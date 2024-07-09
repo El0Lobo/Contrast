@@ -580,6 +580,11 @@ form button {
         top: 0;
         right: 0;
       }
+      .NONAZIS {
+        top: 260px;
+        right: 644px;
+        position: absolute;
+      }
 }
 
 @media only screen and (max-width: 400px) {
