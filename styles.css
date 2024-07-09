@@ -28,21 +28,20 @@
     src: url('/fonts/Anarchaos1.otf') format('opentype');
 }
 
-@font-face {
-    font-family: 'HitMePunk';
-    src: url('/fonts/Hit me, punk! 01.ttf') format('truetype');
-}
 
-@font-face {
-    font-family: 'ElectroInsanity';
-    src: url('/fonts/Electro Insanity.ttf') format('truetype');
-}
 
 @font-face {
     font-family: 'SantaCarla';
-    src: url('/fonts/santacarla.ttf') format('truetype');
-}
-
+    src: url('https://el0lobo.github.io/fonts/santacarla.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'ElectroInsanity';
+    src: url('https://el0lobo.github.io/fonts/Electro%20Insanity.ttf') format('truetype');
+  }
+  @font-face {
+    font-family: 'HitMePunk';
+    src: url('https://el0lobo.github.io/fonts/Hit%20me,%20punk!%2001.ttf') format('truetype');
+  }
 .instagram-embed {
     display: flex;
     flex-direction: column;
