@@ -82,25 +82,33 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.date) {
             const date = document.createElement('p');
             date.className = 'event-date';
-            date.textContent = event.date.toLocaleDateString();
+            date.textContent = event.date.toLocaleDateString('de-DE');
             info.appendChild(date);
         }
     
         const name = document.createElement('h3');
-        name.className = 'event-name';
-        name.textContent = event.name;
-        info.appendChild(name);
+            name.className = 'event-name';
+            name.textContent = event.name;
+            info.appendChild(name);
     
-        const description = document.createElement('p');
-        description.className = 'event-description';
-        description.textContent = event.description;
-        info.appendChild(description);
+            const description = document.createElement('p');
+            description.className = 'event-description';
+            description.textContent = event.description;
+            info.appendChild(description);
     
-        entry.appendChild(info);
-        entry.onclick = () => showSection(event.sectionId);
+            entry.appendChild(info);
+    
+        // Add condition to check if the event is a break
+        if (event.className === 'break') {
+            entry.onclick = function() {
+                showImagePopup(event.img, event.name);
+            };
+        } else {
+            entry.onclick = () => showSection(event.sectionId);
+        }
     
         return entry;
-    }
+    }    
     
     function renderEventEntries(events) {
         const concertsContainer = document.getElementById('next-concerts');
@@ -174,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     cell.innerHTML += `<br><span class="clickable" onclick="showSection('${singleDayEvent.sectionId}')">${singleDayEvent.name}</span>`;
                 } else {
                     // Apply usual day styles and names
-                    const dayOfWeek = date.getDay();
+                    const dayOfWeek = (date.getDay() + 6) % 7; // Adjust for Monday start
                     if (usualDays[dayOfWeek]) {
                         cell.className = usualDays[dayOfWeek].className;
                         if (usualDays[dayOfWeek].sectionId) {
@@ -197,30 +205,12 @@ document.addEventListener('DOMContentLoaded', function () {
         endOfWeek.setDate(startOfWeek.getDate() + 6);
         const options = { month: 'short', day: 'numeric' };
         document.getElementById('calendar-title').textContent = 
-            `${startOfWeek.toLocaleDateString(undefined, options)} - ${endOfWeek.toLocaleDateString(undefined, options)}`;
-    }
-
-    function showImagePopup(src, alt) {
-        const popup = document.createElement('div');
-        popup.className = 'image-popup';
-        
-        const overlay = document.createElement('div');
-        overlay.className = 'overlay';
-        overlay.onclick = () => document.body.removeChild(popup);
-        popup.appendChild(overlay);
-        
-        const img = document.createElement('img');
-        img.src = src;
-        img.alt = alt;
-        img.className = 'popup-img';
-        popup.appendChild(img);
-        
-        document.body.appendChild(popup);
+            `${startOfWeek.toLocaleDateString('de-DE', options)} - ${endOfWeek.toLocaleDateString('de-DE', options)}`;
     }
 
     const calendarDiv = document.getElementById('calendar');
     let startOfWeek = new Date();
-    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Start of the current week
+    startOfWeek.setDate(startOfWeek.getDate() - ((startOfWeek.getDay() + 6) % 7)); // Start of the current week (Monday)
 
     function renderCalendar() {
         calendarDiv.innerHTML = ''; // Clear previous calendar

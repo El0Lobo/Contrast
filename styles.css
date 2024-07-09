@@ -56,6 +56,7 @@
     margin: 0;
 }
 
+
 #next-concerts li, #next-events li {
     padding: 10px;
     margin-bottom: 5px;
@@ -284,8 +285,8 @@ footer {
 }
 
 .event-img {
-    width: 100px;
-    height: 100px;
+    max-width: 187px;
+    max-height: 148px;
     object-fit: cover;
     margin-right: 15px;
 }
@@ -520,6 +521,18 @@ form button {
 }
 
 @media only screen and (max-width: 768px) {
+    .event-entry {
+        display: block;
+        align-items: center;
+        justify-content: center;
+        margin: 10px auto;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 80%;
+        cursor: pointer;
+        background: #7fffd442;
+      }
     nav ul {
         flex-direction: column;
     }
@@ -545,7 +558,10 @@ form button {
         max-width: 350px;
         max-height: 438px;
         margin: 0 auto;
+        left: -16px;
+        position: relative;
       }
+
       .neon-sign {
         font-family: "Vibur", sans-serif;
         text-align: center;
@@ -559,12 +575,28 @@ form button {
         right: 0;
       }
 
-        .NONAZIS {
-          top: 21%;
-          right: 75%;
-          width: 85px;
+    .NONAZIS {
+        top: 21%;
+        right: 75%;
+        width: 85px;
+    }
+    #calendar-main{
+        max-height: 75px;
+        width: 98vw;
+        padding: 0;
+        position: relative;
+        left: -47px;
+        border-radius: 10px;
+        padding-bottom: 5px;
         }
-      
+    #footer {
+            background: rgba(51, 51, 51, 0.5);
+            color: #fff;
+            text-align: center;
+            position: relative;
+            width: 100%;
+            bottom: -180px;
+          }
 }
 
 @media only screen and (max-width: 1440px){

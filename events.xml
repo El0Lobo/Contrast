@@ -1,4 +1,5 @@
 <events>
+
     <event>
         <date>2024-07-10</date>
         <name>Concert</name>
@@ -6,6 +7,20 @@
         <img></img>
         <description>An exciting concert event featuring local bands.</description>
     </event>
+
+    <event>
+        <date>2024-07-12</date>
+        <name>Queer History of Rock‘n‘Roll</name>
+        <class>event</class>
+        <img>pics/event1.png</img>
+        <description>Am 12.07. dreht sich bei uns alles um die queere Geschichte des Rock'n'Roll: Zuerst gibt's einen Vortrag zum Thema als Kooperation zwischen Infokneipe und dem Queer Skate Club, anschließend wird zu regenbogenfarbigen Gitarrenklängen gefeiert!
+        20:00 Uhr Vortrag: Queer History of Rock‘n‘Roll
+        Drag-Outfits im Glam Rock, gay leather fashion im Heavy Metal – ausgerechnet in der hypermaskulinen, cis-männlich dominierten Rock-Szene haben queere Styles eine lange Tradition. Doch woher kommt die visuelle Nähe zur LGBTQ-Community? Und welche Rolle haben queere Musiker:innen in der Szene im Laufe der Jahrzehnte gespielt? Der Vortrag beleuchtet das Spannungsfeld zwischen Männlichkeitskult, Homophobie, antipatriarchaler Rebellion und s*xueller Revolution und würdigt die größten queeren Ikonen der Rock-Geschichte.
+        22:00 Uhr Party: Queer Rock Classics
+        Queer-Party mit Rock-Schwerpunkt! Von Queen bis Judas Priest, von David Bowie bis zur Rocky Horror Picture Show – feiert mit uns queere Rock-Klassiker!
+        </description>
+    </event>
+
     <event>
         <date>2024-07-15</date>
         <name>Jugo Kneipe</name>
@@ -18,6 +33,7 @@
             Živjeli!
         </description>
     </event>
+
     <event>
         <start-date>2024-07-20</start-date>
         <end-date>2024-07-25</end-date>
@@ -26,4 +42,5 @@
         <img>pics/Sommerpause.png</img>
         <description>Summer break with no events scheduled during this period.</description>
     </event>
+
 </events>
