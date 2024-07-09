@@ -2,22 +2,26 @@
     <event>
         <date>2024-07-10</date>
         <name>Concert</name>
-        <class>event3</class>
-        <img>pics/concert1.png</img>
+        <class>concert</class>
+        <img></img>
         <description>An exciting concert event featuring local bands.</description>
     </event>
     <event>
         <date>2024-07-15</date>
-        <name>Special Event</name>
-        <class>event2</class>
-        <img>pics/special.png</img>
-        <description>A special event with unique activities and performances.</description>
+        <name>Jugo Kneipe</name>
+        <class>event</class>
+        <img>pics/event.jpg</img>
+        <description>Druževi 🫡
+Kurz vor der Sommerpause melden wir uns noch einmal zurück und laden zum heißen Ritt ein, denn das Special seid dieses Mal ihr! 🤠
+Packt eure Liebsten ein, steckt den Zahnstocher in den Mund und gebt am Open Mic alles, als wäre gerade die hart erarbeitete Ernte eingefahren worden - bis die Stehtische wieder knacken, es ist seljačko Karaoke time 🧑‍🌾👨‍🌾
+Der Rest ist Geschichte.
+Živjeli!</description>
     </event>
     <event>
         <start-date>2024-07-20</start-date>
         <end-date>2024-07-25</end-date>
         <name>Sommerpause</name>
-        <class>event1</class>
+        <class>break</class>
         <img>pics/Sommerpause.png</img>
         <description>Summer break with no events scheduled during this period.</description>
     </event>

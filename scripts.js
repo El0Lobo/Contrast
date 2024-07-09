@@ -1,35 +1,32 @@
-document.addEventListener('DOMContentLoaded', function () {
-    function showSection(sectionId) {
-        // Hide all sections
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(section => section.classList.remove('active'));
-    
-        // Show the selected section
-        const section = document.getElementById(sectionId);
-        section.classList.add('active');
-    
-        // Update the navigation links
-        const navLinks = document.querySelectorAll('nav ul li a');
-        navLinks.forEach(link => link.classList.remove('active'));
-    
-        // Add active class to the clicked link
-        const activeLink = document.querySelector(`nav ul li a[onclick="showSection('${sectionId}')"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
+function showSection(sectionId) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(section => section.classList.remove('active'));
+
+    // Show the selected section
+    const section = document.getElementById(sectionId);
+    section.classList.add('active');
+
+    // Update the navigation links
+    const navLinks = document.querySelectorAll('nav ul li a');
+    navLinks.forEach(link => link.classList.remove('active'));
+
+    // Add active class to the clicked link
+    const activeLink = document.querySelector(`nav ul li a[onclick="showSection('${sectionId}')"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
     }
-    
+}
+
+document.addEventListener('DOMContentLoaded', function () {
     // Example: Call showSection to show the home section by default
-    document.addEventListener('DOMContentLoaded', () => {
-        showSection('home');
-    });
-    
+    showSection('home');
 
     const usualDays = {
-        0: {name: 'Queer-Kneipe', className: 'queerkneipe'}, // Sunday
-        1: {name: 'Das Labor', className: 'das-labor'}, // Monday
+        0: {name: 'Queer-Kneipe', className: 'queerkneipe', sectionId: 'queerkneipe_kn'}, // Sunday
+        1: {name: 'Das Labor', className: 'das-labor', sectionId: 'labor_kn'}, // Monday
         2: {name: 'Mixed Music', className: 'mixed-music'}, // Tuesday
-        3: {name: 'Punk-Kneipe', className: 'punkkneipe'}, // Wednesday
+        3: {name: 'Punk Kneipe', className: 'punkkneipe', sectionId: 'punk_kneipe'}, // Wednesday
         4: {name: 'Kneipe', className: 'kneipe'}, // Thursday
         5: {name: 'Kneipe', className: 'kneipe'}, // Friday
         6: {name: 'Geschlossen', className: 'geschlossen'} // Saturday
@@ -49,10 +46,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     const endDate = eventNodes[i].getElementsByTagName('end-date')[0]?.textContent;
                     const name = eventNodes[i].getElementsByTagName('name')[0].textContent;
                     const className = eventNodes[i].getElementsByTagName('class')[0].textContent;
+                    const img = eventNodes[i].getElementsByTagName('img')[0]?.textContent || 'pics/logo.png';
+                    const description = eventNodes[i].getElementsByTagName('description')[0].textContent;
+                    const sectionId = className === 'concert' ? 'concerts' : 'events';
                     if (date) {
-                        events.push({ date: new Date(date), name: name, className: className });
+                        events.push({ date: new Date(date), name: name, className: className, img: img, description: description, sectionId: sectionId });
                     } else if (startDate && endDate) {
-                        events.push({ startDate: new Date(startDate), endDate: new Date(endDate), name: name, className: className });
+                        events.push({ startDate: new Date(startDate), endDate: new Date(endDate), name: name, className: className, img: img, description: description });
                     }
                 }
                 callback(events);
@@ -61,10 +61,66 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.send();
     }
 
+    function createEventEntry(event) {
+        const entry = document.createElement('div');
+        entry.className = 'event-entry';
+
+        if (event.img) {
+            const img = document.createElement('img');
+            img.src = event.img;
+            img.alt = event.name;
+            img.className = 'event-img';
+            img.addEventListener('click', function() {
+                showImagePopup(event.img, event.name);
+            });
+            entry.appendChild(img);
+        }
+
+        const info = document.createElement('div');
+        info.className = 'event-info';
+
+        const date = document.createElement('p');
+        date.className = 'event-date';
+        date.textContent = event.date.toLocaleDateString();
+        info.appendChild(date);
+
+        const name = document.createElement('h3');
+        name.className = 'event-name';
+        name.textContent = event.name;
+        info.appendChild(name);
+
+        const description = document.createElement('p');
+        description.className = 'event-description';
+        description.textContent = event.description;
+        info.appendChild(description);
+
+        entry.appendChild(info);
+        entry.onclick = () => showSection(event.sectionId);
+
+        return entry;
+    }
+
+    function renderEventEntries(events) {
+        const concertsContainer = document.getElementById('next-concerts');
+        const eventsContainer = document.getElementById('next-events');
+        
+        concertsContainer.innerHTML = '';
+        eventsContainer.innerHTML = '';
+        
+        events.forEach(event => {
+            const entry = createEventEntry(event);
+            if (event.className === 'concert') {
+                concertsContainer.appendChild(entry);
+            } else {
+                eventsContainer.appendChild(entry);
+            }
+        });
+    }
+
     function createCalendar(weekStart, additionalEvents) {
         const calendar = document.createElement('table');
         const header = document.createElement('tr');
-        const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat','Sun' ];
+        const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ];
         
         daysOfWeek.forEach(day => {
             const th = document.createElement('th');
@@ -90,23 +146,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 cell.className = multiDayEvent.className;
                 cell.innerHTML += `<br>${multiDayEvent.name}`;
             } else {
-                // Apply usual day styles and names
-                const dayOfWeek = date.getDay();
-                if (usualDays[dayOfWeek]) {
-                    cell.className = usualDays[dayOfWeek].className;
-                    cell.innerHTML += `<br>${usualDays[dayOfWeek].name}`;
-                }
-                
-                // Apply additional event styles and names
-                const event = additionalEvents.find(event => 
+                // Apply additional single-day event styles and names
+                const singleDayEvent = additionalEvents.find(event => 
                     event.date &&
                     event.date.getDate() === date.getDate() && 
                     event.date.getMonth() === date.getMonth() && 
                     event.date.getFullYear() === date.getFullYear()
                 );
-                if (event) {
-                    cell.className = event.className;
-                    cell.innerHTML += `<br>${event.name}`;
+                if (singleDayEvent) {
+                    cell.className = singleDayEvent.className;
+                    cell.innerHTML += `<br><span class="clickable" onclick="showSection('${singleDayEvent.sectionId}')">${singleDayEvent.name}</span>`;
+                } else {
+                    // Apply usual day styles and names
+                    const dayOfWeek = date.getDay();
+                    if (usualDays[dayOfWeek]) {
+                        cell.className = usualDays[dayOfWeek].className;
+                        if (usualDays[dayOfWeek].sectionId) {
+                            cell.innerHTML += `<br><span class="clickable" onclick="showSection('${usualDays[dayOfWeek].sectionId}')">${usualDays[dayOfWeek].name}</span>`;
+                        } else {
+                            cell.innerHTML += `<br>${usualDays[dayOfWeek].name}`;
+                        }
+                    }
                 }
             }
 
@@ -124,6 +184,24 @@ document.addEventListener('DOMContentLoaded', function () {
             `${startOfWeek.toLocaleDateString(undefined, options)} - ${endOfWeek.toLocaleDateString(undefined, options)}`;
     }
 
+    function showImagePopup(src, alt) {
+        const popup = document.createElement('div');
+        popup.className = 'image-popup';
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        overlay.onclick = () => document.body.removeChild(popup);
+        popup.appendChild(overlay);
+        
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = alt;
+        img.className = 'popup-img';
+        popup.appendChild(img);
+        
+        document.body.appendChild(popup);
+    }
+
     const calendarDiv = document.getElementById('calendar');
     let startOfWeek = new Date();
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Start of the current week
@@ -134,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const calendar = createCalendar(startOfWeek, events);
             calendarDiv.appendChild(calendar);
             updateTitle(startOfWeek);
+            renderEventEntries(events);
         });
     }
 

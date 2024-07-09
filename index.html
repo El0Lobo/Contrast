@@ -21,9 +21,10 @@
                 <li><a href="#" class="active" onclick="showSection('home')">Home</a></li>
                 <li><a href="#" onclick="showSection('queerkneipe_kn')">Queerkneipe</a></li>
                 <li><a href="#" onclick="showSection('labor_kn')">Labor</a></li>
-                <li><a href="#" onclick="showSection('punk_kneipe')">Punk-Kneipe & Infokneipe</a></li>
-                <li><a href="#" onclick="showSection('booking')">Veranstaltungen</a></li>
-                <li><a href="#" onclick="showSection('contact')">Contact</a></li>
+                <li><a href="#" onclick="showSection('punk_kneipe')">Punk-Kneipe</a></li>
+                <li><a href="#" onclick="showSection('concerts')">Konzerte</a></li>
+                <li><a href="#" onclick="showSection('events')">Veranstaltungen</a></li>
+                <li><a href="#" onclick="showSection('contact')">Kontakt</a></li>
             </ul>
         </nav>
     </header>
@@ -48,31 +49,38 @@
             </div>
             <div id="calendar"></div>
         </section>
+
         <section id="queerkneipe_kn" class="section">
             <h1>Queerkneipe</h1>
             <p>Die Queerkneipe ist unser spezieller Abend für die queere Community, der jeden Montag stattfindet. Genieße eine einladende und inklusive Atmosphäre mit lebendiger Musik und großartiger Gesellschaft. Bleibe auf dem Laufenden über unsere neuesten Veranstaltungen und Community-Treffen, indem du uns auf Instagram folgst.</p>
-            <iframe src="https://www.instagram.com/queerkneipe_kn/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="display: flex;flex-direction: column;max-width: 400px;margin: 0 auto;"></iframe>
+            <iframe src="https://www.instagram.com/queerkneipe_kn/embed" frameborder="0" scrolling="yes" allowtransparency="true" class="instagram-embed"></iframe>
         </section>
         
         <section id="labor_kn" class="section">
             <h1>Labor</h1>
             <p>Labor KN ist unser experimenteller Abend, der jeden Dienstag stattfindet. Dieser Abend bietet eine Mischung aus elektronischer Musik, experimentellen Klängen und einzigartigen Auftritten. Es ist eine Nacht der Kreativität und des Erkundens neuer musikalischer Landschaften. Schaue auf unserem Instagram vorbei, um die neuesten Updates und Highlights unserer Veranstaltungen zu sehen.</p>
-            <iframe src="https://www.instagram.com/labor_kn/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="display: flex;flex-direction: column;max-width: 400px;margin: 0 auto;"></iframe>
+            <iframe src="https://www.instagram.com/labor_kn/embed" frameborder="0" scrolling="yes" allowtransparency="true" class="instagram-embed"></iframe>
         </section>
         
         <section id="punk_kneipe" class="section">
             <h1>Punk-Kneipe & Infokneipe</h1>
             <p>Jeden Donnerstag ist Punk-Nacht, gewidmet den Punkrock-Enthusiasten. Genieße eine Nacht mit energiegeladener musik, spannenden Gesprächen und einer rebellischen Atmosphäre. Neben Punkmusik haben wir auch Infokneipe-Sitzungen, bei denen du mehr über verschiedene soziale und politische Themen erfahren kannst. Folge uns auf Instagram für weitere Details.</p>
-            <iframe src="https://www.instagram.com/infokneipe_kn/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="display: flex;flex-direction: column;max-width: 400px;margin: 0 auto;"></iframe>
+            <iframe src="https://www.instagram.com/infokneipe_kn/embed" frameborder="0" scrolling="yes" allowtransparency="true" class="instagram-embed"></iframe>
+        </section>
+
+        <section id="concerts" class="section">
+            <h1>Konzerte</h1>
+            <p>Interessierst du dich für fantastische Live-Musik? Im Contrast bieten wir eine Vielzahl von Konzerten an, die du nicht verpassen solltest. Schau dir unsere Instagram-Seite an, um über bevorstehende Konzerte und Highlights vergangener Auftritte informiert zu bleiben. Erlebe unvergessliche Musikmomente bei uns!</p>
+            <div id="next-concerts"></div>
         </section>
         
-        <section id="booking" class="section">
-            <h1>Booking</h1>
-            <p>Bist du daran interessiert, im Contrast aufzutreten? Egal, ob du eine Band, ein DJ oder ein Performer bist, wir freuen uns darauf, von dir zu hören. Folge unserer Instagram-Seite für Buchungsdetails und um Highlights vergangener Auftritte zu sehen. Lass uns deinen nächsten Auftritt unvergesslich machen!</p>
-            <iframe src="https://www.instagram.com/booking_contrast/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="display: flex;flex-direction: column;max-width: 400px;margin: 0 auto;"></iframe>
+        <section id="events" class="section">
+            <h1>Veranstaltungen</h1>
+            <p>Hast du Lust auf spannende Events? Im Contrast gibt es immer aufregende Veranstaltungen zu entdecken, von Musik über Kunst bis hin zu Kultur. Folge unserer Instagram-Seite für Informationen zu bevorstehenden Events und um Highlights vergangener Veranstaltungen zu sehen. Lass dich von unseren Events begeistern und mach deinen nächsten Besuch bei uns unvergesslich!</p>
+            <div id="next-events"></div>
         </section>
         
-        
+
         <section id="contact" class="section">
                 <h1>Kontakt</h1>
                 <p>Adresse: <a href="https://www.google.com/maps/search/?api=1&query=Joseph-Belli-Weg+11,+Konstanz+78467,+Germany" target="_blank">Joseph-Belli-Weg 11, Konstanz 78467, Germany</a></p>
@@ -83,15 +91,9 @@
                 <p>Öffnungszeiten:</p>
                 <p>Montag bis Donnerstag: <br> 21:00 - 01:00 Uhr</p>
                 <p>Freitag bis Samstag: <br> 22:00 - 03:00 Uhr</p>
-            <form>
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" required></textarea>
-                <button type="submit">Submit</button>
-            </form>
+                <h1>Booking</h1>
+                <p>Bist du daran interessiert, im Contrast aufzutreten? Egal, ob du eine Band, ein DJ oder ein Performer bist, wir freuen uns darauf, von dir zu hören. Folge unserer Instagram-Seite für Buchungsdetails und um Highlights vergangener Auftritte zu sehen. Lass uns deinen nächsten Auftritt unvergesslich machen!</p>
+                <iframe src="https://www.instagram.com/booking_contrast/embed" frameborder="0" scrolling="yes" allowtransparency="true" class="instagram-embed"></iframe>
         </section>
     </main>
     <footer>
