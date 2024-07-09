@@ -344,3 +344,25 @@ document.addEventListener('DOMContentLoaded', function () {
     updateNeonSign();
     setInterval(updateNeonSign, 60000); // Update every minute
 });
+
+
+function toggleMenu() {
+    const nav = document.querySelector('nav ul');
+    const toggle = document.getElementById('menu-toggle');
+
+    if (nav.classList.contains('active')) {
+        nav.classList.remove('active');
+        toggle.innerHTML = '▼';
+    } else {
+        nav.classList.add('active');
+        toggle.innerHTML = '▲';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Show menu on load for mobile
+    if (window.innerWidth <= 768) {
+        document.querySelector('nav ul').classList.add('active');
+        document.getElementById('menu-toggle').innerHTML = '▲';
+    }
+});
