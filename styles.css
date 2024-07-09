@@ -618,6 +618,13 @@ form button {
         position: absolute;
       }
 }
+@media only screen and (max-width: 790px) {
+    .NONAZIS {
+      top: 340px;
+      right: 222px;
+      position: absolute;
+    }
+  }
 @media only screen and (max-width: 800px) {
     .neon-sign {
         font-family: "Vibur", sans-serif;
@@ -633,10 +640,18 @@ form button {
       }
     .NONAZIS {
         top: 340px;
-        right: 260px;
+        right: 222px;
         position: absolute;
     }
   }
+
+@media only screen and (max-width: 860px) {
+.NONAZIS {
+    top: 340px;
+    right: 282px;
+    position: absolute;
+}
+}
 @media only screen and (max-width: 400px) {
     .instagram-embed {
       display: flex;
