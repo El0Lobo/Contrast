@@ -1,59 +1,47 @@
 @font-face {
     font-family: 'Mustasurma';
-    src: url('/fonts/Mustasurma.ttf') format('truetype');
+    src: url('fonts/Mustasurma.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'PIG';
-    src: url('/fonts/PIG.TTF') format('truetype');
+    src: url('fonts/PIG.TTF') format('truetype');
 }
 
 @font-face {
     font-family: 'PunkKid';
-    src: url('/fonts/punk kid.ttf') format('truetype');
+    src: url('fonts/punk kid.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'Punktype';
-    src: url('/fonts/Punktype.ttf') format('truetype');
+    src: url('fonts/Punktype.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'AcrossTheLines';
-    src: url('/fonts/across the lines.ttf') format('truetype');
+    src: url('fonts/across the lines.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'Anarchaos';
-    src: url('/fonts/Anarchaos1.otf') format('opentype');
+    src: url('fonts/Anarchaos1.otf') format('opentype');
 }
 
 @font-face {
     font-family: 'HitMePunk';
-    src: url('/fonts/Hit me, punk! 01.ttf') format('truetype');
+    src: url('fonts/Hit me, punk! 01.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'ElectroInsanity';
-    src: url('/fonts/Electro Insanity.ttf') format('truetype');
+    src: url('fonts/Electro Insanity.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'SantaCarla';
-    src: url('/fonts/santacarla.ttf') format('truetype');
+    src: url('fonts/santacarla.ttf') format('truetype');
 }
-@font-face {
-    font-family: 'SantaCarla';
-    src: url('https://el0lobo.github.io/fonts/santacarla.ttf') format('truetype');
-  }
-  @font-face {
-    font-family: 'ElectroInsanity';
-    src: url('https://el0lobo.github.io/fonts/Electro%20Insanity.ttf') format('truetype');
-  }
-  @font-face {
-    font-family: 'HitMePunk';
-    src: url('https://el0lobo.github.io/fonts/Hit%20me,%20punk!%2001.ttf') format('truetype');
-  }
 .instagram-embed {
     display: flex;
     flex-direction: column;
@@ -286,6 +274,7 @@ footer {
     border-radius: 5px;
     width: 80%; /* 80% of the viewport width */
     cursor: pointer;
+    background: #7fffd442;
 }
 
 .event-img {
@@ -344,7 +333,7 @@ footer {
 }
 
 .break {
-    background: rgb(0, 0, 0);
+    background: rgb(19, 71, 5);
 }
 .event {
     background: rgb(215, 150, 10);
