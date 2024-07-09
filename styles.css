@@ -581,3 +581,15 @@ form button {
         right: 0;
       }
 }
+
+@media only screen and (max-width: 400px) {
+    .instagram-embed {
+      display: flex;
+      flex-direction: column;
+      max-width: 274px;
+      max-height: 380px;
+      margin: 0 auto;
+      position: relative;
+      left: -5px;
+    }
+  }
