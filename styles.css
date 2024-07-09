@@ -372,7 +372,14 @@ form button {
     border: none;
     cursor: pointer;
 }
-
+.NONAZIS {
+    font-family: "Vibur", sans-serif;
+    text-align: center;
+    top: 0%;
+    right: 60%;
+    position: absolute;
+    font-size: 2.3em;
+  }
 .neon-sign {
     font-family: "Vibur", sans-serif;
     text-align: center;
@@ -551,6 +558,13 @@ form button {
         top: 0;
         right: 0;
       }
+
+        .NONAZIS {
+          top: 21%;
+          right: 75%;
+          width: 85px;
+        }
+      
 }
 
 @media only screen and (max-width: 1440px){
