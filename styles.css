@@ -568,24 +568,26 @@ form button {
 }
 
 @media only screen and (max-width: 1440px){
-      .neon-sign {
+
+    .neon-sign {
         font-family: "Vibur", sans-serif;
         text-align: center;
-        position: relative;
+        position: absolute;
         font-size: 2.1em;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         display: flex;
-        top: 0;
-        right: 0;
+        top: 136px;
+        right: 62px;
+    }
       }
       .NONAZIS {
-        top: 260px;
+        top: 186px;
         right: 644px;
         position: absolute;
       }
-}
+
 
 @media only screen and (max-width: 400px) {
     .instagram-embed {
