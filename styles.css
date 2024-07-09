@@ -157,6 +157,9 @@ main {
 .section {
     display: none;
     text-align: center;
+    max-width: 80vw;
+    left: 8%;
+    position: relative;
 }
 
 .section.active {
@@ -373,8 +376,8 @@ form button {
 .neon-sign {
     font-family: "Vibur", sans-serif;
     text-align: center;
-    top: 28%;
-    right: 13%;
+    top: 0%;
+    right: 5%;
     position: absolute;
     font-size: 2.3em;
   }
@@ -546,32 +549,6 @@ form button {
 }
 
 @media only screen and (max-width: 1440px){
-    nav ul {
-        flex-direction: column;
-    }
-    nav ul li {
-        margin: 10px 0;
-    }
-    .image {
-        max-width: 100%;
-        height: auto;
-      }
-      body {
-        font-family: 'Anarchaos';
-        font-size: x-large;
-     }
-     nav ul li a {
-        color: #fff;
-        text-decoration: none;
-        font-size: 1.8rem;
-      }
-      .instagram-embed {
-        display: flex;
-        flex-direction: column;
-        max-width: 350px;
-        max-height: 438px;
-        margin: 0 auto;
-      }
       .neon-sign {
         font-family: "Vibur", sans-serif;
         text-align: center;
