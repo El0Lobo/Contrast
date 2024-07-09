@@ -25,7 +25,7 @@
 
 @font-face {
     font-family: 'Anarchaos';
-    src: url('/fonts/Anarchaos.otf') format('opentype');
+    src: url('/fonts/Anarchaos1.otf') format('opentype');
 }
 
 @font-face {
@@ -114,6 +114,7 @@ main {
 
 .section {
     display: none;
+    text-align: center;
 }
 
 .section.active {
@@ -133,14 +134,18 @@ footer {
     justify-content: space-between;
     align-items: center;
     margin-top: 20px;
+    background: rgba(0, 94, 94, 0.8);
+
 }
 
 #calendar-controls button {
+    background: rgba(0, 94, 94, 0.8);
     background: none;
     border: none;
     color: white;
-    font-size: 1.5rem;
+    font-size: 3.5rem;
     cursor: pointer;
+    padding: 2%;
 }
 
 #calendar-controls button:hover {
@@ -149,11 +154,9 @@ footer {
 
 
 #calendar {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 94, 94, 0.8);
     color: #000;
     padding: 20px;
-    border-radius: 8px;
-    margin-top: 20px;
     overflow-x: auto;
     text-shadow: none;
 }
