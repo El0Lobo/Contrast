@@ -102,20 +102,33 @@ document.addEventListener('DOMContentLoaded', function () {
         return entry;
     }
     
-
     function renderEventEntries(events) {
         const concertsContainer = document.getElementById('next-concerts');
         const eventsContainer = document.getElementById('next-events');
+        const pastConcertsContainer = document.getElementById('past-concerts-container');
+        const pastEventsContainer = document.getElementById('past-events-container');
         
         concertsContainer.innerHTML = '';
         eventsContainer.innerHTML = '';
+        pastConcertsContainer.innerHTML = '';
+        pastEventsContainer.innerHTML = '';
         
+        const today = new Date();
+
         events.forEach(event => {
             const entry = createEventEntry(event);
             if (event.className === 'concert') {
-                concertsContainer.appendChild(entry);
+                if (event.date && event.date < today) {
+                    pastConcertsContainer.appendChild(entry);
+                } else {
+                    concertsContainer.appendChild(entry);
+                }
             } else {
-                eventsContainer.appendChild(entry);
+                if (event.date && event.date < today) {
+                    pastEventsContainer.appendChild(entry);
+                } else {
+                    eventsContainer.appendChild(entry);
+                }
             }
         });
     }
@@ -123,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function createCalendar(weekStart, additionalEvents) {
         const calendar = document.createElement('table');
         const header = document.createElement('tr');
-        const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ];
+        const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         
         daysOfWeek.forEach(day => {
             const th = document.createElement('th');

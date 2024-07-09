@@ -394,7 +394,12 @@ form button {
         0 0 60px #ff00ff;
     animation: pulsate 0.11s ease-in-out infinite alternate;     
 }
-
+#past-concerts-container,
+#past-events-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
 @keyframes flicker1 {
     0%, 18%, 22%, 25%, 53%, 57%, 100% {
         text-shadow:
