@@ -1,0 +1,24 @@
+<events>
+    <event>
+        <date>2024-07-10</date>
+        <name>Concert</name>
+        <class>event3</class>
+        <img>pics/concert1.png</img>
+        <description>An exciting concert event featuring local bands.</description>
+    </event>
+    <event>
+        <date>2024-07-15</date>
+        <name>Special Event</name>
+        <class>event2</class>
+        <img>pics/special.png</img>
+        <description>A special event with unique activities and performances.</description>
+    </event>
+    <event>
+        <start-date>2024-07-20</start-date>
+        <end-date>2024-07-25</end-date>
+        <name>Sommerpause</name>
+        <class>event1</class>
+        <img>pics/Sommerpause.png</img>
+        <description>Summer break with no events scheduled during this period.</description>
+    </event>
+</events>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrast EV Konstanz</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+    <header>
+        <img src="pics/logo white.png" alt="Contrast EV Konstanz Logo" class="logo">
+        <nav>
+            <ul>
+                <li><a href="#" class="active" onclick="showSection('home')">Home</a></li>
+                <li><a href="#" onclick="showSection('queerkneipe_kn')">Queerkneipe</a></li>
+                <li><a href="#" onclick="showSection('labor_kn')">Labor</a></li>
+                <li><a href="#" onclick="showSection('punk_kneipe')">Punk-Kneipe & Infokneipe</a></li>
+                <li><a href="#" onclick="showSection('booking')">Veranstaltungen</a></li>
+                <li><a href="#" onclick="showSection('contact')">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="home" class="section active">
+            <h1>Willkommen im Contrast</h1>
+            <p>Euer Zentrum für alternative Musik, Kunst und Kultur in Konstanz.</p>
+            <p>Lasst alle Hoffnung fahren, die ihr eintretet...</p>
+            <div class="container">
+                <img src="pics/logo big.png" alt="Contrastlogo" class="image">
+            </div>
+            <h1>Über Uns</h1>
+            <p>Das Contrast, betrieben von Jugendkultur e.V., ist ein Jugendclub in Konstanz, Deutschland. Bekannt für seine lebendige Subkultur-Atmosphäre, bietet Contrast eine bunte Mischung aus Punk, Techno und alternativen Events.</p>
+            <p>Voller Graffiti und einer gemütliche Atmosphäre mit erschwinglichen Getränken und einem Gratistischkicker. Geöffnet an Wochentagen von 21:00 bis 01:00 Uhr und am Wochenende von 22:00 bis 03:00 Uhr, veranstalten wir verschiedene Themenabende und Events.</a>.</p>
+            <p>Im Contrast sind Zusammenhalt und Akzeptanz besonders wichtig. Unser Club ist ein sicherer Ort für alle Jugendlichen, unabhängig von Geschlecht, Herkunft oder Interessen. Wir glauben an die Bedeutung von Gemeinschaft und daran, dass jeder willkommen ist und eine Stimme hat.</p>
+            <p>Unsere Wände spiegeln die kreative Energie und den Gemeinschaftsgeist wider. Kommt vorbei und seid Teil einer offenen und vielfältigen Gemeinschaft, die jeden willkommen heißt. Wir freuen uns darauf, euch bei unseren nächsten Veranstaltungen zu sehen!</p>
+            <p>Für mehr Informationen und aktuelle Events, besucht unsere <a href="https://www.facebook.com/Contrastkn/">Facebook-Seite</a>.</p>
+            <div id="calendar-controls">
+                <button id="prev-week">&larr;</button>
+                <h2 id="calendar-title">This Week</h2>
+                <button id="next-week">&rarr;</button>
+            </div>
+            <div id="calendar"></div>
+        </section>
+        <section id="queerkneipe_kn" class="section">
+            <h1>Mo: @queerkneipe_kn</h1>
+            <p>Check out the latest from our queer community nights on Instagram.</p>
+            <!-- Instagram embed code -->
+            <iframe src="https://www.instagram.com/queerkneipe_kn/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="display: flex;flex-direction: column;max-width: 400px;margin: 0 auto;"></iframe>
+        </section>
+        <section id="labor_kn" class="section">
+            <h1>Di: @labor_kn</h1>
+            <p>Explore the latest events and updates from our experimental nights.</p>
+            <!-- Instagram embed code -->
+            <iframe src="https://www.instagram.com/labor_kn/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="display: flex;flex-direction: column;max-width: 400px;margin: 0 auto;"></iframe>
+        </section>
+        <section id="punk_kneipe" class="section">
+            <h1>Do: Punk-Kneipe & @infokneipe_kn</h1>
+            <p>Join us for punk nights and informative sessions. Follow us on Instagram for more.</p>
+            <!-- Instagram embed code -->
+            <iframe src="https://www.instagram.com/infokneipe_kn/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="display: flex;flex-direction: column;max-width: 400px;margin: 0 auto;"></iframe>        </section>
+        <section id="booking" class="section">
+            <h1>Booking: @booking_contrast</h1>
+            <p>Interested in performing at Contrast? Contact us through Instagram.</p>
+            <!-- Instagram embed code -->
+            <iframe src="https://www.instagram.com/booking_contrast/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true" style="display: flex;flex-direction: column;max-width: 400px;margin: 0 auto;"></iframe>
+        </section>
+        <section id="contact" class="section">
+            <h1>Contact</h1>
+            <p>Address: Joseph-Belli-Weg 11, Konstanz 78467, Germany</p>
+            <p>Email: <a href="mailto:info@contrast-kn.de">info@contrast-kn.de</a></p>
+            <form>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Contrast EV Konstanz. All rights reserved. <br> Developed by             <a href="https://acme-prototypes.com/" class="acme-link"><img src="pics/ACME (Small).png" alt="ACME" class="acme-logo" style="width: 70px;position: relative;top: 7px;"></a></p>
+    </footer>
+    <script src="scripts.js"></script>
+</body>
+</html>
