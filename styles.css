@@ -609,11 +609,11 @@ form button {
         justify-content: center;
         align-items: center;
         display: flex;
-        top: 0;
-        right: 0;
+        top: 156px;
+        right: 120px;
       }
       .NONAZIS {
-        top: 260px;
+        top: 184px;
         right: 644px;
         position: absolute;
       }
