@@ -370,6 +370,140 @@ form button {
     cursor: pointer;
 }
 
+.neon-sign {
+    font-family: "Vibur", sans-serif;
+    text-align: center;
+    top: 28%;
+    right: 13%;
+    position: absolute;
+    font-size: 2.3em;
+  }
+
+.neon-sign .we-are {
+    color: #fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #ff00ff,
+        0 0 30px #ff00ff,
+        0 0 40px #ff00ff,
+        0 0 50px #ff00ff,
+        0 0 60px #ff00ff;
+    animation: pulsate 0.11s ease-in-out infinite alternate;     
+}
+
+@keyframes flicker1 {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        text-shadow:
+            0 0 5px #fff,
+            0 0 10px #fff,
+            0 0 20px #ff00ff,
+            0 0 30px #ff00ff,
+            0 0 40px #ff00ff,
+            0 0 50px #ff00ff,
+            0 0 60px #ff00ff;
+        opacity: 1;
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+        opacity: 0.6;
+    }
+}
+
+@keyframes pulsate {
+    0% {
+        text-shadow:
+            0 0 4px #fff,
+            0 0 10px #fff,
+            0 0 18px #fff,
+            0 0 38px #f09,
+            0 0 73px #f09,
+            0 0 80px #f09,
+            0 0 94px #f09,
+            0 0 140px #f09;
+    }
+    100% {
+        text-shadow:
+            0 0 4px #fff,
+            0 0 11px #fff,
+            0 0 19px #fff,
+            0 0 40px #f09,
+            0 0 80px #f09,
+            0 0 90px #f09,
+            0 0 100px #f09,
+            0 0 150px #f09;
+    }
+}
+
+.neon-sign .open {
+    color: #fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #8a0898,
+        0 0 30px #8a0898,
+        0 0 40px #8a0898,
+        0 0 50px #8a0898,
+        0 0 60px #8a0898;
+    animation: flicker2 3s infinite alternate, pulsate2 2s infinite alternate;
+}
+
+@keyframes flicker2 {
+    0%, 19%, 21%, 23%, 25%, 50%, 52%, 57%, 100% {
+        text-shadow:
+            0 0 5px #ffffff,
+            0 0 10px #ffffff,
+            0 0 20px #8a0898,
+            0 0 30px #8a0898,
+            0 0 40px #8a0898,
+            0 0 50px #8a0898,
+            0 0 60px #8a0898;
+        opacity: 1;
+    }
+    20%, 22%, 24%, 51%, 53%, 56% {
+        text-shadow: none;
+        opacity: 0.7;
+    }
+}
+
+@keyframes pulsate2 {
+    0% {
+        text-shadow:
+            0 0 4px #fff,
+            0 0 10px #fff,
+            0 0 18px #8a0898,
+            0 0 38px #8a0898,
+            0 0 73px #8a0898,
+            0 0 80px #8a0898,
+            0 0 94px #8a0898,
+            0 0 140px #8a0898;
+    }
+    100% {
+        text-shadow:
+            0 0 4px #fff,
+            0 0 11px #fff,
+            0 0 19px #8a0898,
+            0 0 40px #8a0898,
+            0 0 80px #8a0898,
+            0 0 90px #8a0898,
+            0 0 100px #8a0898,
+            0 0 150px #8a0898;
+    }
+}
+
+.neon-sign .break-name {
+    color: #fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #00ff00,
+        0 0 30px #00ff00,
+        0 0 40px #00ff00,
+        0 0 50px #00ff00,
+        0 0 60px #00ff00;
+    display: none;
+}
+
 @media only screen and (max-width: 768px) {
     nav ul {
         flex-direction: column;
@@ -396,5 +530,17 @@ form button {
         max-width: 350px;
         max-height: 438px;
         margin: 0 auto;
+      }
+      .neon-sign {
+        font-family: "Vibur", sans-serif;
+        text-align: center;
+        position: relative;
+        font-size: 2.3em;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        top: 0;
+        right: 0;
       }
 }

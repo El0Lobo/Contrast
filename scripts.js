@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function createEventEntry(event) {
         const entry = document.createElement('div');
         entry.className = 'event-entry';
-
+    
         if (event.img) {
             const img = document.createElement('img');
             img.src = event.img;
@@ -75,30 +75,33 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             entry.appendChild(img);
         }
-
+    
         const info = document.createElement('div');
         info.className = 'event-info';
-
-        const date = document.createElement('p');
-        date.className = 'event-date';
-        date.textContent = event.date.toLocaleDateString();
-        info.appendChild(date);
-
+    
+        if (event.date) {
+            const date = document.createElement('p');
+            date.className = 'event-date';
+            date.textContent = event.date.toLocaleDateString();
+            info.appendChild(date);
+        }
+    
         const name = document.createElement('h3');
         name.className = 'event-name';
         name.textContent = event.name;
         info.appendChild(name);
-
+    
         const description = document.createElement('p');
         description.className = 'event-description';
         description.textContent = event.description;
         info.appendChild(description);
-
+    
         entry.appendChild(info);
         entry.onclick = () => showSection(event.sectionId);
-
+    
         return entry;
     }
+    
 
     function renderEventEntries(events) {
         const concertsContainer = document.getElementById('next-concerts');
@@ -236,4 +239,105 @@ document.addEventListener('DOMContentLoaded', function () {
             showSection(sectionId);
         });
     });
+});
+
+function loadAdditionalEvents(callback) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'events.xml', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const events = [];
+            const xml = xhr.responseXML;
+            const eventNodes = xml.getElementsByTagName('event');
+            for (let i = 0; i < eventNodes.length; i++) {
+                const date = eventNodes[i].getElementsByTagName('date')[0]?.textContent;
+                const startDate = eventNodes[i].getElementsByTagName('start-date')[0]?.textContent;
+                const endDate = eventNodes[i].getElementsByTagName('end-date')[0]?.textContent;
+                const name = eventNodes[i].getElementsByTagName('name')[0].textContent;
+                const className = eventNodes[i].getElementsByTagName('class')[0].textContent;
+                const img = eventNodes[i].getElementsByTagName('img')[0]?.textContent || 'pics/logo.png';
+                const description = eventNodes[i].getElementsByTagName('description')[0].textContent;
+                const sectionId = className === 'concert' ? 'concerts' : 'events';
+                if (date) {
+                    events.push({ date: new Date(date), name: name, className: className, img: img, description: description, sectionId: sectionId });
+                } else if (startDate && endDate) {
+                    events.push({ startDate: new Date(startDate), endDate: new Date(endDate), name: name, className: className, img: img, description: description });
+                }
+            }
+            callback(events);
+        }
+    };
+    xhr.send();
+}
+
+function isWithinTimeRange(startTime, endTime, currentTime) {
+    if (startTime > endTime) { // Handles cases where endTime is past midnight
+        return currentTime >= startTime || currentTime <= endTime;
+    }
+    return currentTime >= startTime && currentTime <= endTime;
+}
+
+function updateNeonSign() {
+    const today = new Date();
+    const currentDay = today.getDay(); // Sunday - Saturday : 0 - 6
+    const currentTime = today.getHours() + today.getMinutes() / 60;
+
+    const openTimes = [
+        { start: 21, end: 1 }, // Montag bis Donnerstag
+        { start: 22, end: 3 }, // Freitag bis Samstag
+    ];
+
+    const statusText = document.getElementById('status-text');
+    const openText = document.getElementById('open-text');
+    const breakName = document.getElementById('break-name');
+
+    loadAdditionalEvents((events) => {
+        let onBreak = false;
+
+        for (let i = 0; i < events.length; i++) {
+            const event = events[i];
+            const startDate = event.startDate;
+            const endDate = event.endDate;
+
+            if (startDate && endDate) {
+                if (today >= startDate && today <= endDate) {
+                    statusText.style.display = 'none';
+                    openText.style.display = 'none';
+                    breakName.style.display = 'block';
+                    breakName.innerHTML = `${event.name}<br>Reopening: ${new Date(endDate).toLocaleDateString()}`;
+                    onBreak = true;
+                    break;
+                }
+            }
+        }
+
+        if (!onBreak) {
+            let openTime;
+            if (currentDay >= 1 && currentDay <= 4) { // Montag bis Donnerstag
+                openTime = openTimes[0];
+            } else if (currentDay === 5 || currentDay === 6) { // Freitag bis Samstag
+                openTime = openTimes[1];
+            } else { // Sunday
+                statusText.textContent = 'We are';
+                openText.textContent = 'CLOSED';
+                return;
+            }
+
+            const isOpen = isWithinTimeRange(openTime.start, openTime.end, currentTime);
+            statusText.style.display = 'block';
+            breakName.style.display = 'none';
+            if (isOpen) {
+                statusText.textContent = 'We are';
+                openText.textContent = 'OPEN';
+            } else {
+                statusText.textContent = 'Opening at';
+                openText.innerHTML = `${openTime.start}:00`;
+            }
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    updateNeonSign();
+    setInterval(updateNeonSign, 60000); // Update every minute
 });
