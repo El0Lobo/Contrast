@@ -80,9 +80,10 @@ body {
 }
 
 header {
-  background: rgba(51, 51, 51, 0.5);
-  text-align: center;
-  padding: 1rem 0;
+    background: rgba(51, 51, 51, 0.5);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
 }
 nav ul li a.active {
   text-decoration: underline;
@@ -104,8 +105,12 @@ nav ul li a.active {
 }
 
 header img.logo {
-  max-width: 200px;
-  height: auto;
+    max-width: 200px;
+    height: auto;
+    position: relative;
+    left: 43%;
+    margin-bottom: -50px;
+    top: -30px;
 }
 
 nav ul {
@@ -169,7 +174,7 @@ footer {
   position: relative;
   width: 100%;
   bottom: 0;
-  margin-top: 50px;
+  margin-top: 200px;
   padding-bottom: 1px;
 }
 
@@ -545,12 +550,14 @@ form button {
     border-radius: 10px;
     padding-bottom: 5px;
   }
-  #footer {
-    background: rgba(51, 51, 51, 0.5);
-    color: #fff;
-    text-align: center;
+
+  header img.logo {
+    max-width: 200px;
+    height: auto;
     position: relative;
-    width: 100%;
+    left: 25%;
+    margin-bottom: -81px;
+    top: -42px;
   }
 }
 
