@@ -122,23 +122,28 @@ document.addEventListener('DOMContentLoaded', function () {
         pastEventsContainer.innerHTML = '';
         
         const today = new Date();
-
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        
         events.forEach(event => {
             const entry = createEventEntry(event);
+            const eventDate = new Date(event.date);
+        
             if (event.className === 'concert') {
-                if (event.date && event.date < today) {
+                if (event.date && eventDate.toDateString() === yesterday.toDateString()) {
                     pastConcertsContainer.appendChild(entry);
                 } else {
                     concertsContainer.appendChild(entry);
                 }
             } else {
-                if (event.date && event.date < today) {
+                if (event.date && eventDate.toDateString() === yesterday.toDateString()) {
                     pastEventsContainer.appendChild(entry);
                 } else {
                     eventsContainer.appendChild(entry);
                 }
             }
         });
+        
     }
 
     function createCalendar(weekStart, additionalEvents) {

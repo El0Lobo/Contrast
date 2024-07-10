@@ -1,11 +1,24 @@
 <events>
 
     <event>
-        <date>2024-07-10</date>
+        <date>2024-07-09</date>
         <name>Concert</name>
         <class>concert</class>
         <img></img>
         <description>An exciting concert event featuring local bands.</description>
+    </event>
+
+    <event>
+        <date>2024-07-10</date>
+        <name>Jugo Kneipe</name>
+        <class>event</class>
+        <img>pics/event.jpg</img>
+        <description>Druževi 🫡
+            Kurz vor der Sommerpause melden wir uns noch einmal zurück und laden zum heißen Ritt ein, denn das Special seid dieses Mal ihr! 🤠
+            Packt eure Liebsten ein, steckt den Zahnstocher in den Mund und gebt am Open Mic alles, als wäre gerade die hart erarbeitete Ernte eingefahren worden - bis die Stehtische wieder knacken, es ist seljačko Karaoke time 🧑‍🌾👨‍🌾
+            Der Rest ist Geschichte.
+            Živjeli!
+        </description>
     </event>
 
     <event>
@@ -18,19 +31,6 @@
         Drag-Outfits im Glam Rock, gay leather fashion im Heavy Metal – ausgerechnet in der hypermaskulinen, cis-männlich dominierten Rock-Szene haben queere Styles eine lange Tradition. Doch woher kommt die visuelle Nähe zur LGBTQ-Community? Und welche Rolle haben queere Musiker:innen in der Szene im Laufe der Jahrzehnte gespielt? Der Vortrag beleuchtet das Spannungsfeld zwischen Männlichkeitskult, Homophobie, antipatriarchaler Rebellion und s*xueller Revolution und würdigt die größten queeren Ikonen der Rock-Geschichte.
         22:00 Uhr Party: Queer Rock Classics
         Queer-Party mit Rock-Schwerpunkt! Von Queen bis Judas Priest, von David Bowie bis zur Rocky Horror Picture Show – feiert mit uns queere Rock-Klassiker!
-        </description>
-    </event>
-
-    <event>
-        <date>2024-07-15</date>
-        <name>Jugo Kneipe</name>
-        <class>event</class>
-        <img>pics/event.jpg</img>
-        <description>Druževi 🫡
-            Kurz vor der Sommerpause melden wir uns noch einmal zurück und laden zum heißen Ritt ein, denn das Special seid dieses Mal ihr! 🤠
-            Packt eure Liebsten ein, steckt den Zahnstocher in den Mund und gebt am Open Mic alles, als wäre gerade die hart erarbeitete Ernte eingefahren worden - bis die Stehtische wieder knacken, es ist seljačko Karaoke time 🧑‍🌾👨‍🌾
-            Der Rest ist Geschichte.
-            Živjeli!
         </description>
     </event>
 
