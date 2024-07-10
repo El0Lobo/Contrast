@@ -109,7 +109,7 @@ nav ul li a.active {
 }
 
 header img.logo {
-    max-width: 100px;
+    max-width: 200px;
     height: auto;
 }
 
@@ -183,12 +183,10 @@ footer {
     justify-content: space-between;
     align-items: center;
     margin-top: 20px;
-    background: rgba(0, 94, 94, 0.8);
-
 }
 
 #calendar-controls button {
-    background: rgba(0, 94, 94, 0.8);
+    background: rgba(0, 94, 94, 0.493);
     background: none;
     border: none;
     color: white;
