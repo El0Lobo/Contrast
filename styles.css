@@ -380,6 +380,7 @@ form button {
     right: 60%;
     position: absolute;
     font-size: 2.3em;
+    opacity: 70%;
   }
 .neon-sign {
     font-family: "Vibur", sans-serif;
@@ -388,6 +389,7 @@ form button {
     right: 5%;
     position: absolute;
     font-size: 2.3em;
+    opacity: 90%;
   }
 
 .neon-sign .we-are {
