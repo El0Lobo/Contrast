@@ -724,3 +724,14 @@ form button {
     position: absolute;
   }
 }
+
+
+
+@media only screen and (max-width: 1080px) {
+  nav ul li {
+    font-size: 2em;
+  }
+  nav ul li a {
+    font-size: 0.5em;
+  }
+}
