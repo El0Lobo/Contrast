@@ -569,17 +569,17 @@ form button {
 }
 
 @media only screen and (max-width: 1440px) {
-  .neon-sign {
-    font-family: "Vibur", sans-serif;
-    text-align: center;
-    position: absolute;
-    font-size: 2.1em;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    top: 156px;
-    right: 90px;
+    .neon-sign {
+      font-family: "Vibur", sans-serif;
+      text-align: center;
+      position: absolute;
+      font-size: 1.3em;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      top: 183px;
+      right: 65px;
   }
   .NONAZIS {
     top: 184px;
