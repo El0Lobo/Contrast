@@ -1,5 +1,6 @@
 Zeug das fehlt:
 !!!!!!!Schicht abwählen Button!!!!!!!!!!
+Putzschicht
 Bilanz
 Kasse?
 fehlende schichten diesen Monat
@@ -16,7 +17,21 @@ Leaderboard (top 10 der meisten schichten gemacht (username nummer der schichten
                                               - Kommentar
                                               
 3te Section Stuff we need: kleinzeug das der Laden braucht den mitglieder haben könnten.sollten auch einträge hinzugefügt und entfernt werden können.
-Admin kann schichten für User eintragen
-User Hinzufügen als admin
+Vorstand kann schichten für User eintragen
+User Hinzufügen als Vorstand
 4 User Klassen: Admin, Vorstand, Manager, User 
-                
+Hausverbots liste
+abstimmungen anonym (unique vote)
+Kasse zähler für Menschen
+Themen der letzten Vorstandsitzung (in news)
+Vorschläge für änderungen von usern (votable)
+anschaffungen furs Contrast
+Mitglieder Liste:
+(optionale Kontaktdaten)
+wer hat einen Schlüssel?
+                    - Vorstand
+                    - Activ
+                    - Passiv
+
+Logins und ähnliches, wie router passwort, domain logins,Github creds, usw (sichtbar für Vorstand)
+              
