@@ -1,0 +1,22 @@
+Zeug das fehlt:
+!!!!!!!Schicht abwählen Button!!!!!!!!!!
+Bilanz
+Kasse?
+fehlende schichten diesen Monat
+Leaderboard (top 10 der meisten schichten gemacht (username nummer der schichten))
+2te section für booking muss editierbar sein:
+                                              - Name der band
+                                              - Logo
+                                              - Genre
+                                              - Kontakt
+                                              - Doordeal?
+                                              - Doorprice
+                                              - Preis bezahlt wenn kein doordeal
+                                              - last booked
+                                              - Kommentar
+                                              
+3te Section Stuff we need: kleinzeug das der Laden braucht den mitglieder haben könnten.sollten auch einträge hinzugefügt und entfernt werden können.
+Admin kann schichten für User eintragen
+User Hinzufügen als admin
+4 User Klassen: Admin, Vorstand, Manager, User 
+                

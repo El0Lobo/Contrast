@@ -4,6 +4,7 @@
         <date>2024-07-09</date>
         <name>Concert</name>
         <class>concert</class>
+        <price>Free</price>
         <img></img>
         <description>An exciting concert event featuring local bands.</description>
     </event>
