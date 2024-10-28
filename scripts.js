@@ -314,8 +314,13 @@ function updateNeonSign() {
     const currentTime = today.getHours() + today.getMinutes() / 60;
 
     const openTimes = [
-        { start: 21, end: 1 }, // Montag bis Donnerstag
-        { start: 22, end: 3 }, // Freitag bis Samstag
+        { start: 20, end: 1 }, // Montag
+        { start: 21, end: 1 }, // Dienstag
+        { start: 0,  end: 0 }, // Mittwoch zu
+        { start: 20, end: 1 }, // Donnerstag
+        { start: 22, end: 3 }, // Freitag
+        { start: 22, end: 3 }, // Samstag
+        { start: 0,  end: 0 }, // Sonntag zu
     ];
 
     const statusText = document.getElementById('status-text');
@@ -344,11 +349,13 @@ function updateNeonSign() {
 
         if (!onBreak) {
             let openTime;
-            if (currentDay >= 1 && currentDay <= 4) { // Montag bis Donnerstag
-                openTime = openTimes[0];
-            } else if (currentDay === 5 || currentDay === 6) { // Freitag bis Samstag
-                openTime = openTimes[1];
-            } else { // Sunday
+            openTime = openTimes[currentDay];
+            //if (currentDay >= 1 && currentDay <= 4) { // Montag bis Donnerstag
+            //    openTime = openTimes[0];
+            //} else if (currentDay === 5 || currentDay === 6) { // Freitag bis Samstag
+            //    openTime = openTimes[1];
+            //} else { // Sunday
+            if (openTime.start == openTime.end) {
                 statusText.textContent = 'We are';
                 openText.textContent = 'CLOSED';
                 return;
