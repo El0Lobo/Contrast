@@ -97,15 +97,17 @@ function loadAdditionalEvents(callback) {
                 const date = eventNodes[i].getElementsByTagName('date')[0]?.textContent;
                 const startDate = eventNodes[i].getElementsByTagName('start-date')[0]?.textContent;
                 const endDate = eventNodes[i].getElementsByTagName('end-date')[0]?.textContent;
+                const startTime = eventNodes[i].getElementsByTagName('start-time')[0]?.textContent;
+                const endTime = eventNodes[i].getElementsByTagName('end-time')[0]?.textContent; // let there be end times...
                 const name = eventNodes[i].getElementsByTagName('name')[0].textContent;
                 const className = eventNodes[i].getElementsByTagName('class')[0].textContent;
                 const img = eventNodes[i].getElementsByTagName('img')[0]?.textContent || 'pics/logo.png';
                 const description = eventNodes[i].getElementsByTagName('description')[0].textContent;
                 const sectionId = className === 'concert' ? 'concerts' : 'events';
                 if (date) {
-                    events.push({ date: new Date(date), name: name, className: className, img: img, description: description, sectionId: sectionId });
+                    events.push({ date: new Date(date), name: name, className: className, img: img, description: description, sectionId: sectionId, startTime: startTime, endTime: endTime });
                 } else if (startDate && endDate) {
-                    events.push({ startDate: new Date(startDate), endDate: new Date(endDate), name: name, className: className, img: img, description: description });
+                    events.push({ startDate: new Date(startDate), endDate: new Date(endDate), name: name, className: className, img: img, description: description, startTime: startTime, endTime: endTime });
                 }
             }
 
@@ -328,6 +330,7 @@ function updateNeonSign() {
         { start: 20, end: 1 }, // Donnerstag
         { start: 22, end: 3 }, // Freitag
         { start: 22, end: 3 }, // Samstag
+        { start: 0 , end: 0 }, // dummy if event is found
     ];
 
     const statusText = document.getElementById('status-text');
@@ -351,6 +354,15 @@ function updateNeonSign() {
                     onBreak = true;
                     break;
                 }
+            } else if (events[i].date == today || (currentTime < 12 && events[i].date == today-1)) {
+                openTimes[7] = openTimes[currentDay];
+                if (events[i].startTime) {
+                    openTimes[7].start = events[i].startTime;
+                }
+                if (events[i].endTime) {
+                    openTimes[7].end = events[i].endTime;
+                }
+                currentDay = 7;
             }
         }
 
