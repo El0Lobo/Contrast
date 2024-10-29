@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+    <link rel="stylesheet" href="static/1-admin.css">
+    <script src="static/1-admin.js"></script>
+    {% block header %} {% endblock %}
+  </head>
+  <body>
+    <!-- (A) SIDEBAR -->
+    <div id="pgside">
+      <!-- (A1) BRANDING OR USER -->
+      <div id="pguser" onclick="if(confirm('Sign Off?')){logout();}">
+        <input type="hidden" name="logout" value="1">
+    
+        <!-- Conditionally load different images for admin and users -->
+        <img src="{{ img_src }}" id="pguserimg" alt="User Image">
+    
+        <div class="txt">
+            <div id="pgusername">{{ user }}</div>
+            <div id="pguseracct">logoff</div>
+        </div>
+    </div>
+    
+      <!-- (A2) MENU ITEMS -->
+      <a href="#" class="current">
+        <i class="ico">&#9733;</i>
+        <i class="txt">Schichtplan</i>
+      </a>
+    </div>
+
+    <!-- (B) MAIN -->
+    <main id="pgmain">{% block content %} {% endblock %}</main>
+  </body>
+</html>

@@ -1,10 +1,21 @@
 /* (A) WHOLE PAGE */
+:root {
+  --color-body-bg: #ababab;
+  --color-form-border: #ccc;
+  --color-form-bg: #fff;
+  --color-form-label: #7e7e7e;
+  --color-submit-bg: #c51111;
+  --color-submit-text: #fff;
+  --color-error-border: #ff7979;
+  --color-error-bg: #ffdada;
+}
+
 * {
   font-family: Arial, Helvetica, sans-serif;
   box-sizing: border-box;
 }
 body {
-  background: #f2f2f2;
+  background: var(--color-body-bg);
 }
 
 /* (B) LOGIN FORM */
@@ -12,8 +23,8 @@ form {
   width: 400px;
   padding: 20px;
   margin: 0 auto;
-  border: 1px solid #ccc;
-  background: #fff;
+  border: 1px solid var(--color-form-border);
+  background: var(--color-form-bg);
 }
 form h1 {
   font-size: 28px;
@@ -24,7 +35,7 @@ form label, form input {
   width: 100%;
 }
 form label {
-  color: #7e7e7e;
+  color: var(--color-form-label);
   padding: 10px 0;
 }
 form input { padding: 10px; }
@@ -32,8 +43,8 @@ form input[type=submit] {
   margin-top: 20px;
   border: 0;
   font-weight: 700;
-  color: #fff;
-  background: #c51111;
+  color: var(--color-submit-text);
+  background: var(--color-submit-bg);
   cursor: pointer;
 }
 
@@ -41,6 +52,6 @@ form input[type=submit] {
 .error {
   padding: 10px;
   margin-bottom: 20px;
-  border: 1px solid #ff7979;
-  background: #ffdada;
+  border: 1px solid var(--color-error-border);
+  background: var(--color-error-bg);
 }

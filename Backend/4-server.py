@@ -1,46 +1,83 @@
-from flask import Flask, render_template, make_response, request, redirect, url_for, jsonify
-import bcrypt, jwt, time, random, calendar, os, json
-from datetime import datetime
+# (A) INIT
+# (A1) LOAD REQUIRED PACKAGES
+from flask import Flask, render_template, make_response, request, redirect, url_for, jsonify, flash
+from werkzeug.datastructures import ImmutableMultiDict
+import bcrypt, jwt, time, random, json, os
+from datetime import datetime, timedelta
+import calendar
+from functools import wraps
 
+# (A2) FLASK INIT
 app = Flask(__name__)
+app.secret_key = "YOUR_SECRET_KEY"
+# app.debug = True
 
-# Settings
+# (A3) SETTINGS
 HOST_NAME = "localhost"
 HOST_PORT = 80
 JWT_KEY = "YOUR-SECRET-KEY"
 JWT_ISS = "YOUR-NAME"
 JWT_ALGO = "HS512"
-UPLOAD_FOLDER = 'uploads'
+BANDS_FILE = "bands.json"
+UPLOAD_FOLDER = "static/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Data structure to store calendar events and shifts
-calendar_data = {
-    "events": [],
-}
+# (B) USERS DATA
+USERS_FILE = "users.json"
+EVENTS_FILE = "events.json"
 
-# List of admin users by username
-ADMIN_USERS = ["admin"]
+# Load users from JSON file
+try:
+    with open(USERS_FILE, "r") as file:
+        USERS = json.load(file)
+except FileNotFoundError:
+    USERS = []
 
-# Predefined weekly events
-predefined_events = {
-    0: {"name": "Queer-Kneipe", "needs_door_shift": False, "has_double_shifts": False},
-    1: {"name": "Das Labor", "needs_door_shift": True, "has_double_shifts": True},
-    3: {"name": "Punk-Kneipe", "needs_door_shift": False, "has_double_shifts": False},
-    4: {"name": "Kneipe", "needs_door_shift": False, "has_double_shifts": False},
-    5: {"name": "Kneipe", "needs_door_shift": False, "has_double_shifts": False},
-}
-def month_name(month_number):
-    # List of German month names
-    german_months = [
-        "Januar", "Februar", "März", "April", "Mai", "Juni",
-        "Juli", "August", "September", "Oktober", "November", "Dezember"
-    ]
-    return german_months[month_number - 1]
+# Load bands from JSON file
+try:
+    with open(BANDS_FILE, "r") as file:
+        BANDS = json.load(file)
+except FileNotFoundError:
+    BANDS = {"bands": []}
 
-@app.context_processor
-def utility_processor():
-    return dict(month_name=month_name)
-# JWT Verification using username
+# Load events from JSON file
+try:
+    with open(EVENTS_FILE, "r") as file:
+        EVENTS = json.load(file)
+except FileNotFoundError:
+    EVENTS = {}
+
+# Helper function to save users to JSON file
+def save_users():
+    with open(USERS_FILE, "w") as file:
+        json.dump(USERS, file, indent=2)
+
+# Helper function to save bands to JSON file
+def save_bands():
+    with open(BANDS_FILE, "w") as file:
+        json.dump(BANDS, file, indent=2)
+
+# Helper function to save events to JSON file
+def save_events():
+    with open(EVENTS_FILE, "w") as file:
+        json.dump(EVENTS, file, indent=2)
+
+# (C) JSON WEB TOKEN
+# (C1) GENERATE JWT
+def jwtSign(email, role):
+    rnd = "".join(random.choice("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@#$%^_-") for i in range(24))
+    now = int(time.time())
+    return jwt.encode({
+        "iat": now,  # ISSUED AT - TIME WHEN TOKEN IS GENERATED
+        "nbf": now,  # NOT BEFORE - WHEN THIS TOKEN IS CONSIDERED VALID
+        "exp": now + 3600,  # EXPIRY - 1 HR (3600 SECS) FROM NOW IN THIS EXAMPLE
+        "jti": rnd,  # RANDOM JSON TOKEN ID
+        "iss": JWT_ISS,  # ISSUER
+        "data": {"email": email, "role": role}
+    }, JWT_KEY, algorithm=JWT_ALGO)
+
+# (C2) VERIFY JWT
 def jwtVerify(cookies):
     try:
         user = jwt.decode(cookies.get("JWT"), JWT_KEY, algorithms=[JWT_ALGO])
@@ -48,401 +85,50 @@ def jwtVerify(cookies):
     except:
         return False
 
-# Helper function to get month data
-current_month = datetime.now().month
-current_year = datetime.now().year
+# (C3) GET USER DATA BY EMAIL
+def getUserByEmail(email):
+    for user in USERS:
+        if user["email"] == email:
+            return user
+    return None
 
-def get_month_data(month, year):
-    first_day, num_days = calendar.monthrange(year, month)
-    first_day = (first_day) % 7  # Adjust to start on Monday
-    today = datetime.now().date()
+# (C4) ROLE-BASED ACCESS DECORATOR
+def role_required(required_roles):
+    def wrapper(fn):
+        @wraps(fn)
+        def decorated_view(*args, **kwargs):
+            user = jwtVerify(request.cookies)
+            if not user or user.get("role") not in required_roles:
+                return redirect(url_for("login"))
+            return fn(*args, **kwargs)
+        return decorated_view
+    return wrapper
 
-    days = []
-    for i in range(1, num_days + 1):
-        day_date = datetime(year, month, i).date()
-        days.append({
-            'day': i,
-            'date': day_date,
-            'is_today': day_date == today,
-            'is_past': day_date < today
-        })
-
-    return {
-        "year": year,
-        "month": month,
-        "days": days,
-        "first_day": first_day
-    }
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-BANDS_DATA_FILE = 'bands_data.json'
-
-# Load or initialize bands data
-def load_bands_data():
-    if os.path.exists(BANDS_DATA_FILE) and os.path.getsize(BANDS_DATA_FILE) > 0:
-        with open(BANDS_DATA_FILE, 'r') as f:
-            return json.load(f)
-    else:
-        return {"bands": []}
-
-def save_bands_data(bands_data):
-    with open(BANDS_DATA_FILE, 'w') as f:
-        json.dump(bands_data, f)
-
-@app.route('/booking')
-def booking():
+# (D) ROUTES
+# (D1) ADMIN PAGE
+@app.route('/')
+@role_required(["admin", "vorstand", "manager", "user"])
+def schichtplan():
     user = jwtVerify(request.cookies)
-    if not user:
-        return redirect(url_for("login"))
+    user_info = getUserByEmail(user["email"])
 
-    bands_data = load_bands_data()
-    return render_template('4-booking.html', bands_data=bands_data)
-
-
-@app.route('/add_band', methods=['POST'])
-def add_band():
-    user = jwtVerify(request.cookies)
-    if not user or user['username'] not in ADMIN_USERS:
-        return redirect(url_for("login"))
-
-    band_name = request.form.get('band_name')
-    genre = request.form.get('genre')
-    contact = request.form.get('contact')
-    doordeal = request.form.get('doordeal') == 'on'
-    door_price = request.form.get('door_price')
-    fixed_price = request.form.get('fixed_price')
-    last_booked = request.form.get('last_booked')
-    comment = request.form.get('comment')
-    logo = request.files.get('logo')
-
-    logo_filename = None
-    if logo:
-        logo_filename = os.path.join(UPLOAD_FOLDER, logo.filename)
-        logo.save(logo_filename)
-
-    bands_data = load_bands_data()
-    new_band = {
-        "name": band_name,
-        "logo": logo_filename,
-        "genre": genre,
-        "contact": contact,
-        "doordeal": doordeal,
-        "door_price": door_price,
-        "fixed_price": fixed_price,
-        "last_booked": last_booked,
-        "comment": comment
-    }
-    bands_data['bands'].append(new_band)
-    save_bands_data(bands_data)
-
-    return redirect(url_for('booking'))
-
-
-# Function to add predefined weekly events to the calendar
-def add_predefined_events(month, year):
-    for day in range(1, calendar.monthrange(year, month)[1] + 1):
-        date = datetime(year, month, day)
-        date_str = date.strftime("%Y-%m-%d")
-        weekday = date.weekday()
-
-        existing_event = next((event for event in calendar_data['events'] if event['date'] == date_str), None)
-        if existing_event:
-            continue
-
-        if weekday in predefined_events:
-            event_details = {
-                "name": predefined_events[weekday]["name"],
-                "date": date_str,
-                "needs_door_shift": predefined_events[weekday]["needs_door_shift"],
-                "has_double_shifts": predefined_events[weekday]["has_double_shifts"],
-                "entry_time": "20:00",
-                "price": None,
-                "acts": [],
-                "image": None,
-                "is_predefined": True,
-                "shifts": {
-                    "theke_1_1": None,
-                    "theke_1_2": None,
-                    "door_1_1": None if predefined_events[weekday]["needs_door_shift"] else "Not Applicable",
-                    "door_1_2": None if predefined_events[weekday]["needs_door_shift"] else "Not Applicable",
-                }
-            }
-
-            if predefined_events[weekday]["has_double_shifts"]:
-                event_details["shifts"].update({
-                    "theke_2_1": None,
-                    "theke_2_2": None,
-                    "door_2_1": None if predefined_events[weekday]["needs_door_shift"] else "Not Applicable",
-                    "door_2_2": None if predefined_events[weekday]["needs_door_shift"] else "Not Applicable",
-                })
-
-            calendar_data['events'].append(event_details)
-
-# Create a new event and purge any predefined event for the same date
-@app.route('/create_event', methods=['POST'])
-def create_event():
-    user = jwtVerify(request.cookies)
-    if user == False or user['username'] not in ADMIN_USERS:
-        return redirect(url_for("index"))
-
-    event_name = request.form.get('event_name')
-    event_description = request.form.get('event_description')
-    event_date_from = request.form.get('event_date_from')
-    event_date_to = request.form.get('event_date_to')
-    event_type = request.form.get('event_type')
-    start_time = request.form.get('start_time')
-    acts = request.form.get('acts')
-    genre = request.form.get('genre')
-    entry_time = request.form.get('entry_time')
-    price = request.form.get('price')
-    needs_door_shift = request.form.get('tur_schicht') == 'on'
-    has_double_shifts = request.form.get('doppel_schicht') == 'on'
-    event_image = request.files.get('event_image')
-
-    # Save the image file if uploaded
-    image_filename = None
-    if event_image:
-        image_filename = os.path.join(UPLOAD_FOLDER, event_image.filename)
-        event_image.save(image_filename)
-
-    # Parse the list fields if needed
-    acts_list = [act.strip() for act in acts.split(',')] if acts else []
-    genre_list = [genre.strip() for genre in genre.split(',')] if genre else []
-
-    shifts = {
-        "theke_1_1": None,
-        "theke_1_2": None,
-        "door_1_1": None if needs_door_shift else "Not Applicable",
-        "door_1_2": None if needs_door_shift else "Not Applicable",
-    }
-
-    if has_double_shifts:
-        shifts.update({
-            "theke_2_1": None,
-            "theke_2_2": None,
-            "door_2_1": None if needs_door_shift else "Not Applicable",
-            "door_2_2": None if needs_door_shift else "Not Applicable",
-        })
-
-    # Remove any predefined events for the selected date range
-    calendar_data['events'] = [
-        event for event in calendar_data['events']
-        if not (event_date_from <= event['date'] <= event_date_to)
-    ]
-
-    event_details = {
-        "name": event_name,
-        "description": event_description,
-        "date_from": event_date_from,
-        "date_to": event_date_to,
-        "type": event_type,
-        "start_time": start_time,
-        "acts": acts_list,
-        "genre": genre_list,
-        "entry_time": entry_time,
-        "price": price,
-        "needs_door_shift": needs_door_shift,
-        "has_double_shifts": has_double_shifts,
-        "image": image_filename,
-        "is_predefined": False,
-        "shifts": shifts
-    }
-
-    calendar_data['events'].append(event_details)
-
-    with open('calendar_data.json', 'w') as f:
-        json.dump(calendar_data, f)
-
-    return redirect(url_for('index'))
-
-USERS_FILE = 'users.json'
-
-def load_users():
-    if os.path.exists(USERS_FILE) and os.path.getsize(USERS_FILE) > 0:
-        with open(USERS_FILE, 'r') as f:
-            return json.load(f)
-    else:
-        return {"users": []}
-
-def save_users(users_data):
-    with open(USERS_FILE, 'w') as f:
-        json.dump(users_data, f)
-
-@app.route('/create_user', methods=['POST'])
-def create_user():
-    username = request.form['username']
-    email = request.form['email']
-    password = request.form['password']
-    role = request.form['role']  # Get the role from the form
-
-    # Load existing users
-    users_data = load_users()
-
-    # Validate user input
-    if not username or not email or not password or not role:
-        return jsonify({'error': 'Please fill in all fields'}), 400
-
-    # Check if username is unique
-    if any(user['username'] == username for user in users_data['users']):
-        return jsonify({'error': 'Username already exists'}), 400
-
-    # Hash password
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-
-    # Create new user dictionary
-    new_user = {
-        "username": username,
-        "email": email,
-        "password": hashed_password,
-        "role": role  # Store the role
-    }
-
-    # Add new user to the list and save
-    users_data['users'].append(new_user)
-    save_users(users_data)
-
-    return jsonify({'success': 'User created successfully'}), 201
-
-
-# Display the calendar
-@app.route("/")
-def index():
-    if os.path.exists('calendar_data.json') and os.path.getsize('calendar_data.json') > 0:
-        with open('calendar_data.json', 'r') as f:
-            global calendar_data
-            calendar_data = json.load(f)
-
-    user = jwtVerify(request.cookies)
-    if user == False:
-        return redirect(url_for("login"))
-    else:
-        month_data = get_month_data(current_month, current_year)
-        add_predefined_events(current_month, current_year)  # Add predefined events before rendering
-
-        is_admin = user["username"] in ADMIN_USERS
-
-        # Set the image path based on whether the user is admin or not
-        img_src = "static/pic3.png" if is_admin else "static/pic2.png"
-
-        # Render different templates based on user role
-        if is_admin:
-            return render_template(
-                "2-home.html", 
-                title="Home Page", 
-                user=user["username"], 
-                calendar_data=calendar_data, 
-                month_data=month_data, 
-                predefined_events=predefined_events, 
-                is_admin=is_admin, 
-                allow_create_event=is_admin, 
-                img_src=img_src  # Pass the image source to the template
-            )
-        else:
-            return render_template(
-                "2-home-1.html", 
-                title="Home Page", 
-                user=user["username"], 
-                calendar_data=calendar_data, 
-                month_data=month_data, 
-                predefined_events=predefined_events, 
-                is_admin=is_admin, 
-                allow_create_event=is_admin, 
-                img_src=img_src  # Pass the image source to the template
-            )
-
-# Assign shift to user
-@app.route('/assign_shift', methods=['POST'])
-def assign_shift():
-    user = jwtVerify(request.cookies)
-    if not user:
-        return jsonify({'error': 'User is not authenticated'}), 400
-
-    event_date = request.form.get('event_date')
-    shift_number = request.form.get('shift_number')
-
-    if not event_date or not shift_number:
-        return jsonify({'error': 'Missing event_date or shift_number in request'}), 400
-
-    username = user['username']
-
+    # Convert all event dates to "YYYY-MM-DD" strings for consistent display
     for event in calendar_data['events']:
-        if event['date'] == event_date:
-            # Check if the user already has a shift claimed
-            if username in event['shifts'].values():
-                return jsonify({'error': 'User already has a shift claimed for this day'}), 400
+        if isinstance(event['date'], datetime):
+            event['date'] = event['date'].strftime('%Y-%m-%d')
 
-            # Assign the shift if it's available
-            if shift_number in event['shifts']:
-                current_shift = event['shifts'][shift_number]
-
-                if current_shift is None:
-                    event['shifts'][shift_number] = username
-                elif isinstance(current_shift, str) and current_shift != username:
-                    event['shifts'][shift_number] = [current_shift, username]
-                elif isinstance(current_shift, list) and username not in current_shift and len(current_shift) < 2:
-                    current_shift.append(username)
-
-            break
-    else:
-        return jsonify({'error': 'Event not found for the given date'}), 400
-
-    with open('calendar_data.json', 'w') as f:
-        json.dump(calendar_data, f)
-
-    return jsonify({'success': 'Shift assigned successfully'}), 200
-
-# Unassign shift
-@app.route('/unassign_shift', methods=['POST'])
-def unassign_shift():
-    user = jwtVerify(request.cookies)
-    if not user:
-        return jsonify({'error': 'User is not authenticated'}), 400
-
-    event_date = request.form.get('event_date')
-
-    username = user['username']
-
-    for event in calendar_data['events']:
-        if event['date'] == event_date:
-            for shift_key, shift_value in event['shifts'].items():
-                if shift_value == username:
-                    event['shifts'][shift_key] = None
-                    break
-
-    with open('calendar_data.json', 'w') as f:
-        json.dump(calendar_data, f)
-
-    return jsonify({'success': 'Shift unassigned successfully'}), 200
+    return render_template(
+        "schichtplan.html",
+        title="Home Page",
+        user=user_info,
+        active_page="Schichtplan",
+        calendar_data=calendar_data,
+        month_data=month_data,
+        month_name=month_name
+    )
 
 
-# Shift missing endpoint
-@app.route('/missing_shifts', methods=['GET'])
-def missing_shifts():
-    missing = []
-    for event in calendar_data['events']:
-        if not event['shifts']['theke_1_1'] or not event['shifts']['theke_1_2'] or (event['needs_door_shift'] and (not event['shifts']['door_1_1'] or not event['shifts']['door_1_2'])):
-            missing.append(event)
-    return jsonify(missing)
-
-# Change month (previous/next)
-@app.route('/change_month', methods=['POST'])
-def change_month():
-    global current_month, current_year
-    direction = request.form.get('direction')
-    if direction == 'next':
-        current_month += 1
-        if current_month > 12:
-            current_month = 1
-            current_year += 1
-    elif direction == 'prev':
-        current_month -= 1
-        if current_month < 1:
-            current_month = 12
-            current_year -= 1
-    return redirect(url_for('index'))
-
-# Login page
+# (D2) LOGIN PAGE
 @app.route("/login")
 def login():
     if jwtVerify(request.cookies):
@@ -450,50 +136,361 @@ def login():
     else:
         return render_template("3-login.html")
 
-# Login endpoint
+# (D3) LOGIN ENDPOINT
 @app.route("/in", methods=["POST"])
 def lin():
-    USERS = {
-        "admin": b'$2b$12$po2e.kKOoXl.6RoGwbIyfeD7ZU04zC8ldtPdj/4XTK0HI91KjBwq6',  # Password: adminpassword
-        "user1": b'$2b$12$sujqhPEYRTfHZX8PDM4dZuYr8.XS6VZK13ATqIr6FYEZnWcXxJGB6',  # Password: password1
-        "user2": b'$2b$12$loerZmOk8Az30N3/J05EXeFqdsAFi6po/zAy/0z9PQ8U6h5chJX0W'   # Password: password2
-    }
     data = dict(request.form)
-    username = data.get("username")
-    password = data.get("password")
-
-    valid = username in USERS and bcrypt.checkpw(password.encode("utf-8"), USERS[username])
-    
+    user = getUserByEmail(data["email"])
+    valid = user is not None and bcrypt.checkpw(data["password"].encode("utf-8"), user["password"].encode("utf-8"))
+    msg = "OK" if valid else "Invalid email/password"
+    res = make_response(msg, 200)
     if valid:
-        # Set the JWT cookie and redirect to the homepage
-        res = make_response(redirect(url_for("index")))
-        res.set_cookie("JWT", jwtSign(username))  # JWT contains the username now
-        return res
-    else:
-        # Return to login with an error message
-        return make_response("Invalid username/password", 200)
+        res.set_cookie("JWT", jwtSign(data["email"], user["role"]))
+    return res
 
-
-# Logout endpoint
+# (D4) LOGOUT ENDPOINT
 @app.route("/out", methods=["POST"])
 def lout():
     res = make_response("OK", 200)
     res.delete_cookie("JWT")
     return res
 
-# Generate JWT
-def jwtSign(username):
-    rnd = "".join(random.choice("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@#$%^_-") for i in range(24))
-    now = int(time.time())
-    return jwt.encode({
-        "iat": now,
-        "nbf": now,
-        "exp": now + 3600,
-        "jti": rnd,
-        "iss": JWT_ISS,
-        "data": {"username": username}  # Store the username in the JWT
-    }, JWT_KEY, algorithm=JWT_ALGO)
+# (D5) ADD USER PAGE
+@app.route("/mitglieder")
+@role_required(["admin","user"])
+def add_user_page():
+    user = jwtVerify(request.cookies)
+    user_info = getUserByEmail(user["email"])
+    return render_template("mitglieder.html", user=user_info, members=USERS)
 
-# Start the app
+# (D6) ADD USER ENDPOINT
+@app.route("/add_user", methods=["POST"])
+@role_required(["admin"])
+def add_user():
+    data = dict(request.form)
+    new_user = {
+        "name": data.get("name", ""),
+        "email": data.get("email"),
+        "password": bcrypt.hashpw(data["password"].encode("utf-8"), bcrypt.gensalt()).decode("utf-8"),
+        "role": data.get("role", "user"),
+        "phonenumber": data.get("phonenumber", None),
+        "show_email": data.get("show_email", "off") == "on",
+        "show_phonenumber": data.get("show_phonenumber", "off") == "on",
+        "description": data.get("description", "")
+    }
+    USERS.append(new_user)
+    save_users()
+    return redirect(url_for("index"))
+
+# (D7) BOOKING PAGE
+@app.route("/booking")
+@role_required(["admin", "vorstand", "manager","user"])
+def booking_page():
+    user = jwtVerify(request.cookies)
+    user_info = getUserByEmail(user["email"])
+    return render_template("booking.html", user=user_info, bands_data=BANDS)
+
+# (D8) ADD BAND ENDPOINT
+@app.route("/add_band", methods=["POST"])
+@role_required(["admin", "vorstand", "manager"])
+def add_band():
+    data = request.form
+    logo = request.files["logo"]
+    logo_path = None
+    if logo:
+        logo_filename = f"{time.time()}_{logo.filename}"
+        logo_path = os.path.join(app.config["UPLOAD_FOLDER"], logo_filename)
+        logo.save(logo_path)
+        logo_path = f"/{logo_path}"
+    new_band = {
+        "name": data.get("band_name"),
+        "logo": logo_path,
+        "genre": data.get("genre"),
+        "contact": data.get("contact"),
+        "doordeal": data.get("doordeal") == "on",
+        "door_price": float(data.get("door_price", 0) or 0),
+        "fixed_price": float(data.get("fixed_price", 0) or 0),
+        "last_booked": data.get("last_booked"),
+        "comment": data.get("comment", "")
+    }
+    BANDS["bands"].append(new_band)
+    save_bands()
+    return redirect(url_for("booking_page"))
+
+# Load calendar data from JSON file
+if os.path.exists('calendar_data.json'):
+    with open('calendar_data.json', 'r') as f:
+        calendar_data = json.load(f)
+else:
+    calendar_data = {'events': []}
+
+# Set up month data to correctly represent the month's first day and days
+current_date = datetime.now().date()  # Only use the date part
+month_data = {
+    'month': current_date.month,
+    'year': current_date.year,
+    'first_day': datetime(current_date.year, current_date.month, 1).weekday(),  # Start on the actual weekday without +1
+    'days': [
+        {
+            'day': i + 1,
+            'date': datetime(current_date.year, current_date.month, i + 1).date(),  # Strip time here too
+            'is_past': datetime(current_date.year, current_date.month, i + 1).date() < current_date,
+            'is_today': datetime(current_date.year, current_date.month, i + 1).date() == current_date
+        } for i in range(calendar.monthrange(current_date.year, current_date.month)[1])
+    ]
+}
+
+def month_name(month):
+    months = [
+        "Januar", "Februar", "März", "April", "Mai", "Juni",
+        "Juli", "August", "September", "Oktober", "November", "Dezember"
+    ]
+    return months[month - 1]
+
+
+@app.route('/create_event', methods=['POST'])
+def create_event():
+    event_name = request.form.get('event_name')
+    event_description = request.form.get('event_description')
+    event_date = request.form.get('event_date')
+    event_type = request.form.get('event_type')
+    entry_time = request.form.get('entry_time')
+    price = request.form.get('price')
+    tur_schicht = 'tur_schicht' in request.form
+    doppel_schicht = 'doppel_schicht' in request.form
+    weekly = 'weekly' in request.form
+    replace = 'replace' in request.form
+
+    # Handle Konzert-specific fields
+    acts = request.form.get('acts') if event_type == 'Konzert' else None
+    genre = request.form.get('genre') if event_type == 'Konzert' else None
+    
+    # Handle Pause-specific fields
+    event_date_from = request.form.get('event_date_from') if event_type == 'Pause' else None
+    event_date_to = request.form.get('event_date_to') if event_type == 'Pause' else None
+
+    # Create the event dictionary
+    if event_type == 'Putzschicht':
+        shifts = {
+            'putz_1': None,
+            'putz_2': None
+        }
+    else:
+        shifts = {
+            'theke_1_1': None,
+            'theke_1_2': None,
+            'door_1_1': None,
+            'door_1_2': None,
+            'theke_2_1': None,
+            'theke_2_2': None,
+            'door_2_1': None,
+            'door_2_2': None
+        }
+
+    event = {
+        'name': event_name,
+        'description': event_description,
+        'date': event_date,
+        'type': event_type,
+        'entry_time': entry_time,
+        'price': price,
+        'needs_door_shift': tur_schicht,
+        'has_double_shifts': doppel_schicht,
+        'shifts': shifts,
+        'acts': acts,
+        'genre': genre,
+        'date_range': {'from': event_date_from, 'to': event_date_to}
+    }
+
+    if weekly:
+        # Handle weekly events
+        current_date = datetime.strptime(event_date, '%Y-%m-%d')
+        while current_date.year < datetime.now().year + 1:  # Limit to adding weekly events for the next year
+            if replace:
+                # Remove any existing event on this date
+                calendar_data['events'] = [e for e in calendar_data['events'] if e['date'] != current_date.strftime('%Y-%m-%d')]
+            event_copy = event.copy()
+            event_copy['date'] = current_date.strftime('%Y-%m-%d')
+            calendar_data['events'].append(event_copy)
+            current_date += timedelta(weeks=1)
+    else:
+        # Add single event or add to existing weekly event
+        if replace:
+            calendar_data['events'] = [e for e in calendar_data['events'] if e['date'] != event_date]
+        calendar_data['events'].append(event)
+
+    save_calendar_data()
+    flash('Event successfully created!')
+    return redirect(url_for('schichtplan'))
+
+@app.route('/assign_shift', methods=['POST'])
+def assign_shift():
+    event_date = request.form.get('event_date')
+    shift_number = request.form.get('shift_number')
+    
+    # Get the username from the verified JWT user
+    user = jwtVerify(request.cookies)
+    if not user:
+        return "Unauthorized", 401
+    username = getUserByEmail(user["email"])["name"]  # Actual username
+
+    for event in calendar_data['events']:
+        if event['date'] == event_date:
+            if event['shifts'][shift_number] is None:
+                event['shifts'][shift_number] = username  # Save the username
+                save_calendar_data()
+                flash('Shift successfully claimed!')
+            else:
+                return 'Shift already taken', 400
+
+    return '', 200
+
+@app.route('/unassign_shift', methods=['POST'])
+def unassign_shift():
+    event_date = request.form.get('event_date')
+    
+    # Get the username from the verified JWT user
+    user = jwtVerify(request.cookies)
+    if not user:
+        return "Unauthorized", 401
+    username = getUserByEmail(user["email"])["name"]  # Actual username
+
+    for event in calendar_data['events']:
+        if event['date'] == event_date:
+            for shift, assigned_user in event['shifts'].items():
+                if assigned_user == username:
+                    event['shifts'][shift] = None
+                    save_calendar_data()
+                    flash('Shift successfully unclaimed!')
+                    break  # Exit loop once shift is unassigned
+
+    return '', 200
+
+
+@app.route('/change_month', methods=['POST'])
+def change_month():
+    direction = request.form.get('direction')
+    if direction == 'prev':
+        if month_data['month'] == 1:
+            month_data['month'] = 12
+            month_data['year'] -= 1
+        else:
+            month_data['month'] -= 1
+    elif direction == 'next':
+        if month_data['month'] == 12:
+            month_data['month'] = 1
+            month_data['year'] += 1
+        else:
+            month_data['month'] += 1
+    # Update first day and days for the new month
+    month_data['first_day'] = (datetime(month_data['year'], month_data['month'], 1).weekday() + 1) % 7
+    month_data['days'] = [{'day': i + 1, 'date': datetime(month_data['year'], month_data['month'], i + 1),
+                           'is_past': datetime(month_data['year'], month_data['month'], i + 1) < datetime.now(),
+                           'is_today': datetime(month_data['year'], month_data['month'], i + 1).date() == datetime.now().date()} for i in range(calendar.monthrange(month_data['year'], month_data['month'])[1])]
+    return redirect(url_for('schichtplan'))
+
+# Helper function to save calendar data to JSON
+def save_calendar_data():
+    with open('calendar_data.json', 'w') as f:
+        json.dump(calendar_data, f, indent=4)
+
+# (D9) EDIT EVENT ENDPOINT
+@app.route('/edit_event/<event_date>', methods=['GET', 'POST'])
+@role_required(["admin", "vorstand"])
+def edit_event(event_date):
+    user = jwtVerify(request.cookies)
+    if request.method == 'POST':
+        for event in calendar_data['events']:
+            if event['date'] == event_date:
+                event['name'] = request.form.get('event_name')
+                event['description'] = request.form.get('event_description')
+                event['entry_time'] = request.form.get('entry_time')
+                event['price'] = request.form.get('price')
+                event['acts'] = request.form.get('acts') if event['type'] == 'Konzert' else None
+                event['genre'] = request.form.get('genre') if event['type'] == 'Konzert' else None
+                save_calendar_data()
+                flash('Event successfully updated!')
+                break
+        return redirect(url_for('schichtplan'))
+    event_data = next((event for event in calendar_data['events'] if event['date'] == event_date), None)
+    return render_template('edit_event.html', event=event_data)
+
+# (D10) DELETE EVENT ENDPOINT
+@app.route('/delete_event/<event_date>', methods=['POST'])
+@role_required(["admin", "vorstand"])
+def delete_event(event_date):
+    calendar_data['events'] = [e for e in calendar_data['events'] if e['date'] != event_date]
+    save_calendar_data()
+    flash('Event successfully deleted!')
+    return redirect(url_for('schichtplan'))
+
+# (D11) ROUTE FOR ADD NEWS
+NEWS_JSON_PATH = "news_data.json"  # Define the path for your JSON file
+
+@app.route("/news")
+@role_required(["admin", "user"])
+def view_news():
+    # Retrieve the user from JWT
+    user = jwtVerify(request.cookies)
+    user_info = getUserByEmail(user["email"]) if user else None
+
+    # Load news data from JSON file or initialize an empty list if the file doesn’t exist
+    if os.path.exists(NEWS_JSON_PATH):
+        with open(NEWS_JSON_PATH, "r", encoding="utf-8") as json_file:
+            news_data = json.load(json_file)
+    else:
+        news_data = []
+
+    # Render the template with news data and user info
+    return render_template("news.html", news_data=news_data, user=user_info)
+
+
+@app.route("/add-news", methods=["POST"])
+@role_required(["admin"])
+def add_news():
+    title = request.form.get("title")
+    description = request.form.get("description")
+    date = datetime.now().strftime('%Y-%m-%d')  # Store date in YYYY-MM-DD format internally
+    image_path = None
+
+    # Handle file upload
+    if "image" in request.files:
+        image = request.files["image"]
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+
+    # Load existing news entries
+    if os.path.exists(NEWS_JSON_PATH):
+        with open(NEWS_JSON_PATH, "r", encoding="utf-8") as json_file:
+            news_data = json.load(json_file)
+    else:
+        news_data = []
+
+    # Create a new news entry
+    new_entry = {
+        "id": len(news_data) + 1,
+        "title": title,
+        "date": date,  # Stored in standard format, displayed in German format
+        "description": description,
+        "image_path": image_path
+    }
+
+    # Add the new entry to the list and save to JSON
+    news_data.insert(0, new_entry)  # Insert at the beginning for newest on top
+    with open(NEWS_JSON_PATH, "w", encoding="utf-8") as json_file:
+        json.dump(news_data, json_file, ensure_ascii=False, indent=4)
+
+    flash("News entry added successfully!")
+    return redirect(url_for("view_news"))
+
+@app.template_filter("dateformat")
+def dateformat(value, format="%d.%m.%Y"):
+    if isinstance(value, str):
+        value = datetime.strptime(value, '%Y-%m-%d')  # Parse string if needed
+    return value.strftime(format)
+
+# (E) START!
 if __name__ == "__main__":
     app.run(HOST_NAME, HOST_PORT)

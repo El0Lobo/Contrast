@@ -9,16 +9,13 @@
     <script src="static/3-login.js"></script>
   </head>
   <body>
-    <form method="POST" action="/in">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required><br>
-      
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required><br>
-      
+    <form method="post" id="login" onsubmit="return login()">
+      <h1>ADMIN LOGIN</h1>
+      <label>Email</label>
+      <input type="email" name="email" required value="joy@doe.com">
+      <label>Password</label>
+      <input type="password" name="password" required value="12345">
       <input type="submit" value="Login">
-  </form>
-  
     </form>
   </body>
 </html>

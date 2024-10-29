@@ -1,4 +1,15 @@
 /* (A) GLOBAL */
+:root {
+  --color-bg-sidebar: #28303999;
+  --color-bg-user: #043368;
+  --color-username: #ff6a6a;
+  --color-sidebar-item-current: #7c1919;
+  --color-sidebar-item-hover: #9b2323;
+  --color-sidebar-text: #fff;
+  --color-main-bg: #f2f2f2;
+  --color-main-dark-bg: #6f7d8d;
+}
+
 * {
   font-family: Arial, Helvetica, sans-serif;
   box-sizing: border-box;
@@ -7,14 +18,28 @@ body {
   display: flex;
   min-height: 100vh;
   padding: 0; margin: 0;
-}
 
+}
+body::before {
+  content: "";
+  background-image: url("/static/background 2.png");
+  background-size: cover;     /* Ensures the image covers the whole screen */
+  background-position: center; /* Centers the image */
+  background-attachment: fixed; /* Keeps the image fixed when scrolling */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  position: fixed;             /* Fixes the image in place */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* Places it behind the content */
+}
 /* (B) SIDEBAR */
 /* (B1) SIDEBAR ITSELF */
 #pgside {
   width: 230px;
   transition: width 0.2s;
-  background: #283039;
+  background: var(--color-bg-sidebar);
 }
 
 /* (B2) USER OR BRANDING */
@@ -22,7 +47,7 @@ body {
   display: flex;
   align-items: center;
   padding: 10px;
-  background: #043368;
+  background: var(--color-bg-user);
   cursor: pointer;
 }
 #pgside #pguserimg {
@@ -31,7 +56,7 @@ body {
   margin-right: 10px;
 }
 #pgside #pgusername {
-  color: #ff6a6a;
+  color: var(--color-username);
   font-weight: 700;
   text-transform: uppercase;
   word-break: break-all;
@@ -39,7 +64,7 @@ body {
 #pgside #pguseracct { font-size: 13px; }
 
 /* (B3) SIDEBAR ITEMS */
-#pgside, #pgside a { color: #fff; }
+#pgside, #pgside a { color: var(--color-sidebar-text); }
 #pgside a {
   display: block;
   padding: 20px;
@@ -47,8 +72,8 @@ body {
   text-decoration: none;
   cursor: pointer;
 }
-#pgside a.current { background: #7c1919; }
-#pgside a:hover { background: #9b2323; }
+#pgside a.current { background: var(--color-sidebar-item-current); }
+#pgside a:hover { background: var(--color-sidebar-item-hover); }
 
 /* (B4) SIDEBAR ICONS & TEXT */
 #pgside .ico, #pgside .txt { font-style: normal; }
@@ -77,118 +102,14 @@ body {
 #pgmain {
   flex-grow: 1;
   padding: 20px;
-  background: #f2f2f2;
 }
-
-/* (C) Calendar */
-
-  .calendar {
-    max-width: 1247px;
-    margin: 20px auto;
-  }
-  .calendar-header {
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  .calendar-body {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-  }
-  .calendar-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
-.month-form {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.prev-button, .next-button {
-    padding: 10px 15px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    cursor: pointer;
-}
-
-.calendar-header {
-    text-align: center;
-    font-size: 24px;
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-  .day-header {
-    font-weight: bold;
-    text-align: center;
-    padding: 10px;
-    background-color: #f2f2f2;
-  }
-  .calendar-day {
-    border: 1px solid #ccc;
-    padding: 10px;
-    position: relative;
-    min-height: 100px;
-  }
-  .calendar-day.empty {
-    background-color: #e9e9e9;
-  }
-  .calendar-day .date {
-    font-weight: bold;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-  }
-  .event {
-    margin-top: 20px;
-    font-size: 12px;
-    background-color: #e6f7ff;
-    padding: 5px;
-    border-radius: 5px;
-  }
-  .popup {
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 20;
-  }
-  .popup-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    max-width: 600px;
-    margin: 100px auto;
-    position: relative;
-  }
-  .close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
-    cursor: pointer;
-  }
-
-  /* Highlight the present day */
-.calendar-day.today {
-  background-color: #8e0c0c7f;  /* Highlight color */
-  color: #000;                /* Text color */
-  font-weight: bold;          /* Make it bold */
-}
-
-/* Grey out the past days */
-.calendar-day.past {
-  background-color: #e0e0e0;  /* Light grey background */
-  color: #a0a0a0;             /* Grey text */
-  pointer-events: none;
+h1, h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  color: #000000;
+  text-shadow: 
+  0 0 5px rgb(236, 221, 191), 
+  0 0 10px rgb(236, 221, 191), 
+  0 0 15px rgb(236, 221, 191), 
+  0 0 20px rgb(236, 221, 191);
 }
