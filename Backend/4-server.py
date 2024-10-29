@@ -161,7 +161,7 @@ def lout():
 def add_user_page():
     user = jwtVerify(request.cookies)
     user_info = getUserByEmail(user["email"])
-    return render_template("mitglieder.html", user=user_info, members=USERS)
+    return render_template("mitglieder.html", user=user_info, members=USERS, active_page='Mitglieder', title='Mitglieder')
 
 # (D6) ADD USER ENDPOINT
 @app.route("/add_user", methods=["POST"])
@@ -188,7 +188,7 @@ def add_user():
 def booking_page():
     user = jwtVerify(request.cookies)
     user_info = getUserByEmail(user["email"])
-    return render_template("booking.html", user=user_info, bands_data=BANDS)
+    return render_template("booking.html", user=user_info, bands_data=BANDS, active_page='Booking', title='Booking')
 
 # (D8) ADD BAND ENDPOINT
 @app.route("/add_band", methods=["POST"])
@@ -442,7 +442,7 @@ def view_news():
         news_data = []
 
     # Render the template with news data and user info
-    return render_template("news.html", news_data=news_data, user=user_info)
+    return render_template("news.html", news_data=news_data, user=user_info, active_page='News', title='News')
 
 
 @app.route("/add-news", methods=["POST"])
@@ -490,6 +490,147 @@ def dateformat(value, format="%d.%m.%Y"):
     if isinstance(value, str):
         value = datetime.strptime(value, '%Y-%m-%d')  # Parse string if needed
     return value.strftime(format)
+
+BANNED_JSON_PATH = "banned_individuals.json"
+GUEST_LIST_PATH = "guest_list.json"
+
+# Helper functions to load and save JSON data
+def load_json(path):
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as file:
+            return json.load(file)
+    return []
+
+def save_json(path, data):
+    with open(path, "w", encoding="utf-8") as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
+
+# Route for the "Tür" page with banned individuals and guest list
+@app.route("/tuer")
+@role_required(["admin", "user", "vorstand", "manager"])
+def door():
+    user = jwtVerify(request.cookies)
+    user_info = getUserByEmail(user["email"]) if user else None
+
+    # Load banned individuals and guest list data
+    banned_data = load_json(BANNED_JSON_PATH)
+    guest_data = load_json(GUEST_LIST_PATH)
+
+    # Render the template with both lists
+    return render_template(
+        "tuer.html",
+        banned_data=banned_data,
+        guest_data=guest_data,
+        user=user_info,
+        active_page="Tür",
+        title="Tür"
+    )
+
+# Route to handle adding a banned individual
+@app.route("/add_banned", methods=["POST"])
+@role_required(["admin", "vorstand", "manager"])
+def add_banned():
+    data = request.get_json()
+    name = data.get("name")
+    reason = data.get("reason")
+    social_link = data.get("social_link")
+
+    if not (name and reason):
+        return jsonify({"error": "Name and reason are required"}), 400
+
+    banned_data = load_json(BANNED_JSON_PATH)
+    banned_data.append({"name": name, "reason": reason, "social_link": social_link})
+
+    save_json(BANNED_JSON_PATH, banned_data)
+    return jsonify({"success": True, "message": "Person added to banned list"}), 200
+
+# Route to handle adding a guest
+@app.route("/add_guest", methods=["POST"])
+@role_required(["admin", "vorstand", "manager"])
+def add_guest():
+    data = request.get_json()
+    name = data.get("name")
+    annotation = data.get("annotation")
+
+    if not (name and annotation):
+        return jsonify({"error": "Name and annotation are required"}), 400
+
+    guest_data = load_json(GUEST_LIST_PATH)
+    guest_data.append({"name": name, "annotation": annotation})
+
+    save_json(GUEST_LIST_PATH, guest_data)
+    return jsonify({"success": True, "message": "Guest added to list"}), 200
+# Route to handle removing a guest from the guest list
+@app.route("/remove_guest/<name>", methods=["DELETE"])
+@role_required(["admin", "vorstand", "manager"])
+def remove_guest(name):
+    guest_data = load_json(GUEST_LIST_PATH)
+    guest_data = [guest for guest in guest_data if guest["name"] != name]
+    save_json(GUEST_LIST_PATH, guest_data)
+    return jsonify({"success": True, "message": f"Guest '{name}' removed"}), 200
+
+# Route to clear the entire guest list
+@app.route("/clear_guest_list", methods=["DELETE"])
+@role_required(["admin", "vorstand", "manager"])
+def clear_guest_list():
+    save_json(GUEST_LIST_PATH, [])
+    return jsonify({"success": True, "message": "Guest list cleared"}), 200
+
+# Route to remove a specific banned person
+@app.route("/remove_banned/<name>", methods=["DELETE"])
+@role_required(["admin", "vorstand", "manager"])
+def remove_banned(name):
+    banned_data = load_json(BANNED_JSON_PATH)
+    banned_data = [banned for banned in banned_data if banned["name"] != name]
+    save_json(BANNED_JSON_PATH, banned_data)
+    return jsonify({"success": True, "message": f"Banned person '{name}' removed"}), 200
+
+# (D12) CREDENTIALS PAGE
+# File path for saving site credentials
+CREDENTIALS_FILE = "credentials.json"
+
+# Load credentials from JSON file, initialize empty list if not found
+try:
+    with open(CREDENTIALS_FILE, "r") as file:
+        CREDENTIALS = json.load(file)
+except FileNotFoundError:
+    CREDENTIALS = []
+
+# Helper function to save credentials to JSON file
+def save_credentials():
+    with open(CREDENTIALS_FILE, "w") as file:
+        json.dump(CREDENTIALS, file, indent=2)
+
+# (D13) CREDENTIALS PAGE - For Site and Router Login Details
+@app.route("/credentials")
+@role_required(["admin", "vorstand"])
+def credentials_page():
+    user = jwtVerify(request.cookies)
+    user_info = getUserByEmail(user["email"]) if user else None
+
+    # Render the credentials page with saved credentials data
+    return render_template("credentials.html", user=user_info, credentials=CREDENTIALS, title="Site Credentials")
+
+# (D14) ADD SITE CREDENTIAL ENDPOINT
+@app.route("/add_credential", methods=["POST"])
+@role_required(["admin", "vorstand"])
+def add_credential():
+    data = request.form.to_dict()
+    new_credential = {
+        "name": data.get("name"),           # Site or service name
+        "login_id": data.get("login_id"),   # Login ID (username or similar identifier)
+        "password": data.get("password"),   # Password
+        "link": data.get("link")            # Site link
+    }
+
+    # Append new credential to the CREDENTIALS list and save
+    CREDENTIALS.append(new_credential)
+    save_credentials()
+
+    flash("New site credential added successfully!")
+    return redirect(url_for("credentials_page"))
+
+
 
 # (E) START!
 if __name__ == "__main__":

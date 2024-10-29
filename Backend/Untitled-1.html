@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bar Event Flyer</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f8f9fa; }
+    .flyer-container { max-width: 400px; background-color: #222; color: #fff; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); }
+    .flyer-container img { max-width: 100%; border-radius: 8px; margin-bottom: 20px; }
+    .flyer-title { font-size: 1.8em; margin-bottom: 10px; color: #ffd700; }
+    .event-date, .event-location { font-size: 1.2em; margin: 10px 0; }
+    .event-description { font-size: 1em; margin: 15px 0; }
+    .event-price { font-size: 1.4em; margin-top: 20px; color: #28a745; }
+    .buy-tickets { display: inline-block; padding: 10px 20px; background-color: #ff6347; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="flyer-container" id="flyer">
+    <img src="" alt="Event Image" id="eventImage">
+    <div class="flyer-title" id="eventName">Event Name</div>
+    <div class="event-date" id="eventDate">Date & Time</div>
+    <div class="event-location" id="eventLocation">Location</div>
+    <div class="event-description" id="eventDescription">Event Description</div>
+    <div class="event-price" id="eventPrice">Price: €15.00</div>
+    <a href="#" class="buy-tickets" id="ticketUrl">Get Tickets</a>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MusicEvent",
+    "name": "Live DJ Night",
+    "startDate": "2024-11-15T21:00",
+    "location": {
+      "@type": "Place",
+      "name": "Local Bar Name",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Street Address",
+        "addressLocality": "City",
+        "postalCode": "ZIP Code",
+        "addressCountry": "Country"
+      }
+    },
+    "performer": {
+      "@type": "MusicGroup",
+      "name": "DJ Name"
+    },
+    "description": "A night of live DJ performances featuring electronic music.",
+    "image": "https://example.com/image.jpg",
+    "offers": {
+      "@type": "Offer",
+      "url": "https://example.com/tickets",
+      "price": "15.00",
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+
+  <script>
+    // Load event data from JSON-LD and display it on the flyer
+    const eventData = JSON.parse(document.querySelector('script[type="application/ld+json"]').innerText);
+
+    document.getElementById('eventImage').src = eventData.image;
+    document.getElementById('eventName').innerText = eventData.name;
+    document.getElementById('eventDate').innerText = new Date(eventData.startDate).toLocaleString('de-DE', {
+      dateStyle: 'full', timeStyle: 'short'
+    });
+    document.getElementById('eventLocation').innerText = `${eventData.location.name}, ${eventData.location.address.streetAddress}, ${eventData.location.address.addressLocality}`;
+    document.getElementById('eventDescription').innerText = eventData.description;
+    document.getElementById('eventPrice').innerText = `Price: €${eventData.offers.price}`;
+    document.getElementById('ticketUrl').href = eventData.offers.url;
+  </script>
+
+</body>
+</html>

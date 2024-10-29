@@ -1,70 +1,77 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>{{ title }}</title>
-    <meta charset="utf-8">
-    <meta name="robots" content="noindex">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
-    <link rel="stylesheet" href="static/1-admin.css">
-    <script src="static/1-admin.js"></script>
-    {% block header %} {% endblock %}
-  </head>
-  <body>
-    <!-- (A) SIDEBAR -->
-    <div id="pgside">
-      <!-- (A1) BRANDING OR USER -->
-      <div id="pguser" onclick="if(confirm('Sign Off?')){logout();}">
-        <input type="hidden" name="logout" value="1">
-        <img 
-        src="{% if user.role == 'admin' %}static/admin.png{% 
+
+<head>
+  <title>{{ title }}</title>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <link rel="stylesheet" href="static/1-admin.css">
+  <script src="static/1-admin.js"></script>
+  {% block header %} {% endblock %}
+</head>
+
+<body>
+  <!-- (A) SIDEBAR -->
+  <div id="pgside">
+    <!-- (A1) BRANDING OR USER -->
+    <div id="pguser" onclick="if(confirm('Sign Off?')){logout();}">
+      <input type="hidden" name="logout" value="1">
+      <img src="{% if user.role == 'admin' %}static/admin.png{% 
               elif user.role == 'user' %}static/user.png{% 
               elif user.role == 'vorstand' %}static/vorstand.png{% 
               elif user.role == 'manager' %}static/manager.png{% 
               else %}static/passive.png{% 
-              endif %}" 
-        id="pguserimg">
-        <div class="txt">
-          <div id="pgusername">{{ user.name }}</div>
-          <div id="pguseracct">account | logoff</div>
-        </div>
+              endif %}" id="pguserimg">
+      <div class="txt">
+        <div id="pgusername">{{ user.name }}</div>
+        <div id="pguseracct">account | logoff</div>
       </div>
-
-      <!-- (A2) MENU ITEMS -->
-        <a href="/" class="{{ 'current' if active_page == 'Schichtplan' else '' }}">
-            <i class="ico">&#9733;</i>
-             <i class="txt">Schichtplan</i>
-           </a>
-        <a href="/booking" class="{{ 'current' if active_page == 'Booking' else '' }}">
-          <i class="ico">&#9728;</i>
-          <i class="txt">Booking</i>
-        </a>
-        <a href="#">
-          <i class="ico">&#9737;</i>
-          <i class="txt">"Kasse"</i>
-        </a>
-        <a href="/mitglieder" class="{{ 'current' if active_page == 'Mitglieder' else '' }}">
-          <i class="ico">&#9737;</i>
-          <i class="txt">Mitglieder</i>
-        </a>
-        <a href="#">
-          <i class="ico">&#9737;</i>
-          <i class="txt">Stuff we need</i>
-        </a>
-        <a href="#">
-          <i class="ico">&#9737;</i>
-          <i class="txt">Tür</i>
-        </a>
-        <a href="#">
-          <i class="ico">&#9737;</i>
-          <i class="txt">Vote</i>
-        </a>
-        <a href="/news" class="{{ 'current' if active_page == 'News' else '' }}">
-          <i class="ico">&#9737;</i>
-          <i class="txt">News</i>
-        </a>
     </div>
 
-    <!-- (B) MAIN -->
-    <main id="pgmain">{% block content %} {% endblock %}</main>
-  </body>
+    <!-- (A2) MENU ITEMS -->
+    <a href="/" class="{{ 'current' if active_page == 'Schichtplan' else '' }}">
+      <i class="ico">&#9733;</i>
+      <i class="txt">Schichtplan</i>
+    </a>
+    <a href="/news" class="{{ 'current' if active_page == 'News' else '' }}">
+      <i class="ico">&#9737;</i>
+      <i class="txt">News</i>
+    </a>
+    <a href="/mitglieder" class="{{ 'current' if active_page == 'Mitglieder' else '' }}">
+      <i class="ico">&#9737;</i>
+      <i class="txt">Mitglieder</i>
+    </a>
+    <a href="/booking" class="{{ 'current' if active_page == 'Booking' else '' }}">
+      <i class="ico">&#9728;</i>
+      <i class="txt">Booking</i>
+    </a>
+    <a href="/tuer" class="{{ 'current' if active_page == 'Tür' else '' }}">
+      <i class="ico">&#9737;</i>
+      <i class="txt">Tür</i>
+    </a>
+    {% if user.role in ['admin', 'vorstand'] %}
+    <a href="/credentials" class="{{ 'current' if active_page == 'Credentials' else '' }}">
+      <i class="ico">&#9737;</i>
+      <i class="txt">Credentials</i>
+    </a>
+    {% endif %}
+    <a href="#">
+      <i class="ico">&#9737;</i>
+      <i class="txt">"Kasse"</i>
+    </a>
+    <a href="#">
+      <i class="ico">&#9737;</i>
+      <i class="txt">Stuff we need</i>
+    </a>
+    <a href="#">
+      <i class="ico">&#9737;</i>
+      <i class="txt">Vote</i>
+    </a>
+  </div>
+
+  <!-- (B) MAIN -->
+  <main id="pgmain">{% block content %} {% endblock %}</main>
+</body>
+
 </html>

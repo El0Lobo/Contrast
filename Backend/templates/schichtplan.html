@@ -89,7 +89,7 @@
     <form method="post" action="/change_month" class="month-form">
       <button type="submit" name="direction" value="prev" class="prev-button">&larr;</button>
       <div class="calendar-header">
-        <h1>{{ month_name(month_data['month']) }} {{ month_data['year'] }}</h1>
+        <h1 style="font-size: 37px;">{{ month_name(month_data['month']) }} {{ month_data['year'] }}</h1>
       </div>
       <button type="submit" name="direction" value="next" class="next-button">&rarr;</button>
     </form>
@@ -208,10 +208,49 @@
   </div>
 </div>
 <style>
-  /* Modal Styles */
+  /* Calendar Navigation Styles */
+  .calendar {
+    margin-top: -80px;
+  }
+
+  .calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .month-form {
+    display: flex;
+    align-items: center;
+  }
+
+  .prev-button,
+  .next-button {
+    font-size: 50px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0 10px;
+    color: #333;
+    text-shadow: 0 0 5px rgb(236, 221, 191), 0 0 10px rgb(236, 221, 191), 0 0 15px rgb(236, 221, 191), 0 0 20px rgb(236, 221, 191);
+  }
+
+  .prev-button:hover,
+  .next-button:hover {
+    color: #555;
+  }
+
+  .calendar-header {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 20px;
+  }
+
+  /* Rest of your CSS for modal, forms, and other elements */
   .modal {
     display: none;
-    /* Hidden by default */
     position: fixed;
     z-index: 1;
     left: 0;
@@ -233,7 +272,6 @@
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   }
 
-  /* Edit and Delete icon styles */
   .edit-icon,
   .delete-icon {
     font-size: 0.8em;
@@ -256,7 +294,6 @@
     cursor: pointer;
   }
 
-  /* Form Styles */
   .event-form {
     display: flex;
     flex-direction: column;
@@ -294,27 +331,6 @@
     background-color: #218838;
   }
 
-  /* Calendar Styles */
-  .calendar {
-    margin-top: 20px;
-  }
-
-  .calendar-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .month-form {
-    display: inline;
-  }
-
-  .calendar-header {
-    font-size: 24px;
-    font-weight: bold;
-  }
-
   .calendar-body {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -326,6 +342,7 @@
     font-weight: bold;
     padding: 10px 0;
     background-color: #f1f1f1;
+    font-size: 23px;
   }
 
   .calendar-day {
