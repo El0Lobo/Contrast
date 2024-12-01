@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeButton = document.querySelector('.modal .close');
     let cursorEffectInstance = null; // Track cursor effect instance
 
+    // Base path for GitHub Pages
+    const basePath = '/Contrast/';
+
     // Toggle menu visibility
     hamburger.addEventListener('click', () => {
         menu.classList.toggle('active');
@@ -47,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Content Loading
     function loadContent(file) {
-        fetch(`/static/content/${file}`)
+        fetch(`${basePath}static/content/${file}`)
             .then(response => {
                 if (!response.ok) throw new Error(`File not found: ${file}`);
                 return response.text();
