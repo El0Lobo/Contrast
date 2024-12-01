@@ -1,0 +1,46 @@
+Zeug das fehlt:
+!!!!!!!Schicht abwählen Button!!!!!!!!!!
+Putzschicht
+Bilanz
+Kasse?
+fehlende schichten diesen Monat
+Leaderboard (top 10 der meisten schichten gemacht (username nummer der schichten))
+2te section für booking muss editierbar sein:
+                                              - Name der band
+                                              - Logo
+                                              - Genre
+                                              - Kontakt
+                                              - Doordeal?
+                                              - Doorprice
+                                              - Preis bezahlt wenn kein doordeal
+                                              - last booked
+                                              - Kommentar
+                                              
+3te Section Stuff we need: kleinzeug das der Laden braucht den mitglieder haben könnten.sollten auch einträge hinzugefügt und entfernt werden können.
+Vorstand kann schichten für User eintragen
+User Hinzufügen als Vorstand
+4 User Klassen: Admin, Vorstand, Manager, User 
+Hausverbots liste
+abstimmungen anonym (unique vote)
+Kasse zähler für Menschen
+Themen der letzten Vorstandsitzung (in news)
+Vorschläge für änderungen von usern (votable)
+anschaffungen furs Contrast
+Mitglieder Liste:
+(optionale Kontaktdaten)
+wer hat einen Schlüssel?
+                    - Vorstand
+                    - Activ
+                    - Passiv
+
+Logins und ähnliches, wie router passwort, domain logins,Github creds, usw (sichtbar für Vorstand)
+vermutlich muss das backend komplett neu konzipiert werden damit die funktionen ineinander übergehen.
+vllt mehrere py applets um GitHub actions nicht zu überfordern?
+Theoretisch ist volles deployment über GitHub actions möglich inclusive Secrets
+am liebsten wäre mir das es alles templateable ist damit die arbeit nicht nur für das Contrast realisierbar wäre
+logos/backgrounds replaceable plus ne generic konzert und veranstaltungs section
+alles editierbar machen as admin auch wiederkehrende Termine.
+try to make it universal so other places ain't got that problem.
+
+
+              

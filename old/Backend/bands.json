@@ -1,0 +1,26 @@
+{
+  "bands": [
+    {
+      "name": "Liz and the Homewreckers",
+      "logo": "/static/uploads\\1730039756.2634575_liz.png",
+      "genre": "Punk",
+      "contact": "Liz@homewreckers.com",
+      "doordeal": false,
+      "door_price": 25.0,
+      "fixed_price": 600.0,
+      "last_booked": "2024-03-14",
+      "comment": "greatest dog ever"
+    },
+    {
+      "name": "wtawt",
+      "logo": "/static/uploads\\1730040491.8253343_alpakas-gegen-nazis-unisex-pullover.jpg",
+      "genre": "qwqqwe",
+      "contact": "qwe@qeweq.de",
+      "doordeal": true,
+      "door_price": 12.0,
+      "fixed_price": 0.0,
+      "last_booked": "2024-05-09",
+      "comment": "wqdqdqd"
+    }
+  ]
+}

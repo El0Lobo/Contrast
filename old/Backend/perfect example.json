@@ -1,0 +1,34 @@
+perfect example JSon
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicEvent",
+  "name": "Live DJ Night",
+  "startDate": "2024-11-15T21:00",
+  "location": {
+    "@type": "Place",
+    "name": "Local Bar Name",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Street Address",
+      "addressLocality": "City",
+      "postalCode": "ZIP Code",
+      "addressCountry": "Country"
+    }
+  },
+  "performer": {
+    "@type": "MusicGroup",
+    "name": "DJ Name"
+  },
+  "description": "A night of live DJ performances featuring electronic music.",
+  "image": "URL to an image of the event or bar",
+  "offers": {
+    "@type": "Offer",
+    "url": "URL for tickets or RSVP",
+    "price": "15.00",
+    "priceCurrency": "EUR",
+    "availability": "https://schema.org/InStock"
+  }
+}
+</script>

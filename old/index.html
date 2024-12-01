@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrast EV Konstanz</title>
+    <meta name="description" content="Official website of Contrast EV Konstanz. Stay updated with the latest events, news, and information.">
+    <meta name="keywords" content="Contrast EV Konstanz, events, news, information, Konstanz">
+    <meta name="author" content="Contrast EV Konstanz">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link href='https://fonts.googleapis.com/css?family=Vibur:400' rel='stylesheet' type='text/css'>
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+    <header>
+        <img src="pics/logo white_text2.png" alt="Contrast eV. Konstanz Logo" class="logo">
+        <nav>
+            <ul>
+                <li><a href="#" class="active" onclick="showSection('home')">Home</a></li>
+                <li><a href="#" onclick="showSection('queerkneipe_kn')">Queerkneipe</a></li>
+                <li><a href="#" onclick="showSection('labor_kn')">Labor</a></li>
+                <li><a href="#" onclick="showSection('punk_kneipe')">Punk-Kneipe</a></li>
+                <li><a href="#" onclick="showSection('concerts')">Konzerte</a></li>
+                <li><a href="#" onclick="showSection('events')">Veranstaltungen</a></li>
+                <li><a href="#" onclick="showSection('members')">Mitglied werden</a></li>
+                <li><a href="#" onclick="showSection('contact')">Kontakt</a></li>
+            </ul>
+        </nav>
+        <div id="mobile-menu">
+            <nav>
+                <ul>
+                    <li><a href="#" onclick="showSection('home')">Home</a></li>
+                    <li><a href="#" onclick="showSection('queerkneipe_kn')">Queer-Kneipe</a></li>
+                    <li><a href="#" onclick="showSection('labor_kn')">Das Labor</a></li>
+                    <li><a href="#" onclick="showSection('punk_kneipe')">Punk Kneipe</a></li>
+                    <li><a href="#" onclick="showSection('concerts')">Konzerte</a></li>
+                    <li><a href="#" onclick="showSection('events')">Veranstaltungen</a></li>
+                    <li><a href="#" onclick="showSection('members')">Mitglied werden</a></li>
+                    <li><a href="#" onclick="showSection('contact')">Kontakt</a></li>
+                </ul>
+            </nav>
+            <div id="menu-toggle" onclick="toggleMenu()">▼</div>
+        </div>
+    </header>
+    <main>
+        <section id="home" class="section active">
+            <h1>Willkommen im Contrast</h1>
+            <p>Euer Zentrum für alternative Musik, Kunst und Kultur in Konstanz.</p>
+            <p>Lasst, die Ihr eintretet, alle Hoffnung fahren!</p>
+            <div class="neon-sign">
+                <div class="we-are" id="status-text">We are</div>
+                <div class="open" id="open-text">OPEN</div>
+                <div class="break-name" id="break-name"></div>
+            </div>       
+            <div class="NONAZIS">     
+                <img src="pics/Layer 3.png" alt="NONAZIS" class="image">
+            </div>   
+
+            <h1>Über Uns</h1>
+            <p>Das Contrast ist ein Jugendclub in Konstanz, betrieben vom Jugendkultur e.V. Bekannt für seine lebendige Subkultur-Atmosphäre, bietet es eine bunte Mischung aus Punk, Techno und alternativen Events.</p>
+            <p>Voller Graffiti und gemütlicher Atmosphäre mit erschwinglichen Getränken und kostenlosem Tischkicker. Geöffnet an Wochentagen von 21:00 bis 01:00 Uhr und am Wochenende von 22:00 bis 03:00 Uhr, veranstalten wir verschiedene Themenabende und Events.</a></p>
+            <p>Im Contrast sind Zusammenhalt und Akzeptanz besonders wichtig. Unser Club ist ein sicherer Ort für alle, unabhängig von Geschlecht, Herkunft oder Interessen. Wir glauben an die Bedeutung von Gemeinschaft und daran, dass jeder willkommen ist und eine Stimme hat.</p>
+            <p>Unsere Wände spiegeln die kreative Energie und den Gemeinschaftsgeist wider. Kommt vorbei und seid Teil einer offenen und vielfältigen Gemeinschaft, die jeden willkommen heißt. Wir freuen uns darauf, euch bei unseren nächsten Veranstaltungen zu sehen!</p>
+            <p>Für mehr Informationen und aktuelle Events, besucht unsere <a href="https://www.facebook.com/Contrastkn/">Facebook-Seite</a>.</p>
+            <div id="calendar-main"> 
+                <div id="calendar-controls">
+                <button id="prev-week">&larr;</button>
+                <h2 id="calendar-title">This Week</h2>
+                <button id="next-week">&rarr;</button>
+            </div>
+            <div id="calendar"></div>
+            <iframe src="https://www.instagram.com/contrast_kn/embed" frameborder="0" scrolling="yes" allowtransparency="true" class="instagram-embed" style="padding-top: 20px;"></iframe>        </div> 
+        </section>
+        <div class="container">
+            <img src="pics/logo big.png" alt="Contrastlogo" class="image">
+        </div>
+        <section id="queerkneipe_kn" class="section">
+            <h1>Queerkneipe</h1>
+            <p>Die Queerkneipe ist unser spezieller Abend für die queere Community, der jeden Montag stattfindet. Genieße eine einladende und inklusive Atmosphäre mit lebendiger Musik und großartiger Gesellschaft. Bleibe auf dem Laufenden über unsere neuesten Veranstaltungen und Community-Treffen, indem du uns auf Instagram folgst.</p>
+            <iframe src="https://www.instagram.com/queerkneipe_kn/embed" frameborder="0" scrolling="yes" allowtransparency="true" class="instagram-embed"></iframe>
+        </section>
+        
+        <section id="labor_kn" class="section">
+            <h1>Labor</h1>
+            <p>Labor KN ist unser experimenteller Abend, der jeden Dienstag stattfindet. Dieser bietet eine Mischung aus elektronischer Musik, experimentellen Klängen und einzigartigen Auftritten. Es ist eine Nacht der Kreativität und des Erkundens neuer musikalischer Landschaften. Schaue auf unserem Instagram vorbei, um die neuesten Updates und Highlights unserer Veranstaltungen zu sehen.</p>
+            <iframe src="https://www.instagram.com/labor_kn/embed" frameborder="0" scrolling="yes" allowtransparency="true" class="instagram-embed"></iframe>
+        </section>
+        
+        <section id="punk_kneipe" class="section">
+            <h1>Punk-Kneipe & Infokneipe</h1>
+            <p>Jeden Donnerstag ist Punk-Nacht, gewidmet den Unverbesserlichen. Genieße eine Nacht mit energiegeladener musik, spannenden Gesprächen und einer rebellischen Atmosphäre. Neben Punkmusik haben wir auch Infokneipe-Sitzungen, bei denen du mehr über verschiedene soziale und politische Themen erfahren kannst. Folge uns auf Instagram für weitere Details.</p>
+            <iframe src="https://www.instagram.com/infokneipe_kn/embed" frameborder="0" scrolling="yes" allowtransparency="true" class="instagram-embed"></iframe>
+        </section>
+
+        <section id="concerts" class="section">
+            <h1>Konzerte</h1>
+            <p>Interessierst du dich für fantastische Live-Musik? Im Contrast bieten wir eine Vielzahl von Konzerten an, die du nicht verpassen solltest. Schau dir unsere Instagram-Seite an, um über bevorstehende Konzerte und Highlights vergangener Auftritte informiert zu bleiben. Erlebe unvergessliche Musikmomente bei uns!</p>
+            <div id="next-concerts"></div>
+            <h2>Vergangene Konzerte</h2>
+            <div id="past-concerts-container"></div>
+        </section>
+        
+        <section id="events" class="section">
+            <h1>Veranstaltungen</h1>
+            <p>Hast du Lust auf spannende Events? Im Contrast gibt es immer aufregende Veranstaltungen zu entdecken, von Musik über Kunst bis hin zu Kultur. Folge unserer Instagram-Seite für Informationen zu bevorstehenden Events und um Highlights vergangener Veranstaltungen zu sehen. Lass dich von unseren Events begeistern und mach deinen nächsten Besuch bei uns unvergesslich!</p>
+            <div id="next-events"></div>
+            <h2>Vergangene Veranstaltungen</h2>
+            <div id="past-events-container"></div>
+        </section>
+
+        <section id="members" class="section">
+            <h1>Werde Mitglied und mach einen Unterschied</h1>
+            <p>Bist du leidenschaftlich an spannenden Events interessiert und möchtest einen positiven Beitrag leisten? Im Contrast veranstalten wir eine Vielzahl von Events, die Musik, Kunst und Kultur feiern. Als Mitglied kannst du dich in diese aufregenden Erlebnisse vertiefen, Gleichgesinnte treffen und zu einer lebendigen Gemeinschaft beitragen. Bring deine Energie, Ideen und Begeisterung ein und mach mit uns einen Unterschied!</p>
+            <p>Interessiert? Schreib uns eine E-Mail an <a href="mailto:info@contrast.com">info@contrast.com</a> oder komm einfach vorbei und erfahre mehr darüber, wie du Teil unserer Gemeinschaft werden kannst. Wir freuen uns auf dich!</p>
+        </section>        
+
+        <section id="contact" class="section">
+                <h1>Kontakt</h1>
+                <p>Adresse: <a href="https://www.google.com/maps/search/?api=1&query=Joseph-Belli-Weg+11,+Konstanz+78467,+Germany" target="_blank">Joseph-Belli-Weg 11, Konstanz 78467, Germany</a></p>
+                <p>Email: <a href="mailto:info@contrast-kn.de">info@contrast-kn.de</a></p>
+                <p>Nächste Busstationen: <a href="https://www.google.com/maps/search/?api=1&query=Neuwerk+Bus+Station" target="_blank">Neuwerk</a> und <a href="https://www.google.com/maps/search/?api=1&query=Fürstenberg+Bus+Station" target="_blank">Fürstenberg</a></p>
+                <p>Busfahrplan: <a href="https://www.stadtwerke-konstanz.de/bus/fahrplan/" target="_blank">Stadtwerke Konstanz Busfahrplan</a></p>
+                <p>Nächste Zugstation: <a href="https://www.google.com/maps/search/?api=1&query=Konstanz+Fürstenberg+Train+Station" target="_blank">Konstanz Fürstenberg</a></p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Joseph-Belli-Weg+11,+Konstanz+78467,+Germany" target="_blank">
+                    <img src="pics/map.png" alt="Map" class="image" style="max-width: 76%;">
+                </a>
+                <p>Öffnungszeiten:</p>
+                <p>Montag bis Donnerstag: <br> 21:00 - 01:00 Uhr</p>
+                <p>Freitag bis Samstag: <br> 22:00 - 03:00 Uhr</p>
+                <h1>Booking</h1>
+                <p>Bist du daran interessiert, im Contrast aufzutreten? Egal, ob du eine Band, ein DJ oder ein Performer bist, wir freuen uns darauf, von dir zu hören. Folge unserer Instagram-Seite für Buchungsdetails und um Highlights vergangener Auftritte zu sehen. Lass uns deinen nächsten Auftritt unvergesslich machen!</p>
+                <iframe src="https://www.instagram.com/booking_contrast/embed" frameborder="0" scrolling="yes" allowtransparency="true" class="instagram-embed"></iframe>
+        </section>
+    </main>
+    <footer id="footer">
+        <p style="font-size: 0.9em; margin-bottom: 0px;">&copy; 2024 Contrast EV Konstanz. All rights reserved.</p>
+        <p style="font-size: 0.7em;margin-top: 0px;">  Developed by 
+            <a href="https://acme-prototypes.com/" class="acme-link"><img src="pics/ACME (Small).png" alt="ACME" class="acme-logo" style="width: 57px;position: relative;top: 7px;"></a>
+            <br><a href="#" id="impressum-link">Impressum</a>
+        </p>
+    </footer>
+    <div id="impressum-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class='impressum'>
+                <h1>Impressum</h1>
+                <p>Angaben gemäß § 5 DDG</p>
+                <p>- - <br> 
+                Joseph-Belli-Weg 11<br> 
+                78467 Konstanz <br> 
+                </p>
+                <p> <strong>Vertreten durch: </strong><br>
+                - -<br>
+                </p>
+                <p><strong>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</strong><br>
+                - - <br> 
+                Joseph-Belli-Weg 11<br> 
+                78467 Konstanz <br></p> 
+                <p><strong>Haftungsausschluss: </strong><br><br><strong>Haftung für Inhalte</strong><br><br>
+                Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen. Als Diensteanbieter sind wir gemäß § 7 Abs.1 DDG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 DDG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.<br><br><strong>Haftung für Links</strong><br><br>
+                Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.<br><br><strong>Urheberrecht</strong><br><br>
+                Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.<br><br><strong>Datenschutz</strong><br><br>
+                Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder eMail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben. <br>
+                Wir weisen darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich. <br>
+                Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Die Betreiber der Seiten behalten sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.<br>
+                <br><br><strong>Google Analytics</strong><br><br>
+                Diese Website benutzt Google Analytics, einen Webanalysedienst der Google Inc. (''Google''). Google Analytics verwendet sog. ''Cookies'', Textdateien, die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglicht. Die durch den Cookie erzeugten Informationen über Ihre Benutzung dieser Website (einschließlich Ihrer IP-Adresse) wird an einen Server von Google in den USA übertragen und dort gespeichert. Google wird diese Informationen benutzen, um Ihre Nutzung der Website auszuwerten, um Reports über die Websiteaktivitäten für die Websitebetreiber zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese Informationen gegebenenfalls an Dritte übertragen, sofern dies gesetzlich vorgeschrieben oder soweit Dritte diese Daten im Auftrag von Google verarbeiten. Google wird in keinem Fall Ihre IP-Adresse mit anderen Daten der Google in Verbindung bringen. Sie können die Installation der Cookies durch eine entsprechende Einstellung Ihrer Browser Software verhindern; wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website voll umfänglich nutzen können. Durch die Nutzung dieser Website erklären Sie sich mit der Bearbeitung der über Sie erhobenen Daten durch Google in der zuvor beschriebenen Art und Weise und zu dem zuvor benannten Zweck einverstanden.<br><br><strong>Google AdSense</strong><br><br>
+                Diese Website benutzt Google Adsense, einen Webanzeigendienst der Google Inc., USA (''Google''). Google Adsense verwendet sog. ''Cookies'' (Textdateien), die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglicht. Google Adsense verwendet auch sog. ''Web Beacons'' (kleine unsichtbare Grafiken) zur Sammlung von Informationen. Durch die Verwendung des Web Beacons können einfache Aktionen wie der Besucherverkehr auf der Webseite aufgezeichnet und gesammelt werden. Die durch den Cookie und/oder Web Beacon erzeugten Informationen über Ihre Benutzung dieser Website (einschließlich Ihrer IP-Adresse) werden an einen Server von Google in den USA übertragen und dort gespeichert. Google wird diese Informationen benutzen, um Ihre Nutzung der Website im Hinblick auf die Anzeigen auszuwerten, um Reports über die Websiteaktivitäten und Anzeigen für die Websitebetreiber zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese Informationen gegebenenfalls an Dritte übertragen, sofern dies gesetzlich vorgeschrieben oder soweit Dritte diese Daten im Auftrag von Google verarbeiten. Google wird in keinem Fall Ihre IP-Adresse mit anderen Daten der Google in Verbindung bringen. Das Speichern von Cookies auf Ihrer Festplatte und die Anzeige von Web Beacons können Sie verhindern, indem Sie in Ihren Browser-Einstellungen ''keine Cookies akzeptieren'' wählen (Im MS Internet-Explorer unter ''Extras > Internetoptionen > Datenschutz > Einstellung''; im Firefox unter ''Extras > Einstellungen > Datenschutz > Cookies''); wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website voll umfänglich nutzen können. Durch die Nutzung dieser Website erklären Sie sich mit der Bearbeitung der über Sie erhobenen Daten durch Google in der zuvor beschriebenen Art und Weise und zu dem zuvor benannten Zweck einverstanden.</p><br> 
+                Impressum vom <a href="https://www.impressum-generator.de">Impressum Generator</a> der <a href="https://www.kanzlei-hasselbach.de/rechtsgebiete/familienrecht/">Kanzlei Hasselbach, Fachanwälte für Familienrecht</a>
+            </div>
+        </div>
+    </div>    
+    <script src="scripts.js"></script>
+</body>
+</html>

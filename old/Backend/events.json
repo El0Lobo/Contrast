@@ -1,0 +1,51 @@
+{
+  "events": [],
+  "2024-10-30": [
+    {
+      "name": "124314",
+      "description": "21412414",
+      "date": "2024-10-30",
+      "type": "Infokneipe",
+      "entry_time": "12:12",
+      "entry_price": 12.0,
+      "tur_schicht": true,
+      "putz_schicht": false,
+      "doppel_schicht": true,
+      "weekly": false,
+      "shifts": [
+        {
+          "name": "theke_1_1",
+          "assigned_user": null
+        },
+        {
+          "name": "theke_1_2",
+          "assigned_user": null
+        },
+        {
+          "name": "door_1_1",
+          "assigned_user": null
+        },
+        {
+          "name": "door_1_2",
+          "assigned_user": null
+        },
+        {
+          "name": "theke_2_1",
+          "assigned_user": null
+        },
+        {
+          "name": "theke_2_2",
+          "assigned_user": null
+        },
+        {
+          "name": "door_2_1",
+          "assigned_user": null
+        },
+        {
+          "name": "door_2_2",
+          "assigned_user": null
+        }
+      ]
+    }
+  ]
+}
