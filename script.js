@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeButton = document.querySelector('.modal .close');
     let cursorEffectInstance = null; // Track cursor effect instance
 
-    // Base path for GitHub Pages
-    const basePath = '/Contrast/';
+    // Base path for content (adjust if necessary)
+    const basePath = './static/content/';
 
     // Toggle menu visibility
     hamburger.addEventListener('click', () => {
@@ -16,13 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Modal functionality
-    impressumButton.addEventListener('click', () => {
-        modal.style.display = 'block';
-    });
+    if (impressumButton) {
+        impressumButton.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+    }
 
-    closeButton.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
+    if (closeButton) {
+        closeButton.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+    }
 
     window.addEventListener('click', (event) => {
         if (event.target === modal) {
@@ -30,9 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Rainbow Cursor initialization
+    // Initialize Rainbow Cursor Effect
     function initializeRainbowCursor() {
-        if (cursorEffectInstance && typeof cursorEffectInstance.destroy === 'function') {
+        if (cursorEffectInstance) {
             cursorEffectInstance.destroy();
         }
 
@@ -41,77 +45,80 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Destroy Rainbow Cursor Effect
     function destroyRainbowCursor() {
-        if (cursorEffectInstance && typeof cursorEffectInstance.destroy === 'function') {
+        if (cursorEffectInstance) {
             cursorEffectInstance.destroy();
             cursorEffectInstance = null;
         }
     }
 
-    // Content Loading
+    // Load content into the main section
     function loadContent(file) {
-        fetch(`${basePath}static/content/${file}`)
-            .then(response => {
-                if (!response.ok) throw new Error(`File not found: ${file}`);
+        fetch(`${basePath}${file}`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: File not found (${file})`);
+                }
                 return response.text();
             })
-            .then(html => {
+            .then((html) => {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
-                const newMainContent = doc.querySelector('main').innerHTML;
-                main.innerHTML = newMainContent;
+                const newMainContent = doc.querySelector('main')?.innerHTML;
 
-                // Apply Rainbow Cursor for Queer-Kneipe page
-                if (file === 'Queer-Kneipe.html') {
-                    initializeRainbowCursor();
+                if (newMainContent) {
+                    main.innerHTML = newMainContent;
+
+                    // Initialize Rainbow Cursor for specific pages
+                    if (file === 'Queer-Kneipe.html') {
+                        initializeRainbowCursor();
+                    } else {
+                        destroyRainbowCursor();
+                    }
+
+                    updateActiveLink(file);
                 } else {
-                    destroyRainbowCursor();
+                    throw new Error(`Main content not found in file: ${file}`);
                 }
-
-                updateActiveLink(file);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error(error);
-                main.innerHTML = '<p>Content not found.</p>';
+                main.innerHTML = '<p>Content not found or invalid structure.</p>';
             });
     }
 
-    // Update active menu link
+    // Update active link styling
     function updateActiveLink(activeFile) {
-        menu.querySelectorAll('a').forEach(link => {
-            link.style.textDecoration = 'none'; // Reset all links
+        menu.querySelectorAll('a').forEach((link) => {
             const linkFile = `${link.getAttribute('href').substring(1)}.html`;
-            if (linkFile === activeFile) {
-                link.style.textDecoration = 'underline'; // Underline the active link
-            }
+            link.style.textDecoration = linkFile === activeFile ? 'underline' : 'none';
         });
     }
 
-    // Menu Links Navigation
+    // Handle menu link clicks
     const menuLinks = document.querySelectorAll('.menu a');
-
-    menuLinks.forEach(link => {
+    menuLinks.forEach((link) => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const file = `${link.getAttribute('href').substring(1)}.html`;
             history.pushState({ file }, '', link.getAttribute('href'));
             loadContent(file);
 
-            // Close the menu after clicking a link in mobile view
+            // Close the menu in mobile view after navigation
             if (window.innerWidth <= 768) {
                 menu.classList.remove('active');
             }
         });
     });
 
-    // Handle browser back/forward navigation
-    window.addEventListener('popstate', () => {
-        const hash = window.location.hash.substring(1);
-        const file = `${hash}.html` || 'home.html';
+    // Handle back/forward navigation
+    window.addEventListener('popstate', (event) => {
+        const file = event.state?.file || 'home.html';
         loadContent(file);
     });
 
-    // Initial Load
+    // Initial content load
     const initialHash = window.location.hash.substring(1);
     const initialFile = initialHash ? `${initialHash}.html` : 'home.html';
     loadContent(initialFile);
