@@ -10,29 +10,55 @@ document.addEventListener('DOMContentLoaded', () => {
     // Base path for content (adjust if necessary)
     const basePath = './static/content/';
 
-    // Toggle menu visibility
-    hamburger.addEventListener('click', () => {
-        menu.classList.toggle('active');
+    // Function to attach animation end event listener
+    function attachAnimationHandler() {
+        const animatedText = document.getElementById('animated-text');
+        if (animatedText) {
+            animatedText.addEventListener('animationend', () => {
+                animatedText.classList.remove('animate__animated', 'animate__hinge', 'animate__delay-2s', 'animate__slower');
+                animatedText.classList.add('normal-text');
+            });
+            console.log('Animation handler attached.');
+        } else {
+            console.warn('Animated text element not found!');
+        }
+    }
+
+    // Attach handler initially if `#animated-text` is already in the DOM
+    attachAnimationHandler();
+
+    // Observe the `main` element for changes
+    const observer = new MutationObserver(() => {
+        attachAnimationHandler(); // Recheck and attach handler if `#animated-text` is added
     });
 
+    observer.observe(main, { childList: true, subtree: true });
+
+    // Toggle menu visibility
+    if (hamburger && menu) {
+        hamburger.addEventListener('click', () => {
+            menu.classList.toggle('active');
+        });
+    }
+
     // Modal functionality
-    if (impressumButton) {
+    if (impressumButton && modal) {
         impressumButton.addEventListener('click', () => {
             modal.style.display = 'block';
         });
     }
 
-    if (closeButton) {
+    if (closeButton && modal) {
         closeButton.addEventListener('click', () => {
             modal.style.display = 'none';
         });
-    }
 
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
 
     // Initialize Rainbow Cursor Effect
     function initializeRainbowCursor() {
@@ -90,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update active link styling
     function updateActiveLink(activeFile) {
-        menu.querySelectorAll('a').forEach((link) => {
+        menu?.querySelectorAll('a').forEach((link) => {
             const linkFile = `${link.getAttribute('href').substring(1)}.html`;
             link.style.textDecoration = linkFile === activeFile ? 'underline' : 'none';
         });
@@ -107,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Close the menu in mobile view after navigation
             if (window.innerWidth <= 768) {
-                menu.classList.remove('active');
+                menu?.classList.remove('active');
             }
         });
     });
