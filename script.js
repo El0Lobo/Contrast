@@ -81,10 +81,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load content into the main section
     function loadContent(file) {
-        fetch(`${basePath}${file}`)
+        const hash = window.location.hash.substring(1); // Get the current hash without the #
+        const contentFile = file || `${hash}.html`; // Default to the hash if no file is provided
+    
+        if (!contentFile) {
+            console.error('No file or hash specified for loading content.');
+            return;
+        }
+    
+        fetch(`${basePath}${contentFile}`)
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error(`Error ${response.status}: File not found (${file})`);
+                    throw new Error(`Error ${response.status}: File not found (${contentFile})`);
                 }
                 return response.text();
             })
@@ -92,20 +100,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const newMainContent = doc.querySelector('main')?.innerHTML;
-
+    
                 if (newMainContent) {
                     main.innerHTML = newMainContent;
-
+    
                     // Initialize Rainbow Cursor for specific pages
-                    if (file === 'Queer-Kneipe.html') {
+                    if (contentFile === 'Queer-Kneipe.html') {
                         initializeRainbowCursor();
                     } else {
                         destroyRainbowCursor();
                     }
-
-                    updateActiveLink(file);
+    
+                    updateActiveLink(contentFile);
                 } else {
-                    throw new Error(`Main content not found in file: ${file}`);
+                    throw new Error(`Main content not found in file: ${contentFile}`);
                 }
             })
             .catch((error) => {
@@ -113,6 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 main.innerHTML = '<p>Content not found or invalid structure.</p>';
             });
     }
+    
+    // Listen for hash changes and load corresponding content
+    window.addEventListener('hashchange', () => {
+        loadContent(); // Automatically infer file from the hash
+    });
+    
+
+    
 
     // Update active link styling
     function updateActiveLink(activeFile) {
