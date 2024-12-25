@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fish Game</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    canvas {
+      border: 1px solid white;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .keycap {
+      width: 50px;
+      height: 50px;
+      background: #333;
+      color: white;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid white;
+      border-radius: 5px;
+      box-shadow: 0px 4px #555;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .keycap:active {
+      box-shadow: 0px 2px #333;
+      transform: translateY(2px);
+    }
+
+    .keycap span {
+      display: inline-block;
+      transform: scale(1.5);
+    }
+
+    #left span {
+      transform: rotate(270deg) scale(1.5);
+    }
+
+    #right span {
+      transform: rotate(90deg) scale(1.5);
+    }
+  </style>
+</head>
+<body>
+<canvas width="400" height="400" id="game"></canvas>
+<div class="controls">
+  <div class="controls-row">
+    <div class="keycap" id="up"><span>&uarr;</span></div>
+  </div>
+  <div class="controls-row">
+    <div class="keycap" id="left"><span>&uarr;</span></div>
+    <div class="keycap" id="down"><span>&darr;</span></div>
+    <div class="keycap" id="right"><span>&uarr;</span></div>
+  </div>
+</div>
+<script>
+var canvas = document.getElementById('game');
+var context = canvas.getContext('2d');
+
+var grid = 16;
+var count = 0;
+
+// Scaling factors
+var headScale = 1.5;
+var tailScale = 1.8;
+var middleScale = 1.8;
+var segmentScale = 1.2;
+var foodScale = 1.3;
+
+var snake = {
+  x: 160,
+  y: 160,
+  dx: grid,
+  dy: 0,
+  cells: [],
+  maxCells: 5
+};
+
+var apple = {
+  x: 320,
+  y: 320
+};
+
+var isGameOver = false;
+var isGameStarted = false;
+
+// Array of food images
+var foodImages = [
+  'facist1.png',
+  'facist2.png',
+  'facist3.1.png',
+  'facist4.png',
+  'facist5.png'
+];
+
+var foodImg = new Image();
+
+function setRandomFoodImage() {
+  var randomIndex = Math.floor(Math.random() * foodImages.length);
+  foodImg.src = foodImages[randomIndex];
+}
+
+// Load images
+var snakeHeadImg = new Image();
+snakeHeadImg.src = 'Head.png';
+
+var snakeTailImg = new Image();
+snakeTailImg.src = 'Tail.png';
+
+var middleImg = new Image();
+middleImg.src = 'middle.png';
+
+var segmentImg = new Image();
+segmentImg.src = 'segment.png';
+
+let hoverOpacity = 1;
+let hoverDirection = -0.05;
+
+  // Display the introductory text
+function drawIntroScreen() {
+  context.fillStyle = "black";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "white";
+  context.textAlign = "center";
+
+  // Display the introductory text with smaller font
+  context.font = "10px 'Press Start 2P'";
+  context.fillText("Der Contrast Fisch hat sich tagelang", canvas.width / 2, canvas.height / 2 - 150);
+  context.fillText("nur von Bier ernährt. Hilf ihm bei der", canvas.width / 2, canvas.height / 2 - 130);
+  context.fillText("Beutejagd, damit ihm ein Besuch beim", canvas.width / 2, canvas.height / 2 - 110);
+  context.fillText("Arbeitsamt erspart bleibt und er sich", canvas.width / 2, canvas.height / 2 - 90);
+  context.fillText("das Dosenpfand fürs nächste Bier", canvas.width / 2, canvas.height / 2 - 70);
+  context.fillText("aufheben kann.", canvas.width / 2, canvas.height / 2 - 50);
+  context.fillText("Und keine Sorge, er ist es gewohnt,", canvas.width / 2, canvas.height / 2 +0);
+  context.fillText("Scheiße zu fressen. So ist das halt,", canvas.width / 2, canvas.height / 2 + 20);
+  context.fillText("mit grünen Haaren auf dem Kopf...", canvas.width / 2, canvas.height / 2 + 40);
+
+  // Display the game instructions with larger font
+  context.font = "12px 'Press Start 2P'";
+  context.fillText("BEWEGE DICH MIT DEN PFEILTASTEN", canvas.width / 2, canvas.height / 2 + 80);
+  context.fillText("FRISS BRAUNEN DRECK,UM ZU WACHSEN", canvas.width / 2, canvas.height / 2 + 100);
+  context.fillText("BEISS' DIR NICHT SELBST", canvas.width / 2, canvas.height / 2 + 120);
+  context.fillText(" IN DEN ARSCH", canvas.width / 2, canvas.height / 2 + 140);
+
+
+  // Create the hover effect for "Press any key"
+  hoverOpacity += hoverDirection;
+  if (hoverOpacity <= 0.5 || hoverOpacity >= 1) hoverDirection *= -1;
+
+  context.fillStyle = `rgba(255, 255, 255, ${hoverOpacity})`;
+  context.fillText("PRESS ANY KEY TO PLAY", canvas.width / 2, canvas.height / 2 + 180);
+}
+
+// Animation loop for hover effect
+function animateIntroScreen() {
+  if (!isGameStarted) {
+    drawIntroScreen();
+    requestAnimationFrame(animateIntroScreen);
+  }
+}
+
+// Call this instead of directly drawing the intro screen
+animateIntroScreen();
+
+function drawGameOverScreen() {
+  context.save();
+  context.fillStyle = "rgba(0, 0, 0, 0.8)";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "white";
+  context.font = "12px 'Press Start 2P'";
+  context.textAlign = "center";
+  context.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 20);
+  context.fillText("PRESS ANY KEY TO RESTART", canvas.width / 2, canvas.height / 2 + 20);
+  context.restore();
+}
+
+function restartGame() {
+  snake.x = 160;
+  snake.y = 160;
+  snake.cells = [];
+  snake.maxCells = 5;
+  snake.dx = grid;
+  snake.dy = 0;
+
+  apple.x = getRandomInt(0, 25) * grid;
+  apple.y = getRandomInt(0, 25) * grid;
+
+  setRandomFoodImage();
+  isGameOver = false;
+  isGameStarted = false;
+  drawIntroScreen();
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function drawRotatedImage(image, x, y, scale, angle) {
+  context.save();
+  context.translate(x + grid / 2, y + grid / 2);
+  context.rotate(angle);
+  context.drawImage(image, -(grid * scale) / 2, -(grid * scale) / 2, grid * scale, grid * scale);
+  context.restore();
+}
+
+function loop() {
+  if (!isGameStarted || isGameOver) return;
+
+  requestAnimationFrame(loop);
+
+  if (++count < 4) {
+    return;
+  }
+
+  count = 0;
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Move snake
+  snake.x += snake.dx;
+  snake.y += snake.dy;
+
+  // Wrap around edges
+  if (snake.x < 0) snake.x = canvas.width - grid;
+  else if (snake.x >= canvas.width) snake.x = 0;
+
+  if (snake.y < 0) snake.y = canvas.height - grid;
+  else if (snake.y >= canvas.height) snake.y = 0;
+
+  snake.cells.unshift({ x: snake.x, y: snake.y });
+
+  if (snake.cells.length > snake.maxCells) {
+    snake.cells.pop();
+  }
+
+  drawRotatedImage(foodImg, apple.x, apple.y, foodScale, 0);
+
+  var middleIndex = Math.floor((snake.cells.length - 1) / 2);
+
+  snake.cells.forEach(function (cell, index) {
+    if (index === 0) {
+      let angle = snake.dx > 0 ? 0 : snake.dx < 0 ? Math.PI : snake.dy > 0 ? Math.PI / 2 : -Math.PI / 2;
+      drawRotatedImage(snakeHeadImg, cell.x, cell.y, headScale, angle);
+    } else if (index === middleIndex) {
+      let prev = snake.cells[index - 1];
+      let next = snake.cells[index + 1];
+      let angle = prev.x !== next.x ? 0 : Math.PI / 2;
+      drawRotatedImage(middleImg, cell.x, cell.y, middleScale, angle);
+    } else if (index === snake.cells.length - 1) {
+      let prev = snake.cells[index - 1];
+      let angle = prev.x > cell.x ? 0 : prev.x < cell.x ? Math.PI : prev.y > cell.y ? Math.PI / 2 : -Math.PI / 2;
+      drawRotatedImage(snakeTailImg, cell.x, cell.y, tailScale, angle);
+    } else {
+      let prev = snake.cells[index - 1];
+      let next = snake.cells[index + 1];
+      let angle = prev.x !== next.x ? 0 : Math.PI / 2;
+      drawRotatedImage(segmentImg, cell.x, cell.y, segmentScale, angle);
+    }
+
+    if (cell.x === apple.x && cell.y === apple.y) {
+      snake.maxCells++;
+      apple.x = getRandomInt(0, 25) * grid;
+      apple.y = getRandomInt(0, 25) * grid;
+      setRandomFoodImage();
+    }
+
+    for (var i = index + 1; i < snake.cells.length; i++) {
+      if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+        isGameOver = true;
+        drawGameOverScreen();
+        return;
+      }
+    }
+  });
+}
+
+// Initial Draw
+setRandomFoodImage();
+drawIntroScreen();
+
+function startGame() {
+  if (!isGameStarted) {
+    isGameStarted = true;
+    loop();
+  } else if (isGameOver) {
+    restartGame();
+  }
+}
+
+// Arrow Key Event Listeners
+function setupControls() {
+  document.getElementById('up').addEventListener('click', function () {
+    if (!isGameStarted || isGameOver) return startGame();
+    if (snake.dy === 0) {
+      snake.dx = 0;
+      snake.dy = -grid;
+    }
+  });
+
+  document.getElementById('down').addEventListener('click', function () {
+    if (!isGameStarted || isGameOver) return startGame();
+    if (snake.dy === 0) {
+      snake.dx = 0;
+      snake.dy = grid;
+    }
+  });
+
+  document.getElementById('left').addEventListener('click', function () {
+    if (!isGameStarted || isGameOver) return startGame();
+    if (snake.dx === 0) {
+      snake.dx = -grid;
+      snake.dy = 0;
+    }
+  });
+
+  document.getElementById('right').addEventListener('click', function () {
+    if (!isGameStarted || isGameOver) return startGame();
+    if (snake.dx === 0) {
+      snake.dx = grid;
+      snake.dy = 0;
+    }
+  });
+}
+
+setupControls();
+
+document.addEventListener('keydown', function (e) {
+  if (!isGameStarted || isGameOver) startGame();
+
+  if (e.key === "ArrowUp" && snake.dy === 0) {
+    snake.dx = 0;
+    snake.dy = -grid;
+  } else if (e.key === "ArrowDown" && snake.dy === 0) {
+    snake.dx = 0;
+    snake.dy = grid;
+  } else if (e.key === "ArrowLeft" && snake.dx === 0) {
+    snake.dx = -grid;
+    snake.dy = 0;
+  } else if (e.key === "ArrowRight" && snake.dx === 0) {
+    snake.dx = grid;
+    snake.dy = 0;
+  }
+});
+</script>
+</body>
+</html>

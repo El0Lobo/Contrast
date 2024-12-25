@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw on Mona Lisa</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .canvas-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+        }
+        canvas {
+            border: 1px solid #000;
+            width: 100%;
+            height: 100%;
+        }
+        .controls {
+            margin-bottom: 10px;
+        }
+        .reset-button, .save-button, .load-button {
+            padding: 5px 10px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .reset-button { background-color: red; }
+        .color-picker, .size-selector {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button class="reset-button" id="resetButton">Reset</button>
+        <button class="save-button" id="saveButton" style="display: none;">Export</button>
+        <input type="color" id="colorPicker" class="color-picker" value="#000000">
+        <input type="range" id="sizeSelector" class="size-selector" value="2" min="1" max="50" step="1">
+    </div>
+    <div class="canvas-container">
+        <canvas id="imageCanvas" width="400" height="600"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+        const resetButton = document.getElementById('resetButton');
+        const saveButton = document.getElementById('saveButton');
+        const loadButton = document.getElementById('loadButton');
+        const colorPicker = document.getElementById('colorPicker');
+        const sizeSelector = document.getElementById('sizeSelector');
+
+        let painting = false;
+        let strokeColor = colorPicker.value;
+        let lineWidth = parseInt(sizeSelector.value, 10);
+
+        // Load the Mona Lisa image as the canvas background
+        const img = new Image();
+        img.src = 'Mona_Lisa.png';
+        img.onload = function() {
+            loadRandomCanvasFromJSON();
+        };
+
+        function startPosition(e) {
+            painting = true;
+            draw(e);
+        }
+
+        function endPosition() {
+            painting = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!painting) return;
+
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = strokeColor;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        // Reset the canvas to the initial state
+        resetButton.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            saveCanvasToJSON();
+        });
+
+        // Save the canvas content to JSON and trigger download
+        saveButton.addEventListener('click', () => {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const canvasData = {
+                imageData: Array.from(imageData.data),
+                width: imageData.width,
+                height: imageData.height
+            };
+            const jsonString = JSON.stringify(canvasData);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'canvas-data.json';
+            link.click();
+        });
+
+        // Load a random canvas content from JSON files in the root
+        function loadRandomCanvasFromJSON() {
+            const fileNames = ['canvas-data.json', 'canvas-data(1).json', 'canvas-data(2).json', 'canvas-data(3).json', 'canvas-data(4).json'];
+            const randomFile = fileNames[Math.floor(Math.random() * fileNames.length)];
+
+            fetch(randomFile)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(canvasData => {
+                    const imageData = new ImageData(new Uint8ClampedArray(canvasData.imageData), canvasData.width, canvasData.height);
+                    ctx.putImageData(imageData, 0, 0);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                });
+        }
+
+        // Update color dynamically
+        colorPicker.addEventListener('input', (e) => {
+            strokeColor = e.target.value;
+        });
+
+        // Update size dynamically
+        sizeSelector.addEventListener('input', (e) => {
+            lineWidth = parseInt(e.target.value, 10);
+        });
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+    </script>
+</body>
+</html>
