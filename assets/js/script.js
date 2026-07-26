@@ -458,6 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load content into the main section
     function loadContent(file, moveFocus = false) {
         const contentFile = file || 'home.html';
+        const route = contentFile.replace(/\.html$/, '');
     
         if (!contentFile) {
             console.error('No file or hash specified for loading content.');
@@ -471,7 +472,12 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(contentUrl)
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error(`Error ${response.status}: File not found (${contentUrl})`);
+                    return fetch(routeUrl(route)).then((routeResponse) => {
+                        if (!routeResponse.ok) {
+                            throw new Error(`Error ${response.status}: File not found (${contentUrl})`);
+                        }
+                        return routeResponse.text();
+                    });
                 }
                 return response.text();
             })
@@ -483,6 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
                 if (newMainContent) {
                     main.innerHTML = newMainContent;
+                    main.dataset.route = route;
                     updatePageMetadata(contentFile.replace(/\.html$/, ''));
                     enhanceZoomableImages();
                     enableInstagramEmbeds();
@@ -552,6 +559,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (validRoutes.has(oldQueryRoute) || validRoutes.has(oldHashRoute)) {
         history.replaceState({ file: initialFile }, '', routeUrl(initialRoute));
     }
-    enhanceZoomableImages();
-    loadContent(initialFile);
+    if (main.dataset.route === initialRoute) {
+        protectInstagramEmbeds(document);
+        protectFacebookEmbeds(document);
+        enhanceZoomableImages();
+        enableInstagramEmbeds();
+        enableFacebookEmbeds();
+        initializeVenueCarousel();
+        updateActiveLink(initialFile);
+        updatePageMetadata(initialRoute);
+        if (initialRoute === 'Queer-Kneipe') initializeRainbowCursor();
+    } else {
+        loadContent(initialFile);
+    }
 });

@@ -35,6 +35,17 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Build static site
         run: node scripts/build-clean-routes.mjs
+      - name: Verify generated routes
+        run: |
+          test -f dist/index.html
+          test -f dist/Queer-Kneipe/index.html
+          test -f dist/Das-Labor/index.html
+          test -f dist/Punk-Kneipe/index.html
+          test -f dist/Info-Kneipe/index.html
+          test -f dist/Kunst-Kneipe/index.html
+          test -f dist/Spieleabend/index.html
+          test -f dist/mitglied/index.html
+          test -f dist/Kontakt/index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

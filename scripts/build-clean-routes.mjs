@@ -122,7 +122,8 @@ function mainMarkup(contentFile) {
   const content = fs.readFileSync(path.join(projectDir, 'pages', contentFile), 'utf8');
   const match = content.match(/<main(?:\s[^>]*)?>([\s\S]*?)<\/main>/i);
   if (!match) throw new Error(`No <main> found in pages/${contentFile}`);
-  return `<main id="main-content" tabindex="-1">${match[1]}</main>`;
+  const route = contentFile.replace(/\.html$/, '');
+  return `<main id="main-content" tabindex="-1" data-route="${route}">${match[1]}</main>`;
 }
 
 function setMeta(html, page, isRoot) {
