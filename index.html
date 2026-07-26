@@ -23,27 +23,29 @@
 </head>
 
 <body>
+  <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
   <header>
     <div class="header-container">
       <img src="assets/images/logo-wordmark.png" alt="Contrast" class="title-image">
-      <div class="hamburger">☰</div>
+      <button class="hamburger" type="button" aria-label="Navigation öffnen" aria-expanded="false"
+        aria-controls="site-navigation">☰</button>
     </div>
-    <nav>
+    <nav id="site-navigation" aria-label="Hauptnavigation">
       <ul class="menu">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#Queer-Kneipe">Queer-Kneipe</a></li>
-        <li><a href="#Das-Labor">Das Labor</a></li>
-        <li><a href="#Punk-Kneipe">Punk-Kneipe</a></li>
-        <li><a href="#Info-Kneipe">Info-Kneipe</a></li>
-        <li><a href="#Kunst-Kneipe">Kunst-Kneipe</a></li>
-        <li><a href="#Spieleabend">Spieleabend</a></li>
-        <li><a href="#mitglied">Mitglied werden</a></li>
-        <li><a href="#Kontakt">Kontakt</a></li>
+        <li><a href="?page=home" data-route="home">Home</a></li>
+        <li><a href="?page=Queer-Kneipe" data-route="Queer-Kneipe">Queer-Kneipe</a></li>
+        <li><a href="?page=Das-Labor" data-route="Das-Labor">Das Labor</a></li>
+        <li><a href="?page=Punk-Kneipe" data-route="Punk-Kneipe">Punk-Kneipe</a></li>
+        <li><a href="?page=Info-Kneipe" data-route="Info-Kneipe">Info-Kneipe</a></li>
+        <li><a href="?page=Kunst-Kneipe" data-route="Kunst-Kneipe">Kunst-Kneipe</a></li>
+        <li><a href="?page=Spieleabend" data-route="Spieleabend">Spieleabend</a></li>
+        <li><a href="?page=mitglied" data-route="mitglied">Mitglied werden</a></li>
+        <li><a href="?page=Kontakt" data-route="Kontakt">Kontakt</a></li>
       </ul>
     </nav>
   </header>
 
-  <main>
+  <main id="main-content" tabindex="-1">
     <h1>Willkommen im Contrast</h1>
     <p>Euer Zentrum für alternative Musik, Kunst und Kultur in Konstanz, ganz ohne Kommerz.</p>
   </main>
@@ -62,11 +64,12 @@
       </div>
     </div>
   </footer>
-  <div id="impressum-modal" class="modal">
+  <div id="impressum-modal" class="modal" role="dialog" aria-modal="true"
+    aria-labelledby="impressum-heading" aria-hidden="true">
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <button class="close" type="button" aria-label="Impressum schließen">&times;</button>
         <div class='impressum'>
-            <h1>Impressum</h1>
+            <h1 id="impressum-heading">Impressum</h1>
             <p>Angaben gemäß § 5 DDG</p>
             <p>- - <br> 
             Joseph-Belli-Weg 11<br> 

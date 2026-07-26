@@ -5,7 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('impressum-modal');
     const impressumButton = document.querySelector('.impressum-button');
     const closeButton = document.querySelector('.modal .close');
+    const validRoutes = new Set([
+        'home', 'Queer-Kneipe', 'Das-Labor', 'Punk-Kneipe', 'Info-Kneipe',
+        'Kunst-Kneipe', 'Spieleabend', 'mitglied', 'Kontakt'
+    ]);
     let cursorEffectInstance = null; // Track cursor effect instance
+    let modalTrigger = null;
 
     // Base path for content (adjust if necessary)
     const basePath = './content/';
@@ -144,28 +149,123 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function initializeVenueCarousel() {
+        const carousel = main.querySelector('.venue-carousel');
+        if (!carousel) return;
+
+        const track = carousel.querySelector('.venue-carousel__track');
+        const slides = Array.from(carousel.querySelectorAll('.venue-carousel__slide'));
+        const previousButton = carousel.querySelector('.venue-carousel__arrow--prev');
+        const nextButton = carousel.querySelector('.venue-carousel__arrow--next');
+        const currentLabel = carousel.querySelector('.venue-carousel__current');
+        const dotsContainer = carousel.querySelector('.venue-carousel__dots');
+        let currentIndex = 0;
+        let touchStartX = 0;
+
+        const dots = slides.map((_, index) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'venue-carousel__dot';
+            dot.setAttribute('aria-label', `Bild ${index + 1} anzeigen`);
+            dot.addEventListener('click', () => showSlide(index));
+            dotsContainer.appendChild(dot);
+            return dot;
+        });
+
+        function showSlide(index) {
+            currentIndex = (index + slides.length) % slides.length;
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            currentLabel.textContent = String(currentIndex + 1).padStart(2, '0');
+
+            slides.forEach((slide, slideIndex) => {
+                slide.setAttribute('aria-hidden', slideIndex !== currentIndex ? 'true' : 'false');
+            });
+
+            dots.forEach((dot, dotIndex) => {
+                const isCurrent = dotIndex === currentIndex;
+                dot.classList.toggle('is-active', isCurrent);
+                dot.setAttribute('aria-current', isCurrent ? 'true' : 'false');
+            });
+        }
+
+        previousButton.addEventListener('click', () => showSlide(currentIndex - 1));
+        nextButton.addEventListener('click', () => showSlide(currentIndex + 1));
+
+        carousel.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') showSlide(currentIndex - 1);
+            if (event.key === 'ArrowRight') showSlide(currentIndex + 1);
+        });
+
+        carousel.addEventListener('touchstart', (event) => {
+            touchStartX = event.changedTouches[0].clientX;
+        }, { passive: true });
+
+        carousel.addEventListener('touchend', (event) => {
+            const distance = event.changedTouches[0].clientX - touchStartX;
+            if (Math.abs(distance) < 50) return;
+            showSlide(currentIndex + (distance < 0 ? 1 : -1));
+        }, { passive: true });
+
+        showSlide(0);
+    }
+
     // Toggle menu visibility
     if (hamburger && menu) {
         hamburger.addEventListener('click', () => {
-            menu.classList.toggle('active');
+            const isOpen = menu.classList.toggle('active');
+            hamburger.setAttribute('aria-expanded', String(isOpen));
+            hamburger.setAttribute('aria-label', isOpen ? 'Navigation schließen' : 'Navigation öffnen');
         });
     }
 
     // Modal functionality
+    function openModal() {
+        modalTrigger = document.activeElement;
+        modal.style.display = 'block';
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+        closeButton.focus();
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+        modalTrigger?.focus();
+    }
+
     if (impressumButton && modal) {
-        impressumButton.addEventListener('click', () => {
-            modal.style.display = 'block';
-        });
+        impressumButton.addEventListener('click', openModal);
     }
 
     if (closeButton && modal) {
-        closeButton.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
+        closeButton.addEventListener('click', closeModal);
 
         window.addEventListener('click', (event) => {
             if (event.target === modal) {
-                modal.style.display = 'none';
+                closeModal();
+            }
+        });
+
+        modal.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeModal();
+                return;
+            }
+            if (event.key !== 'Tab') return;
+
+            const focusable = Array.from(modal.querySelectorAll(
+                'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            ));
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
             }
         });
     }
@@ -190,9 +290,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Load content into the main section
-    function loadContent(file) {
-        const hash = window.location.hash.substring(1); // Get the current hash without the #
-        const contentFile = file || `${hash}.html`; // Default to the hash if no file is provided
+    function loadContent(file, moveFocus = false) {
+        const contentFile = file || 'home.html';
     
         if (!contentFile) {
             console.error('No file or hash specified for loading content.');
@@ -217,6 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     main.innerHTML = newMainContent;
                     enableInstagramEmbeds();
                     enableFacebookEmbeds();
+                    initializeVenueCarousel();
     
                     // Initialize Rainbow Cursor for specific pages
                     if (contentFile === 'Queer-Kneipe.html') {
@@ -226,6 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
     
                     updateActiveLink(contentFile);
+                    if (moveFocus) main.focus();
                 } else {
                     throw new Error(`Main content not found in file: ${contentFile}`);
                 }
@@ -236,46 +337,47 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
     
-    // Listen for hash changes and load corresponding content
-    window.addEventListener('hashchange', () => {
-        loadContent(); // Automatically infer file from the hash
-    });
-    
-
-    
-
     // Update active link styling
     function updateActiveLink(activeFile) {
         menu?.querySelectorAll('a').forEach((link) => {
-            const linkFile = `${link.getAttribute('href').substring(1)}.html`;
-            link.style.textDecoration = linkFile === activeFile ? 'underline' : 'none';
+            const isActive = `${link.dataset.route}.html` === activeFile;
+            link.classList.toggle('is-active', isActive);
+            if (isActive) {
+                link.setAttribute('aria-current', 'page');
+            } else {
+                link.removeAttribute('aria-current');
+            }
         });
     }
 
-    // Handle menu link clicks
-    const menuLinks = document.querySelectorAll('.menu a');
-    menuLinks.forEach((link) => {
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
-            const file = `${link.getAttribute('href').substring(1)}.html`;
-            history.pushState({ file }, '', link.getAttribute('href'));
-            loadContent(file);
+    // Handle both persistent navigation and links inside dynamically loaded content.
+    document.addEventListener('click', (event) => {
+        const link = event.target.closest('a[data-route]');
+        if (!link || !validRoutes.has(link.dataset.route)) return;
 
-            // Close the menu in mobile view after navigation
-            if (window.innerWidth <= 768) {
-                menu?.classList.remove('active');
-            }
-        });
+        event.preventDefault();
+        const route = link.dataset.route;
+        const file = `${route}.html`;
+        history.pushState({ file }, '', `?page=${encodeURIComponent(route)}`);
+        loadContent(file, true);
+
+        menu?.classList.remove('active');
+        hamburger?.setAttribute('aria-expanded', 'false');
+        hamburger?.setAttribute('aria-label', 'Navigation öffnen');
     });
 
     // Handle back/forward navigation
     window.addEventListener('popstate', (event) => {
-        const file = event.state?.file || 'home.html';
-        loadContent(file);
+        const route = new URLSearchParams(window.location.search).get('page') || 'home';
+        const safeRoute = validRoutes.has(route) ? route : 'home';
+        loadContent(event.state?.file || `${safeRoute}.html`, true);
     });
 
     // Initial content load
-    const initialHash = window.location.hash.substring(1);
-    const initialFile = initialHash ? `${initialHash}.html` : 'home.html';
+    const queryRoute = new URLSearchParams(window.location.search).get('page');
+    const legacyHashRoute = window.location.hash.substring(1);
+    const requestedRoute = queryRoute || legacyHashRoute || 'home';
+    const initialRoute = validRoutes.has(requestedRoute) ? requestedRoute : 'home';
+    const initialFile = `${initialRoute}.html`;
     loadContent(initialFile);
 });
