@@ -19,8 +19,132 @@ document.addEventListener('DOMContentLoaded', () => {
         'home', 'Queer-Kneipe', 'Das-Labor', 'Punk-Kneipe', 'Info-Kneipe',
         'Kunst-Kneipe', 'Spieleabend', 'mitglied', 'Kontakt'
     ]);
+    const routeMetadata = {
+        home: {
+            title: 'Contrast Konstanz | Alternative Musik, Kunst & Kultur',
+            description: 'Das Contrast ist ein selbstverwalteter Jugendclub in Konstanz für alternative Musik, Kunst, Kultur und eine offene Gemeinschaft.',
+            image: 'assets/images/venue/contrast-venue-01.jpg'
+        },
+        'Queer-Kneipe': {
+            title: 'Queer-Kneipe in Konstanz | Contrast',
+            description: 'Die Queer-Kneipe im Contrast Konstanz: ein offener, sicherer Treffpunkt mit Musik, Gesprächen und Gemeinschaft am Montagabend.',
+            image: 'assets/icons/events/queer-kneipe.png'
+        },
+        'Das-Labor': {
+            title: 'Das Labor – experimentelle Musik in Konstanz | Contrast',
+            description: 'Elektronische Klänge, experimentelle Musik und kreative Performances: Entdecke Das Labor jeden Dienstag im Contrast Konstanz.',
+            image: 'assets/icons/events/das-labor.png'
+        },
+        'Punk-Kneipe': {
+            title: 'Punk-Kneipe in Konstanz | Contrast',
+            description: 'Punk, Gemeinschaft und erschwingliche Getränke: Die Punk-Kneipe findet jeden Donnerstag im Contrast Konstanz statt.',
+            image: 'assets/icons/events/punk-kneipe.png'
+        },
+        'Info-Kneipe': {
+            title: 'Info-Kneipe – Vorträge & Austausch | Contrast Konstanz',
+            description: 'Vorträge, Diskussionen und Austausch zu Politik, Gesellschaft, Umwelt und Kultur bei der Info-Kneipe im Contrast Konstanz.',
+            image: 'assets/icons/events/info-kneipe.png'
+        },
+        'Kunst-Kneipe': {
+            title: 'Kunst-Kneipe in Konstanz | Contrast',
+            description: 'Kunst erleben, gemeinsam kreativ werden und lokale Künstler*innen treffen bei der Kunst-Kneipe im Contrast Konstanz.',
+            image: 'assets/icons/events/kunstkneipe2.png'
+        },
+        Spieleabend: {
+            title: 'Spieleabend in Konstanz | Contrast',
+            description: 'Brettspiele, Kartenspiele und eine offene Gemeinschaft: Informiere dich über den nächsten Spieleabend im Contrast Konstanz.',
+            image: 'assets/icons/events/spieleabend.png'
+        },
+        mitglied: {
+            title: 'Mitglied werden | Contrast Konstanz',
+            description: 'Werde Mitglied im Contrast und gestalte alternative Musik, Kunst, Kultur und gemeinschaftliche Veranstaltungen in Konstanz mit.',
+            image: 'assets/images/membership-poster.png'
+        },
+        Kontakt: {
+            title: 'Kontakt, Anfahrt & Öffnungszeiten | Contrast Konstanz',
+            description: 'Adresse, Anfahrt, Öffnungszeiten und Booking-Kontakt des Contrast am Joseph-Belli-Weg 11 in Konstanz.',
+            image: 'assets/images/map.png'
+        }
+    };
     let cursorEffectInstance = null; // Track cursor effect instance
     let modalTrigger = null;
+    let imageModalTrigger = null;
+
+    const imageModal = document.createElement('div');
+    imageModal.className = 'image-modal';
+    imageModal.setAttribute('role', 'dialog');
+    imageModal.setAttribute('aria-modal', 'true');
+    imageModal.setAttribute('aria-label', 'Bildansicht');
+    imageModal.setAttribute('aria-hidden', 'true');
+    imageModal.innerHTML = `
+        <div class="image-modal__content">
+            <button class="image-modal__close" type="button" aria-label="Bildansicht schließen">&times;</button>
+            <img class="image-modal__image" src="" alt="">
+            <p class="image-modal__caption"></p>
+        </div>
+    `;
+    document.body.appendChild(imageModal);
+
+    const imageModalImage = imageModal.querySelector('.image-modal__image');
+    const imageModalCaption = imageModal.querySelector('.image-modal__caption');
+    const imageModalClose = imageModal.querySelector('.image-modal__close');
+
+    function enhanceZoomableImages() {
+        main.querySelectorAll('img:not(.logo2)').forEach((image) => {
+            image.classList.add('is-zoomable');
+            image.setAttribute('tabindex', '0');
+            image.setAttribute('role', 'button');
+            image.setAttribute('aria-label', `${image.alt || 'Bild'} vergrößern`);
+        });
+    }
+
+    function openImageModal(image) {
+        imageModalTrigger = image;
+        imageModalImage.src = image.currentSrc || image.src;
+        imageModalImage.alt = image.alt || '';
+        imageModalCaption.textContent = image.alt || '';
+        imageModalCaption.hidden = !image.alt;
+        imageModal.classList.add('is-open');
+        imageModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+        imageModalClose.focus();
+    }
+
+    function closeImageModal() {
+        if (!imageModal.classList.contains('is-open')) return;
+        imageModal.classList.remove('is-open');
+        imageModal.setAttribute('aria-hidden', 'true');
+        imageModalImage.src = '';
+        document.body.classList.remove('modal-open');
+        imageModalTrigger?.focus();
+        imageModalTrigger = null;
+    }
+
+    main.addEventListener('click', (event) => {
+        const image = event.target.closest('img.is-zoomable');
+        if (!image) return;
+        event.preventDefault();
+        openImageModal(image);
+    });
+
+    main.addEventListener('keydown', (event) => {
+        const image = event.target.closest('img.is-zoomable');
+        if (!image || (event.key !== 'Enter' && event.key !== ' ')) return;
+        event.preventDefault();
+        openImageModal(image);
+    });
+
+    imageModalClose.addEventListener('click', closeImageModal);
+    imageModal.addEventListener('click', (event) => {
+        if (event.target === imageModal) closeImageModal();
+    });
+    imageModal.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeImageModal();
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            imageModalClose.focus();
+        }
+    });
 
     function routeFromLocation() {
         const queryRoute = new URLSearchParams(window.location.search).get('page');
@@ -34,8 +158,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return new URL(route === 'home' ? './' : `./${route}/`, siteRoot).href;
     }
 
-    // Base path for content (adjust if necessary)
-    const basePath = new URL('content/', siteRoot).href;
+    function updatePageMetadata(route) {
+        const metadata = routeMetadata[route] || routeMetadata.home;
+        const canonicalUrl = routeUrl(route);
+        const imageUrl = new URL(metadata.image, siteRoot).href;
+        document.title = metadata.title;
+
+        const values = {
+            'meta[name="description"]': metadata.description,
+            'meta[property="og:title"]': metadata.title,
+            'meta[property="og:description"]': metadata.description,
+            'meta[property="og:url"]': canonicalUrl,
+            'meta[property="og:image"]': imageUrl
+        };
+
+        Object.entries(values).forEach(([selector, content]) => {
+            document.querySelector(selector)?.setAttribute('content', content);
+        });
+        document.querySelector('link[rel="canonical"]')?.setAttribute('href', canonicalUrl);
+    }
+
+    const pagesPath = new URL('pages/', siteRoot).href;
 
     // Function to attach animation end event listener
     function attachAnimationHandler() {
@@ -321,22 +464,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
     
-        fetch(`${basePath}${contentFile}`)
+        const contentUrl = contentFile === 'home.html'
+            ? siteRoot.href
+            : `${pagesPath}${contentFile}`;
+
+        fetch(contentUrl)
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error(`Error ${response.status}: File not found (${contentFile})`);
+                    throw new Error(`Error ${response.status}: File not found (${contentUrl})`);
                 }
                 return response.text();
             })
             .then((html) => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                protectInstagramEmbeds(doc);
-                protectFacebookEmbeds(doc);
-                const newMainContent = doc.querySelector('main')?.innerHTML;
+                const pageDocument = new DOMParser().parseFromString(html, 'text/html');
+                protectInstagramEmbeds(pageDocument);
+                protectFacebookEmbeds(pageDocument);
+                const newMainContent = pageDocument.querySelector('main')?.innerHTML;
     
                 if (newMainContent) {
                     main.innerHTML = newMainContent;
+                    updatePageMetadata(contentFile.replace(/\.html$/, ''));
+                    enhanceZoomableImages();
                     enableInstagramEmbeds();
                     enableFacebookEmbeds();
                     initializeVenueCarousel();
@@ -404,5 +552,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (validRoutes.has(oldQueryRoute) || validRoutes.has(oldHashRoute)) {
         history.replaceState({ file: initialFile }, '', routeUrl(initialRoute));
     }
+    enhanceZoomableImages();
     loadContent(initialFile);
 });

@@ -1,5 +1,3 @@
-# Local prototypes and archived implementations
-/snake/
+# Generated deployment and archived implementations
+/dist/
 /old/
-/mona/
-/theoretical backend (you guys need to implement this yourself)/
