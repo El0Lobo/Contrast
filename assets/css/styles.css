@@ -209,6 +209,37 @@ main {
     z-index: 1; /* Ensures text stays above the background */
 }
 
+main > p {
+    width: min(760px, 100%);
+    margin: 0 auto 1rem;
+    line-height: 1.65;
+}
+
+main > h1 {
+    width: min(900px, 100%);
+    margin: 2.5rem auto 1.5rem;
+    line-height: 1.15;
+    text-wrap: balance;
+}
+
+.about-copy {
+    width: min(760px, 100%);
+    margin: 3rem auto;
+}
+
+.about-copy h1 {
+    margin: 0 0 1.5rem;
+}
+
+.about-copy p {
+    margin: 0 0 1rem;
+    line-height: 1.65;
+}
+
+.about-copy p:last-child {
+    margin-bottom: 0;
+}
+
 footer {
     background-color: rgba(0, 0, 0, 0.7);
     color: white;

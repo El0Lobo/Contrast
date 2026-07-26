@@ -71,8 +71,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function protectFacebookEmbeds(doc) {
+        doc.querySelectorAll('iframe[src*="facebook.com/plugins/"]').forEach((iframe) => {
+            const embedUrl = iframe.getAttribute('src');
+            const container = iframe.closest('.facebook-container');
+            if (!embedUrl || !container) return;
+
+            const placeholder = doc.createElement('section');
+            placeholder.className = 'instagram-consent facebook-consent';
+            placeholder.dataset.embedUrl = embedUrl;
+            placeholder.setAttribute('aria-label', 'Facebook-Inhalt');
+            placeholder.innerHTML = `
+                <div class="instagram-consent__mark" aria-hidden="true">f</div>
+                <h2>Facebook-Inhalt</h2>
+                <p>Dieser Inhalt wird von Facebook bereitgestellt. Erst wenn du ihn lädst, wird eine Verbindung zu Meta hergestellt. Dabei können personenbezogene Daten, etwa deine IP-Adresse, übertragen und Cookies gesetzt werden.</p>
+                <button type="button" class="instagram-consent__load facebook-consent__load">Facebook laden</button>
+                <p class="instagram-consent__links">
+                    <a href="https://www.facebook.com/punkKneipeContrast/" target="_blank" rel="noopener noreferrer">Seite direkt öffnen</a>
+                    <span aria-hidden="true">·</span>
+                    <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">Datenschutzhinweise von Facebook</a>
+                </p>
+            `;
+            container.replaceWith(placeholder);
+        });
+    }
+
     function enableInstagramEmbeds() {
-        main.querySelectorAll('.instagram-consent__load').forEach((button) => {
+        main.querySelectorAll('.instagram-consent:not(.facebook-consent) .instagram-consent__load').forEach((button) => {
             button.addEventListener('click', () => {
                 const placeholder = button.closest('.instagram-consent');
                 const embedUrl = placeholder?.dataset.embedUrl;
@@ -87,6 +112,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 iframe.setAttribute('scrolling', 'no');
                 iframe.setAttribute('allowtransparency', 'true');
                 placeholder.replaceWith(iframe);
+            });
+        });
+    }
+
+    function enableFacebookEmbeds() {
+        main.querySelectorAll('.facebook-consent__load').forEach((button) => {
+            button.addEventListener('click', () => {
+                const placeholder = button.closest('.facebook-consent');
+                const embedUrl = placeholder?.dataset.embedUrl;
+                if (!placeholder || !embedUrl) return;
+
+                const container = document.createElement('div');
+                container.className = 'facebook-container';
+
+                const iframe = document.createElement('iframe');
+                iframe.src = embedUrl;
+                iframe.title = 'Facebook-Inhalt';
+                iframe.width = '100%';
+                iframe.height = '100%';
+                iframe.loading = 'lazy';
+                iframe.style.border = 'none';
+                iframe.style.overflow = 'hidden';
+                iframe.setAttribute('scrolling', 'no');
+                iframe.setAttribute('allowfullscreen', 'true');
+                iframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share');
+
+                container.appendChild(iframe);
+                placeholder.replaceWith(container);
             });
         });
     }
@@ -157,11 +210,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 protectInstagramEmbeds(doc);
+                protectFacebookEmbeds(doc);
                 const newMainContent = doc.querySelector('main')?.innerHTML;
     
                 if (newMainContent) {
                     main.innerHTML = newMainContent;
                     enableInstagramEmbeds();
+                    enableFacebookEmbeds();
     
                     // Initialize Rainbow Cursor for specific pages
                     if (contentFile === 'Queer-Kneipe.html') {
