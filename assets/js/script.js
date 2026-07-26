@@ -15,56 +15,73 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('impressum-modal');
     const impressumButton = document.querySelector('.impressum-button');
     const closeButton = document.querySelector('.modal .close');
+    const languageButtons = document.querySelectorAll('[data-language]');
+    const browserLanguage = navigator.languages?.[0] || navigator.language || 'en';
+    let currentLanguage = localStorage.getItem('contrast-language')
+        || (browserLanguage.toLowerCase().startsWith('de') ? 'de' : 'en');
     const validRoutes = new Set([
         'home', 'Queer-Kneipe', 'Das-Labor', 'Punk-Kneipe', 'Info-Kneipe',
         'Kunst-Kneipe', 'Spieleabend', 'mitglied', 'Kontakt'
     ]);
     const routeMetadata = {
+      en: {
         home: {
-            title: 'Contrast Konstanz | Alternative Musik, Kunst & Kultur',
-            description: 'Das Contrast ist ein selbstverwalteter Jugendclub in Konstanz für alternative Musik, Kunst, Kultur und eine offene Gemeinschaft.',
+            title: 'Contrast Konstanz | Alternative Music, Art & Culture',
+            description: 'Contrast is a self-managed youth club in Konstanz for alternative music, art, culture and an open community.',
             image: 'assets/images/venue/contrast-venue-01.jpg'
         },
         'Queer-Kneipe': {
-            title: 'Queer-Kneipe in Konstanz | Contrast',
-            description: 'Die Queer-Kneipe im Contrast Konstanz: ein offener, sicherer Treffpunkt mit Musik, Gesprächen und Gemeinschaft am Montagabend.',
+            title: 'Queer Night in Konstanz | Contrast',
+            description: 'Queer Night at Contrast Konstanz is an open, safer meeting place with music, conversation and community every Monday.',
             image: 'assets/icons/events/queer-kneipe.png'
         },
         'Das-Labor': {
-            title: 'Das Labor – experimentelle Musik in Konstanz | Contrast',
-            description: 'Elektronische Klänge, experimentelle Musik und kreative Performances: Entdecke Das Labor jeden Dienstag im Contrast Konstanz.',
+            title: 'The Lab – experimental music in Konstanz | Contrast',
+            description: 'Electronic sounds, experimental music and creative performances every Tuesday at Contrast Konstanz.',
             image: 'assets/icons/events/das-labor.png'
         },
         'Punk-Kneipe': {
-            title: 'Punk-Kneipe in Konstanz | Contrast',
-            description: 'Punk, Gemeinschaft und erschwingliche Getränke: Die Punk-Kneipe findet jeden Donnerstag im Contrast Konstanz statt.',
+            title: 'Punk Night in Konstanz | Contrast',
+            description: 'Punk, community and affordable drinks every Thursday at Punk Night in Contrast Konstanz.',
             image: 'assets/icons/events/punk-kneipe.png'
         },
         'Info-Kneipe': {
-            title: 'Info-Kneipe – Vorträge & Austausch | Contrast Konstanz',
-            description: 'Vorträge, Diskussionen und Austausch zu Politik, Gesellschaft, Umwelt und Kultur bei der Info-Kneipe im Contrast Konstanz.',
+            title: 'Info Night – Talks & Discussion | Contrast Konstanz',
+            description: 'Talks and discussions about politics, society, the environment and culture at Info Night in Contrast Konstanz.',
             image: 'assets/icons/events/info-kneipe.png'
         },
         'Kunst-Kneipe': {
-            title: 'Kunst-Kneipe in Konstanz | Contrast',
-            description: 'Kunst erleben, gemeinsam kreativ werden und lokale Künstler*innen treffen bei der Kunst-Kneipe im Contrast Konstanz.',
+            title: 'Art Night in Konstanz | Contrast',
+            description: 'Experience art, get creative together and meet local artists at Art Night in Contrast Konstanz.',
             image: 'assets/icons/events/kunstkneipe2.png'
         },
         Spieleabend: {
-            title: 'Spieleabend in Konstanz | Contrast',
-            description: 'Brettspiele, Kartenspiele und eine offene Gemeinschaft: Informiere dich über den nächsten Spieleabend im Contrast Konstanz.',
+            title: 'Games Night in Konstanz | Contrast',
+            description: 'Board games, card games and an open community at Games Night in Contrast Konstanz.',
             image: 'assets/icons/events/spieleabend.png'
         },
         mitglied: {
-            title: 'Mitglied werden | Contrast Konstanz',
-            description: 'Werde Mitglied im Contrast und gestalte alternative Musik, Kunst, Kultur und gemeinschaftliche Veranstaltungen in Konstanz mit.',
+            title: 'Become a Member | Contrast Konstanz',
+            description: 'Become a Contrast member and help shape alternative music, art, culture and community events in Konstanz.',
             image: 'assets/images/membership-poster.png'
         },
         Kontakt: {
-            title: 'Kontakt, Anfahrt & Öffnungszeiten | Contrast Konstanz',
-            description: 'Adresse, Anfahrt, Öffnungszeiten und Booking-Kontakt des Contrast am Joseph-Belli-Weg 11 in Konstanz.',
+            title: 'Contact, Directions & Opening Hours | Contrast Konstanz',
+            description: 'Address, directions, opening hours and booking contact for Contrast at Joseph-Belli-Weg 11 in Konstanz.',
             image: 'assets/images/map.png'
         }
+      },
+      de: {
+        home: { title: 'Contrast Konstanz | Alternative Musik, Kunst & Kultur', description: 'Das Contrast ist ein selbstverwalteter Jugendclub in Konstanz für alternative Musik, Kunst, Kultur und eine offene Gemeinschaft.', image: 'assets/images/venue/contrast-venue-01.jpg' },
+        'Queer-Kneipe': { title: 'Queer-Kneipe in Konstanz | Contrast', description: 'Die Queer-Kneipe im Contrast Konstanz: ein offener, sicherer Treffpunkt mit Musik, Gesprächen und Gemeinschaft am Montagabend.', image: 'assets/icons/events/queer-kneipe.png' },
+        'Das-Labor': { title: 'Das Labor – experimentelle Musik in Konstanz | Contrast', description: 'Elektronische Klänge, experimentelle Musik und kreative Performances: Entdecke Das Labor jeden Dienstag im Contrast Konstanz.', image: 'assets/icons/events/das-labor.png' },
+        'Punk-Kneipe': { title: 'Punk-Kneipe in Konstanz | Contrast', description: 'Punk, Gemeinschaft und erschwingliche Getränke: Die Punk-Kneipe findet jeden Donnerstag im Contrast Konstanz statt.', image: 'assets/icons/events/punk-kneipe.png' },
+        'Info-Kneipe': { title: 'Info-Kneipe – Vorträge & Austausch | Contrast Konstanz', description: 'Vorträge, Diskussionen und Austausch zu Politik, Gesellschaft, Umwelt und Kultur bei der Info-Kneipe im Contrast Konstanz.', image: 'assets/icons/events/info-kneipe.png' },
+        'Kunst-Kneipe': { title: 'Kunst-Kneipe in Konstanz | Contrast', description: 'Kunst erleben, gemeinsam kreativ werden und lokale Künstler*innen treffen bei der Kunst-Kneipe im Contrast Konstanz.', image: 'assets/icons/events/kunstkneipe2.png' },
+        Spieleabend: { title: 'Spieleabend in Konstanz | Contrast', description: 'Brettspiele, Kartenspiele und eine offene Gemeinschaft: Informiere dich über den nächsten Spieleabend im Contrast Konstanz.', image: 'assets/icons/events/spieleabend.png' },
+        mitglied: { title: 'Mitglied werden | Contrast Konstanz', description: 'Werde Mitglied im Contrast und gestalte alternative Musik, Kunst, Kultur und gemeinschaftliche Veranstaltungen in Konstanz mit.', image: 'assets/images/membership-poster.png' },
+        Kontakt: { title: 'Kontakt, Anfahrt & Öffnungszeiten | Contrast Konstanz', description: 'Adresse, Anfahrt, Öffnungszeiten und Booking-Kontakt des Contrast am Joseph-Belli-Weg 11 in Konstanz.', image: 'assets/images/map.png' }
+      }
     };
     let cursorEffectInstance = null; // Track cursor effect instance
     let modalTrigger = null;
@@ -74,11 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
     imageModal.className = 'image-modal';
     imageModal.setAttribute('role', 'dialog');
     imageModal.setAttribute('aria-modal', 'true');
-    imageModal.setAttribute('aria-label', 'Bildansicht');
+    imageModal.setAttribute('aria-label', 'Image view');
     imageModal.setAttribute('aria-hidden', 'true');
     imageModal.innerHTML = `
         <div class="image-modal__content">
-            <button class="image-modal__close" type="button" aria-label="Bildansicht schließen">&times;</button>
+            <button class="image-modal__close" type="button" aria-label="Close image view">&times;</button>
             <img class="image-modal__image" src="" alt="">
             <p class="image-modal__caption"></p>
         </div>
@@ -94,7 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
             image.classList.add('is-zoomable');
             image.setAttribute('tabindex', '0');
             image.setAttribute('role', 'button');
-            image.setAttribute('aria-label', `${image.alt || 'Bild'} vergrößern`);
+            image.setAttribute('aria-label', currentLanguage === 'de'
+                ? `${image.alt || 'Bild'} vergrößern`
+                : `Enlarge ${image.alt || 'image'}`);
         });
     }
 
@@ -159,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updatePageMetadata(route) {
-        const metadata = routeMetadata[route] || routeMetadata.home;
+        const metadata = routeMetadata[currentLanguage][route] || routeMetadata[currentLanguage].home;
         const canonicalUrl = routeUrl(route);
         const imageUrl = new URL(metadata.image, siteRoot).href;
         document.title = metadata.title;
@@ -179,6 +198,75 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const pagesPath = new URL('pages/', siteRoot).href;
+    const chromeCopy = {
+        en: {
+            skip: 'Skip to content',
+            nav: ['Home', 'Queer Night', 'The Lab', 'Punk Night', 'Info Night', 'Art Night', 'Games Night', 'Become a member', 'Contact'],
+            navLabel: 'Main navigation',
+            openNav: 'Open navigation',
+            closeNav: 'Close navigation',
+            legal: 'Legal notice',
+            closeLegal: 'Close legal notice',
+            imageView: 'Image view',
+            closeImage: 'Close image view',
+            notFound: 'Content not found or invalid structure.'
+        },
+        de: {
+            skip: 'Zum Inhalt springen',
+            nav: ['Home', 'Queer-Kneipe', 'Das Labor', 'Punk-Kneipe', 'Info-Kneipe', 'Kunst-Kneipe', 'Spieleabend', 'Mitglied werden', 'Kontakt'],
+            navLabel: 'Hauptnavigation',
+            openNav: 'Navigation öffnen',
+            closeNav: 'Navigation schließen',
+            legal: 'Impressum',
+            closeLegal: 'Impressum schließen',
+            imageView: 'Bildansicht',
+            closeImage: 'Bildansicht schließen',
+            notFound: 'Inhalt nicht gefunden oder ungültig.'
+        }
+    };
+    const legalNotice = document.querySelector('.impressum');
+    const englishLegalMarkup = legalNotice?.innerHTML || '';
+    let germanLegalMarkup = '';
+
+    async function updateLegalNotice() {
+        if (!legalNotice) return;
+        if (currentLanguage === 'en') {
+            legalNotice.innerHTML = englishLegalMarkup;
+            return;
+        }
+        if (!germanLegalMarkup) {
+            try {
+                const response = await fetch(`${pagesPath}de/legal.html`);
+                if (!response.ok) throw new Error(`Error ${response.status}`);
+                const documentFragment = new DOMParser().parseFromString(await response.text(), 'text/html');
+                germanLegalMarkup = documentFragment.querySelector('.impressum')?.innerHTML || '';
+            } catch (error) {
+                console.error('Could not load the German legal notice:', error);
+            }
+        }
+        if (germanLegalMarkup && currentLanguage === 'de') {
+            legalNotice.innerHTML = germanLegalMarkup;
+        }
+    }
+
+    function applyChromeLanguage() {
+        const copy = chromeCopy[currentLanguage];
+        document.documentElement.lang = currentLanguage;
+        document.querySelector('meta[property="og:locale"]')?.setAttribute('content', currentLanguage === 'de' ? 'de_DE' : 'en_GB');
+        document.querySelector('.skip-link').textContent = copy.skip;
+        document.querySelector('#site-navigation').setAttribute('aria-label', copy.navLabel);
+        menu?.querySelectorAll('a').forEach((link, index) => { link.textContent = copy.nav[index]; });
+        document.querySelector('.impressum-button').textContent = copy.legal;
+        document.querySelector('.modal .close').setAttribute('aria-label', copy.closeLegal);
+        document.querySelector('.image-modal').setAttribute('aria-label', copy.imageView);
+        document.querySelector('.image-modal__close').setAttribute('aria-label', copy.closeImage);
+        const isOpen = menu?.classList.contains('active');
+        hamburger?.setAttribute('aria-label', isOpen ? copy.closeNav : copy.openNav);
+        languageButtons.forEach((button) => {
+            button.setAttribute('aria-pressed', String(button.dataset.language === currentLanguage));
+        });
+        updateLegalNotice();
+    }
 
     // Function to attach animation end event listener
     function attachAnimationHandler() {
@@ -209,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // no visitor data unless the visitor actively loads the embed.
     function protectInstagramEmbeds(doc) {
         doc.querySelectorAll('iframe[src*="instagram.com"]').forEach((iframe) => {
+            const isGerman = currentLanguage === 'de';
             const embedUrl = iframe.getAttribute('src');
             let profileUrl = 'https://www.instagram.com/contrast_kn/';
 
@@ -225,16 +314,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const placeholder = doc.createElement('section');
             placeholder.className = 'instagram-consent';
             placeholder.dataset.embedUrl = embedUrl;
-            placeholder.setAttribute('aria-label', 'Instagram-Inhalt');
+            placeholder.setAttribute('aria-label', isGerman ? 'Instagram-Inhalt' : 'Instagram content');
             placeholder.innerHTML = `
                 <div class="instagram-consent__mark" aria-hidden="true">◎</div>
-                <h2>Instagram-Inhalt</h2>
-                <p>Dieser Inhalt wird von Instagram bereitgestellt. Erst wenn du ihn lädst, wird eine Verbindung zu Meta hergestellt. Dabei können personenbezogene Daten, etwa deine IP-Adresse, übertragen und Cookies gesetzt werden.</p>
-                <button type="button" class="instagram-consent__load">Instagram laden</button>
+                <h2>${isGerman ? 'Instagram-Inhalt' : 'Instagram content'}</h2>
+                <p>${isGerman ? 'Dieser Inhalt wird von Instagram bereitgestellt. Erst wenn du ihn lädst, wird eine Verbindung zu Meta hergestellt. Dabei können personenbezogene Daten, etwa deine IP-Adresse, übertragen und Cookies gesetzt werden.' : 'This content is provided by Instagram. A connection to Meta is made only when you load it. Personal data, such as your IP address, may be transferred and cookies may be set.'}</p>
+                <button type="button" class="instagram-consent__load">${isGerman ? 'Instagram laden' : 'Load Instagram'}</button>
                 <p class="instagram-consent__links">
-                    <a href="${profileUrl}" target="_blank" rel="noopener noreferrer">Profil direkt öffnen</a>
+                    <a href="${profileUrl}" target="_blank" rel="noopener noreferrer">${isGerman ? 'Profil direkt öffnen' : 'Open profile directly'}</a>
                     <span aria-hidden="true">·</span>
-                    <a href="https://privacycenter.instagram.com/policy/" target="_blank" rel="noopener noreferrer">Datenschutzhinweise von Instagram</a>
+                    <a href="https://privacycenter.instagram.com/policy/" target="_blank" rel="noopener noreferrer">${isGerman ? 'Datenschutzhinweise von Instagram' : 'Instagram privacy policy'}</a>
                 </p>
             `;
             iframe.replaceWith(placeholder);
@@ -243,6 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function protectFacebookEmbeds(doc) {
         doc.querySelectorAll('iframe[src*="facebook.com/plugins/"]').forEach((iframe) => {
+            const isGerman = currentLanguage === 'de';
             const embedUrl = iframe.getAttribute('src');
             const container = iframe.closest('.facebook-container');
             if (!embedUrl || !container) return;
@@ -250,16 +340,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const placeholder = doc.createElement('section');
             placeholder.className = 'instagram-consent facebook-consent';
             placeholder.dataset.embedUrl = embedUrl;
-            placeholder.setAttribute('aria-label', 'Facebook-Inhalt');
+            placeholder.setAttribute('aria-label', isGerman ? 'Facebook-Inhalt' : 'Facebook content');
             placeholder.innerHTML = `
                 <div class="instagram-consent__mark" aria-hidden="true">f</div>
-                <h2>Facebook-Inhalt</h2>
-                <p>Dieser Inhalt wird von Facebook bereitgestellt. Erst wenn du ihn lädst, wird eine Verbindung zu Meta hergestellt. Dabei können personenbezogene Daten, etwa deine IP-Adresse, übertragen und Cookies gesetzt werden.</p>
-                <button type="button" class="instagram-consent__load facebook-consent__load">Facebook laden</button>
+                <h2>${isGerman ? 'Facebook-Inhalt' : 'Facebook content'}</h2>
+                <p>${isGerman ? 'Dieser Inhalt wird von Facebook bereitgestellt. Erst wenn du ihn lädst, wird eine Verbindung zu Meta hergestellt. Dabei können personenbezogene Daten, etwa deine IP-Adresse, übertragen und Cookies gesetzt werden.' : 'This content is provided by Facebook. A connection to Meta is made only when you load it. Personal data, such as your IP address, may be transferred and cookies may be set.'}</p>
+                <button type="button" class="instagram-consent__load facebook-consent__load">${isGerman ? 'Facebook laden' : 'Load Facebook'}</button>
                 <p class="instagram-consent__links">
-                    <a href="https://www.facebook.com/punkKneipeContrast/" target="_blank" rel="noopener noreferrer">Seite direkt öffnen</a>
+                    <a href="https://www.facebook.com/punkKneipeContrast/" target="_blank" rel="noopener noreferrer">${isGerman ? 'Seite direkt öffnen' : 'Open page directly'}</a>
                     <span aria-hidden="true">·</span>
-                    <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">Datenschutzhinweise von Facebook</a>
+                    <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">${isGerman ? 'Datenschutzhinweise von Facebook' : 'Facebook privacy policy'}</a>
                 </p>
             `;
             container.replaceWith(placeholder);
@@ -276,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const iframe = document.createElement('iframe');
                 iframe.src = embedUrl;
                 iframe.className = 'instagram-embed';
-                iframe.title = 'Instagram-Inhalt';
+                iframe.title = currentLanguage === 'de' ? 'Instagram-Inhalt' : 'Instagram content';
                 iframe.loading = 'lazy';
                 iframe.setAttribute('frameborder', '0');
                 iframe.setAttribute('scrolling', 'no');
@@ -298,7 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const iframe = document.createElement('iframe');
                 iframe.src = embedUrl;
-                iframe.title = 'Facebook-Inhalt';
+                iframe.title = currentLanguage === 'de' ? 'Facebook-Inhalt' : 'Facebook content';
                 iframe.width = '100%';
                 iframe.height = '100%';
                 iframe.loading = 'lazy';
@@ -331,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dot = document.createElement('button');
             dot.type = 'button';
             dot.className = 'venue-carousel__dot';
-            dot.setAttribute('aria-label', `Bild ${index + 1} anzeigen`);
+            dot.setAttribute('aria-label', currentLanguage === 'de' ? `Bild ${index + 1} anzeigen` : `Show image ${index + 1}`);
             dot.addEventListener('click', () => showSlide(index));
             dotsContainer.appendChild(dot);
             return dot;
@@ -379,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hamburger.addEventListener('click', () => {
             const isOpen = menu.classList.toggle('active');
             hamburger.setAttribute('aria-expanded', String(isOpen));
-            hamburger.setAttribute('aria-label', isOpen ? 'Navigation schließen' : 'Navigation öffnen');
+            hamburger.setAttribute('aria-label', isOpen ? chromeCopy[currentLanguage].closeNav : chromeCopy[currentLanguage].openNav);
             hamburger.textContent = isOpen ? '×' : '☰';
         });
     }
@@ -465,9 +555,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
     
-        const contentUrl = contentFile === 'home.html'
-            ? siteRoot.href
-            : `${pagesPath}${contentFile}`;
+        const contentUrl = currentLanguage === 'de'
+            ? `${pagesPath}de/${contentFile}`
+            : (contentFile === 'home.html' ? siteRoot.href : `${pagesPath}${contentFile}`);
 
         fetch(contentUrl)
             .then((response) => {
@@ -511,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch((error) => {
                 console.error(error);
-                main.innerHTML = '<p>Content not found or invalid structure.</p>';
+                main.innerHTML = `<p>${chromeCopy[currentLanguage].notFound}</p>`;
             });
     }
     
@@ -541,7 +631,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         menu?.classList.remove('active');
         hamburger?.setAttribute('aria-expanded', 'false');
-        hamburger?.setAttribute('aria-label', 'Navigation öffnen');
+        hamburger?.setAttribute('aria-label', chromeCopy[currentLanguage].openNav);
         if (hamburger) hamburger.textContent = '☰';
     });
 
@@ -551,7 +641,19 @@ document.addEventListener('DOMContentLoaded', () => {
         loadContent(event.state?.file || `${route}.html`, true);
     });
 
+    languageButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const language = button.dataset.language;
+            if (language === currentLanguage) return;
+            currentLanguage = language;
+            localStorage.setItem('contrast-language', language);
+            applyChromeLanguage();
+            loadContent(`${main.dataset.route || routeFromLocation()}.html`, true);
+        });
+    });
+
     // Initial content load
+    applyChromeLanguage();
     const initialRoute = routeFromLocation();
     const initialFile = `${initialRoute}.html`;
     const oldQueryRoute = new URLSearchParams(window.location.search).get('page');
@@ -559,7 +661,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (validRoutes.has(oldQueryRoute) || validRoutes.has(oldHashRoute)) {
         history.replaceState({ file: initialFile }, '', routeUrl(initialRoute));
     }
-    if (main.dataset.route === initialRoute) {
+    if (currentLanguage === 'en' && main.dataset.route === initialRoute) {
         protectInstagramEmbeds(document);
         protectFacebookEmbeds(document);
         enhanceZoomableImages();

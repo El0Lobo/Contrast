@@ -9,64 +9,64 @@ const siteUrl = 'https://contrast-kn.de';
 const pages = {
   home: {
     path: '',
-    title: 'Contrast Konstanz | Alternative Musik, Kunst & Kultur',
-    description: 'Das Contrast ist ein selbstverwalteter Jugendclub in Konstanz für alternative Musik, Kunst, Kultur und eine offene Gemeinschaft.',
+    title: 'Contrast Konstanz | Alternative Music, Art & Culture',
+    description: 'Contrast is a self-managed youth club in Konstanz for alternative music, art, culture and an open community.',
     image: 'assets/images/venue/contrast-venue-01.jpg'
   },
   'Queer-Kneipe': {
     path: 'Queer-Kneipe',
     content: 'Queer-Kneipe.html',
-    title: 'Queer-Kneipe in Konstanz | Contrast',
-    description: 'Die Queer-Kneipe im Contrast Konstanz: ein offener, sicherer Treffpunkt mit Musik, Gesprächen und Gemeinschaft am Montagabend.',
+    title: 'Queer Night in Konstanz | Contrast',
+    description: 'Queer Night at Contrast Konstanz is an open, safer meeting place with music, conversation and community every Monday.',
     image: 'assets/icons/events/queer-kneipe.png'
   },
   'Das-Labor': {
     path: 'Das-Labor',
     content: 'Das-Labor.html',
-    title: 'Das Labor – experimentelle Musik in Konstanz | Contrast',
-    description: 'Elektronische Klänge, experimentelle Musik und kreative Performances: Entdecke Das Labor jeden Dienstag im Contrast Konstanz.',
+    title: 'The Lab – experimental music in Konstanz | Contrast',
+    description: 'Electronic sounds, experimental music and creative performances every Tuesday at Contrast Konstanz.',
     image: 'assets/icons/events/das-labor.png'
   },
   'Punk-Kneipe': {
     path: 'Punk-Kneipe',
     content: 'Punk-Kneipe.html',
-    title: 'Punk-Kneipe in Konstanz | Contrast',
-    description: 'Punk, Gemeinschaft und erschwingliche Getränke: Die Punk-Kneipe findet jeden Donnerstag im Contrast Konstanz statt.',
+    title: 'Punk Night in Konstanz | Contrast',
+    description: 'Punk, community and affordable drinks every Thursday at Punk Night in Contrast Konstanz.',
     image: 'assets/icons/events/punk-kneipe.png'
   },
   'Info-Kneipe': {
     path: 'Info-Kneipe',
     content: 'Info-Kneipe.html',
-    title: 'Info-Kneipe – Vorträge & Austausch | Contrast Konstanz',
-    description: 'Vorträge, Diskussionen und Austausch zu Politik, Gesellschaft, Umwelt und Kultur bei der Info-Kneipe im Contrast Konstanz.',
+    title: 'Info Night – Talks & Discussion | Contrast Konstanz',
+    description: 'Talks and discussions about politics, society, the environment and culture at Info Night in Contrast Konstanz.',
     image: 'assets/icons/events/info-kneipe.png'
   },
   'Kunst-Kneipe': {
     path: 'Kunst-Kneipe',
     content: 'Kunst-Kneipe.html',
-    title: 'Kunst-Kneipe in Konstanz | Contrast',
-    description: 'Kunst erleben, gemeinsam kreativ werden und lokale Künstler*innen treffen bei der Kunst-Kneipe im Contrast Konstanz.',
+    title: 'Art Night in Konstanz | Contrast',
+    description: 'Experience art, get creative together and meet local artists at Art Night in Contrast Konstanz.',
     image: 'assets/icons/events/kunstkneipe2.png'
   },
   Spieleabend: {
     path: 'Spieleabend',
     content: 'Spieleabend.html',
-    title: 'Spieleabend in Konstanz | Contrast',
-    description: 'Brettspiele, Kartenspiele und eine offene Gemeinschaft: Informiere dich über den nächsten Spieleabend im Contrast Konstanz.',
+    title: 'Games Night in Konstanz | Contrast',
+    description: 'Board games, card games and an open community at Games Night in Contrast Konstanz.',
     image: 'assets/icons/events/spieleabend.png'
   },
   mitglied: {
     path: 'mitglied',
     content: 'mitglied.html',
-    title: 'Mitglied werden | Contrast Konstanz',
-    description: 'Werde Mitglied im Contrast und gestalte alternative Musik, Kunst, Kultur und gemeinschaftliche Veranstaltungen in Konstanz mit.',
+    title: 'Become a Member | Contrast Konstanz',
+    description: 'Become a Contrast member and help shape alternative music, art, culture and community events in Konstanz.',
     image: 'assets/images/membership-poster.png'
   },
   Kontakt: {
     path: 'Kontakt',
     content: 'Kontakt.html',
-    title: 'Kontakt, Anfahrt & Öffnungszeiten | Contrast Konstanz',
-    description: 'Adresse, Anfahrt, Öffnungszeiten und Booking-Kontakt des Contrast am Joseph-Belli-Weg 11 in Konstanz.',
+    title: 'Contact, Directions & Opening Hours | Contrast Konstanz',
+    description: 'Address, directions, opening hours and booking contact for Contrast at Joseph-Belli-Weg 11 in Konstanz.',
     image: 'assets/images/map.png'
   }
 };
@@ -82,7 +82,7 @@ const structuredData = {
     `${siteUrl}/assets/images/venue/contrast-venue-01.jpg`,
     `${siteUrl}/assets/images/venue/contrast-venue-06.jpg`
   ],
-  description: 'Selbstverwalteter Jugendclub für alternative Musik, Kunst und Kultur in Konstanz.',
+  description: 'Self-managed youth club for alternative music, art and culture in Konstanz.',
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'Joseph-Belli-Weg 11',
@@ -144,7 +144,7 @@ function setMeta(html, page, isRoot) {
   const socialMeta = `
   <link rel="canonical" href="${canonical}">
   <meta property="og:type" content="website">
-  <meta property="og:locale" content="de_DE">
+  <meta property="og:locale" content="en_GB">
   <meta property="og:site_name" content="Contrast">
   <meta property="og:title" content="${page.title}">
   <meta property="og:description" content="${page.description}">
