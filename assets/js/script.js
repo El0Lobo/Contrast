@@ -237,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isOpen = menu.classList.toggle('active');
             hamburger.setAttribute('aria-expanded', String(isOpen));
             hamburger.setAttribute('aria-label', isOpen ? 'Navigation schließen' : 'Navigation öffnen');
+            hamburger.textContent = isOpen ? '×' : '☰';
         });
     }
 
@@ -386,6 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         menu?.classList.remove('active');
         hamburger?.setAttribute('aria-expanded', 'false');
         hamburger?.setAttribute('aria-label', 'Navigation öffnen');
+        if (hamburger) hamburger.textContent = '☰';
     });
 
     // Handle back/forward navigation
