@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const scriptElement = document.querySelector('script[src$="assets/js/script.js"]');
+    const siteRoot = scriptElement ? new URL('../../', scriptElement.src) : new URL('./', window.location.href);
+    let baseElement = document.querySelector('base');
+
+    if (!baseElement) {
+        baseElement = document.createElement('base');
+        document.head.prepend(baseElement);
+    }
+    baseElement.href = siteRoot.href;
+
     const main = document.querySelector('main');
     const menu = document.querySelector('.menu');
     const hamburger = document.querySelector('.hamburger');
@@ -12,8 +22,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let cursorEffectInstance = null; // Track cursor effect instance
     let modalTrigger = null;
 
+    function routeFromLocation() {
+        const queryRoute = new URLSearchParams(window.location.search).get('page');
+        const legacyHashRoute = window.location.hash.substring(1);
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+        const pathRoute = decodeURIComponent(pathParts[pathParts.length - 1] || '');
+        return [queryRoute, legacyHashRoute, pathRoute].find((route) => validRoutes.has(route)) || 'home';
+    }
+
+    function routeUrl(route) {
+        return new URL(route === 'home' ? './' : `./${route}/`, siteRoot).href;
+    }
+
     // Base path for content (adjust if necessary)
-    const basePath = './content/';
+    const basePath = new URL('content/', siteRoot).href;
 
     // Function to attach animation end event listener
     function attachAnimationHandler() {
@@ -358,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const route = link.dataset.route;
         const file = `${route}.html`;
-        history.pushState({ file }, '', `?page=${encodeURIComponent(route)}`);
+        history.pushState({ file }, '', routeUrl(route));
         loadContent(file, true);
 
         menu?.classList.remove('active');
@@ -368,16 +390,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle back/forward navigation
     window.addEventListener('popstate', (event) => {
-        const route = new URLSearchParams(window.location.search).get('page') || 'home';
-        const safeRoute = validRoutes.has(route) ? route : 'home';
-        loadContent(event.state?.file || `${safeRoute}.html`, true);
+        const route = routeFromLocation();
+        loadContent(event.state?.file || `${route}.html`, true);
     });
 
     // Initial content load
-    const queryRoute = new URLSearchParams(window.location.search).get('page');
-    const legacyHashRoute = window.location.hash.substring(1);
-    const requestedRoute = queryRoute || legacyHashRoute || 'home';
-    const initialRoute = validRoutes.has(requestedRoute) ? requestedRoute : 'home';
+    const initialRoute = routeFromLocation();
     const initialFile = `${initialRoute}.html`;
+    const oldQueryRoute = new URLSearchParams(window.location.search).get('page');
+    const oldHashRoute = window.location.hash.substring(1);
+    if (validRoutes.has(oldQueryRoute) || validRoutes.has(oldHashRoute)) {
+        history.replaceState({ file: initialFile }, '', routeUrl(initialRoute));
+    }
     loadContent(initialFile);
 });
