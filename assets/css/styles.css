@@ -274,7 +274,7 @@ footer {
 }
 
 .instagram-consent {
-    width: min(520px, 90vw);
+    width: min(520px, 100%);
     min-height: 390px;
     margin: 2rem auto;
     padding: clamp(2rem, 6vw, 4rem);
@@ -394,6 +394,15 @@ a:hover {
 }
 /* Responsive styles */
 @media (max-width: 768px) {
+    main {
+        padding-inline: 20px;
+    }
+
+    .instagram-consent {
+        margin-inline: auto;
+        padding-inline: clamp(1.25rem, 6vw, 2rem);
+    }
+
     body::after {
         content: "";
         position: fixed;
