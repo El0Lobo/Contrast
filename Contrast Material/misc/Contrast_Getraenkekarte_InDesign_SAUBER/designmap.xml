@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?aid style="50" type="document" readerVersion="6.0" featureSet="257"?>
+<Document xmlns:idPkg="http://ns.adobe.com/AdobeInDesign/idml/1.0/packaging" DOMVersion="7.0" Self="d" Name="Contrast Getränkekarte – mehrteilig">
+  <Layer Self="layer_background" Name="01 Hintergrund" Visible="true" Locked="false" Printable="true"/>
+  <Layer Self="layer_graphics" Name="02 Grafiken" Visible="true" Locked="false" Printable="true"/>
+  <Layer Self="layer_lines" Name="03 Kreidelinien" Visible="true" Locked="false" Printable="true"/>
+  <Layer Self="layer_text" Name="04 Text" Visible="true" Locked="false" Printable="true"/>
+  <idPkg:Preferences src="Resources/Preferences.xml"/>
+  <idPkg:Graphic src="Resources/Graphic.xml"/>
+  <idPkg:Fonts src="Resources/Fonts.xml"/>
+  <idPkg:Styles src="Resources/Styles.xml"/>
+  <idPkg:Spread src="Spreads/Spread_spread1.xml"/>
+  <idPkg:Story src="Stories/Story_story_subtitle.xml"/>
+  <idPkg:Story src="Stories/Story_story_left_title.xml"/>
+  <idPkg:Story src="Stories/Story_story_beer_heading.xml"/>
+  <idPkg:Story src="Stories/Story_story_beer_g1_names.xml"/>
+  <idPkg:Story src="Stories/Story_story_beer_g1_price.xml"/>
+  <idPkg:Story src="Stories/Story_story_beer_g2_names.xml"/>
+  <idPkg:Story src="Stories/Story_story_beer_g2_price.xml"/>
+  <idPkg:Story src="Stories/Story_story_alcfree_name.xml"/>
+  <idPkg:Story src="Stories/Story_story_alcfree_price.xml"/>
+  <idPkg:Story src="Stories/Story_story_sekt_heading.xml"/>
+  <idPkg:Story src="Stories/Story_story_sekt_names.xml"/>
+  <idPkg:Story src="Stories/Story_story_sekt_prices.xml"/>
+  <idPkg:Story src="Stories/Story_story_right_title.xml"/>
+  <idPkg:Story src="Stories/Story_story_soft_g1_names.xml"/>
+  <idPkg:Story src="Stories/Story_story_soft_g1_price.xml"/>
+  <idPkg:Story src="Stories/Story_story_soft_g2_names.xml"/>
+  <idPkg:Story src="Stories/Story_story_soft_g2_price.xml"/>
+  <idPkg:Story src="Stories/Story_story_soft_single_names.xml"/>
+  <idPkg:Story src="Stories/Story_story_soft_single_prices.xml"/>
+  <idPkg:Story src="Stories/Story_story_snacks_heading.xml"/>
+  <idPkg:Story src="Stories/Story_story_snack1_name.xml"/>
+  <idPkg:Story src="Stories/Story_story_snack1_price.xml"/>
+  <idPkg:Story src="Stories/Story_story_snack2_name.xml"/>
+  <idPkg:Story src="Stories/Story_story_snack2_price.xml"/>
+  <idPkg:Story src="Stories/Story_story_footer.xml"/>
+</Document>
