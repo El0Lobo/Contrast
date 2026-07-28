@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import './generate-asset-manifest.mjs';
 
 const projectDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const outputDir = path.join(projectDir, 'dist');
@@ -181,9 +182,11 @@ if (fs.existsSync(outputDir)) {
 }
 fs.mkdirSync(outputDir, { recursive: true });
 copyDirectory(path.join(projectDir, 'assets'), path.join(outputDir, 'assets'));
+copyDirectory(path.join(projectDir, 'Contrast Material'), path.join(outputDir, 'Contrast Material'));
 copyDirectory(path.join(projectDir, 'pages'), path.join(outputDir, 'pages'));
 fs.copyFileSync(path.join(projectDir, 'robots.txt'), path.join(outputDir, 'robots.txt'));
 fs.copyFileSync(path.join(projectDir, 'sitemap.xml'), path.join(outputDir, 'sitemap.xml'));
+fs.copyFileSync(path.join(projectDir, 'asset-browser.html'), path.join(outputDir, 'asset-browser.html'));
 
 let template = fs.readFileSync(path.join(projectDir, 'index.html'), 'utf8');
 template = setMeta(template, pages.home, true);
