@@ -1690,6 +1690,84 @@ main > p em,
     line-height: 1.7;
 }
 
+.drinks-menu {
+    display: grid;
+    width: 100%;
+    margin: clamp(3rem, 6vw, 5rem) auto;
+    padding: clamp(1.75rem, 4vw, 3.5rem) 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: end;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+
+.drinks-menu__copy {
+    max-width: 48rem;
+}
+
+.drinks-menu__eyebrow {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    font-size: 0.72em;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.drinks-menu h2 {
+    max-width: 12ch;
+    margin: 0 0 1rem;
+    font-size: clamp(2.8em, 6vw, 5.8em);
+    font-weight: 800;
+    letter-spacing: -0.055em;
+    line-height: 0.88;
+    text-wrap: balance;
+}
+
+.drinks-menu__copy > p:last-child {
+    max-width: 38rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: clamp(1em, 1.4vw, 1.18em);
+    line-height: 1.6;
+}
+
+.drinks-menu__link {
+    display: flex;
+    min-width: min(100%, 19rem);
+    padding: 1.25rem 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    color: white;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    font-size: clamp(1.15em, 2vw, 1.55em);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    text-decoration: none !important;
+}
+
+.drinks-menu__link span {
+    display: grid;
+    width: 2.8rem;
+    height: 2.8rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    font-size: 0.7em;
+    transition: color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.drinks-menu__link:hover span,
+.drinks-menu__link:focus-visible span {
+    color: var(--black);
+    background: white;
+    transform: translate(0.18rem, -0.18rem);
+}
+
 .venue-gallery {
     width: 100%;
     margin-block: clamp(3rem, 6vw, 5rem);
@@ -2097,6 +2175,17 @@ main .image {
 
     .logo-container {
         margin-bottom: 2.75rem;
+    }
+
+    .drinks-menu {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .drinks-menu__link {
+        width: 100%;
+        min-width: 0;
     }
 
     .venue-gallery {
