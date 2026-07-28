@@ -1462,7 +1462,7 @@ body::after {
     width: min(42rem, 60vw);
     height: min(42rem, 60vw);
     background-size: contain;
-    opacity: 0.12;
+    opacity: 0.22;
 }
 
 header {
