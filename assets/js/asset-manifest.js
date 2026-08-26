@@ -1,5 +1,14 @@
 window.CONTRAST_ASSETS = [
   {
+    "name": "Contrast_Getraenkekarte_A4_Querformat_23.07.26.pdf",
+    "path": "assets/Contrast_Getraenkekarte_A4_Querformat_23.07.26.pdf",
+    "extension": "pdf",
+    "collection": "website",
+    "isIcon": false,
+    "kind": "document",
+    "sizeLabel": "7.0 MB"
+  },
+  {
     "name": "asset-browser.css",
     "path": "assets/css/asset-browser.css",
     "extension": "css",
@@ -15,7 +24,7 @@ window.CONTRAST_ASSETS = [
     "collection": "website",
     "isIcon": false,
     "kind": "code",
-    "sizeLabel": "41.6 KB"
+    "sizeLabel": "43.5 KB"
   },
   {
     "name": "das-labor.png",
@@ -171,13 +180,22 @@ window.CONTRAST_ASSETS = [
     "sizeLabel": "48.6 KB"
   },
   {
+    "name": "logo-ma3rk.png",
+    "path": "assets/images/logo-ma3rk.png",
+    "extension": "png",
+    "collection": "website",
+    "isIcon": false,
+    "kind": "image",
+    "sizeLabel": "1.3 MB"
+  },
+  {
     "name": "logo-mark.png",
     "path": "assets/images/logo-mark.png",
     "extension": "png",
     "collection": "website",
     "isIcon": false,
     "kind": "image",
-    "sizeLabel": "1.3 MB"
+    "sizeLabel": "3.1 MB"
   },
   {
     "name": "logo-original.png",
@@ -711,6 +729,15 @@ window.CONTRAST_ASSETS = [
     "sizeLabel": "122.1 KB"
   },
   {
+    "name": "Contrast_Getraenkekarte_A4_Querformat_23.07.26.pdf",
+    "path": "Contrast Material/Docs/Contrast_Getraenkekarte_A4_Querformat_23.07.26.pdf",
+    "extension": "pdf",
+    "collection": "contrast-material",
+    "isIcon": false,
+    "kind": "document",
+    "sizeLabel": "7.0 MB"
+  },
+  {
     "name": "Getränkeliste.pdf",
     "path": "Contrast Material/Docs/Getränkeliste.pdf",
     "extension": "pdf",
@@ -744,7 +771,7 @@ window.CONTRAST_ASSETS = [
     "collection": "contrast-material",
     "isIcon": false,
     "kind": "document",
-    "sizeLabel": "5.9 MB"
+    "sizeLabel": "6.6 MB"
   },
   {
     "name": "Contrast_Getraenkekarte_A4_Querformat_SAUBER_EDITIERBAR.pdf",
@@ -1195,6 +1222,15 @@ window.CONTRAST_ASSETS = [
     "isIcon": false,
     "kind": "metadata",
     "sizeLabel": "761 B"
+  },
+  {
+    "name": "Safezones_Contrast.png",
+    "path": "Contrast Material/misc/Safezones_Contrast.png",
+    "extension": "png",
+    "collection": "contrast-material",
+    "isIcon": false,
+    "kind": "image",
+    "sizeLabel": "1.5 MB"
   },
   {
     "name": "contrast_classic_fish.svg",
