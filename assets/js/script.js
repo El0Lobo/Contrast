@@ -1,13 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
     const scriptElement = document.querySelector('script[src$="assets/js/script.js"]');
-    const siteRoot = scriptElement ? new URL('../../', scriptElement.src) : new URL('./', window.location.href);
     let baseElement = document.querySelector('base');
+    // Generated subpages carry their own relative <base>. Keep it: replacing it
+    // with a root-relative URL breaks GitHub Pages project sites (/Contrast/...).
+    const siteRoot = baseElement
+        ? new URL(baseElement.href)
+        : (scriptElement ? new URL('../../', scriptElement.src) : new URL('./', window.location.href));
 
     if (!baseElement) {
         baseElement = document.createElement('base');
+        baseElement.href = siteRoot.href;
         document.head.prepend(baseElement);
     }
-    baseElement.href = siteRoot.href;
 
     const main = document.querySelector('main');
     const menu = document.querySelector('.menu');

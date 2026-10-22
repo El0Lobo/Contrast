@@ -1233,7 +1233,16 @@ main {
 
 /* Contact page */
 .contact-intro {
+    width: 100%;
+    max-width: 44rem;
+    margin-left: 0 !important;
     margin-bottom: clamp(2.5rem, 5vw, 4.5rem) !important;
+}
+
+main[data-route="Kontakt"] > h1 {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .contact-eyebrow {
