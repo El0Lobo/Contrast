@@ -1,3 +1,23 @@
 # Generated deployment and archived implementations
 /dist/
 /old/
+/backups/
+
+# Local editor and agent state
+/.agents/
+/.aws/
+/.codex/
+/.vscode/*
+!/.vscode/settings.json
+!/.vscode/tasks.json
+
+# Dependencies, logs, and operating-system files
+/node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db

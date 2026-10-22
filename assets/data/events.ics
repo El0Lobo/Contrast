@@ -1,0 +1,174 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Contrast Konstanz//Programme//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Contrast programme
+BEGIN:VEVENT
+UID:herbstpause-202611@contrast-kn.de
+DTSTAMP:20261022T100000Z
+DTSTART;VALUE=DATE:20261101
+DTEND;VALUE=DATE:20261115
+SUMMARY:Herbstpause
+X-CONTRAST-CLOSURE:TRUE
+X-CONTRAST-CLOSURE-NAME:Herbstpause
+END:VEVENT
+BEGIN:VEVENT
+UID:velvet-rupture-20261109@contrast-kn.de
+DTSTAMP:20261021T100000Z
+DTSTART;TZID=Europe/Berlin:20261109T200000
+DTEND;TZID=Europe/Berlin:20261110T010000
+SUMMARY:Velvet Rupture — live at Queer Night
+DESCRIPTION:An evening of queer punk and glittering noise.\n\nVelvet Rupture bring sharp hooks\, tender chaos and a room made for singing along.
+LOCATION:Contrast\, Joseph-Belli-Weg 11\, 78467 Konstanz\, Germany
+URL:https://contrast-kn.de/events/velvet-rupture/
+X-CONTRAST-SLUG:velvet-rupture
+X-CONTRAST-SERIES:Queer-Kneipe
+CATEGORIES:Queer-Kneipe
+X-CONTRAST-TYPE:Concert
+X-CONTRAST-PRICE:Pay what you can
+X-CONTRAST-IMAGE:https://contrast-kn.de/assets/images/venue/contrast-venue-04.jpg
+X-CONTRAST-ARTISTS:Velvet Rupture|Queer punk band from Freiburg|https://example.com/velvet-rupture
+X-CONTRAST-ARTISTS:DJ Soft Crash|Post-punk, synth and dancefloor healing|https://example.com/dj-soft-crash
+X-CONTRAST-TAGS:queer punk,live music,concert,Konstanz
+END:VEVENT
+BEGIN:VEVENT
+UID:riot-girls-benefit-20261112@contrast-kn.de
+DTSTAMP:20261021T100000Z
+DTSTART;TZID=Europe/Berlin:20261112T200000
+DTEND;TZID=Europe/Berlin:20261113T010000
+SUMMARY:Riot Grrrl Benefit — Punk Night
+DESCRIPTION:Three fast bands\, a solidarity raffle and every euro after costs goes to a local feminist support project.
+LOCATION:Contrast\, Joseph-Belli-Weg 11\, 78467 Konstanz\, Germany
+URL:https://contrast-kn.de/events/riot-girls-benefit/
+X-CONTRAST-SLUG:riot-girls-benefit
+X-CONTRAST-SERIES:Punk-Kneipe
+CATEGORIES:Punk-Kneipe
+X-CONTRAST-TYPE:Benefit concert
+X-CONTRAST-PRICE:8–15 € sliding scale
+X-CONTRAST-IMAGE:https://contrast-kn.de/assets/images/venue/contrast-venue-05.jpg
+X-CONTRAST-ARTISTS:Crush Depth|Noisy melodic punk from Basel|https://example.com/crush-depth
+X-CONTRAST-ARTISTS:Krawallmargarine|Feminist punk from Konstanz|https://example.com/krawallmargarine
+X-CONTRAST-TAGS:punk,benefit,live music,Konstanz
+END:VEVENT
+BEGIN:VEVENT
+UID:low-light-loud-heart-20261113@contrast-kn.de
+DTSTAMP:20261021T100000Z
+DTSTART;TZID=Europe/Berlin:20261113T220000
+DTEND;TZID=Europe/Berlin:20261114T040000
+SUMMARY:Low Light / Loud Heart — DJ night
+DESCRIPTION:A long night between dark wave\, EBM\, electro and strange pop. Come early\, stay late.
+LOCATION:Contrast\, Joseph-Belli-Weg 11\, 78467 Konstanz\, Germany
+URL:https://contrast-kn.de/events/low-light-loud-heart/
+X-CONTRAST-SLUG:low-light-loud-heart
+X-CONTRAST-SERIES:Friday
+X-CONTRAST-TYPE:DJ night
+X-CONTRAST-PRICE:5–8 €
+X-CONTRAST-IMAGE:https://contrast-kn.de/assets/images/venue/contrast-venue-03.jpg
+X-CONTRAST-ARTISTS:DJ Blackwater|Dark wave and body music|https://example.com/dj-blackwater
+X-CONTRAST-ARTISTS:Celeste Static|Leftfield pop, EBM and electro|https://example.com/celeste-static
+X-CONTRAST-TAGS:dj,dark wave,EBM,dance,Konstanz
+END:VEVENT
+BEGIN:VEVENT
+UID:queer-karaoke-20261019@contrast-kn.de
+DTSTART;TZID=Europe/Berlin:20261019T200000
+DTEND;TZID=Europe/Berlin:20261020T010000
+SUMMARY:Queer Karaoke — sing it loud
+DESCRIPTION:Past sample event for the Queer-Kneipe archive.
+LOCATION:Contrast\, Joseph-Belli-Weg 11\, 78467 Konstanz\, Germany
+X-CONTRAST-SLUG:queer-karaoke
+X-CONTRAST-SERIES:Queer-Kneipe
+CATEGORIES:Queer-Kneipe
+X-CONTRAST-TYPE:Community night
+X-CONTRAST-PRICE:Pay what you can
+X-CONTRAST-IMAGE:https://contrast-kn.de/assets/images/venue/contrast-venue-02.webp
+X-CONTRAST-ARTISTS:Queer-Kneipe Crew|Hosts and selectors from Konstanz|https://www.instagram.com/queerkneipe_contrast/
+END:VEVENT
+BEGIN:VEVENT
+UID:concrete-echo-20261015@contrast-kn.de
+DTSTART;TZID=Europe/Berlin:20261015T200000
+DTEND;TZID=Europe/Berlin:20261016T010000
+SUMMARY:Concrete Echo — Punk Night
+DESCRIPTION:Past sample event for the Punk-Kneipe archive.
+LOCATION:Contrast\, Joseph-Belli-Weg 11\, 78467 Konstanz\, Germany
+X-CONTRAST-SLUG:concrete-echo
+X-CONTRAST-SERIES:Punk-Kneipe
+CATEGORIES:Punk-Kneipe
+X-CONTRAST-TYPE:Concert
+X-CONTRAST-PRICE:7 €
+X-CONTRAST-IMAGE:https://contrast-kn.de/assets/images/venue/contrast-venue-05.jpg
+X-CONTRAST-ARTISTS:Concrete Echo|Punk from the south|https://example.com/concrete-echo
+END:VEVENT
+BEGIN:VEVENT
+UID:care-in-the-city-20261028@contrast-kn.de
+DTSTART;TZID=Europe/Berlin:20261028T193000
+DTEND;TZID=Europe/Berlin:20261028T230000
+SUMMARY:Care in the City — Info-Kneipe
+DESCRIPTION:Talk, discussion and practical exchange on mutual aid in Konstanz.
+LOCATION:Contrast\, Joseph-Belli-Weg 11\, 78467 Konstanz\, Germany
+X-CONTRAST-SLUG:care-in-the-city
+X-CONTRAST-SERIES:Info-Kneipe
+CATEGORIES:Info-Kneipe
+X-CONTRAST-TYPE:Talk and discussion
+X-CONTRAST-PRICE:Free entry
+X-CONTRAST-IMAGE:https://contrast-kn.de/assets/images/venue/contrast-venue-06.jpg
+X-CONTRAST-ARTISTS:Local initiatives|Guests and organisers from Konstanz|https://contrast-kn.de/Kontakt/
+END:VEVENT
+BEGIN:VEVENT
+UID:basement-boogie-20261023@contrast-kn.de
+DTSTART;TZID=Europe/Berlin:20261023T220000
+DTEND;TZID=Europe/Berlin:20261024T040000
+SUMMARY:Basement Boogie — Friday dance night
+DESCRIPTION:House\, disco and warm-up weirdness for the weekend.
+LOCATION:Contrast\, Joseph-Belli-Weg 11\, 78467 Konstanz\, Germany
+X-CONTRAST-SLUG:basement-boogie
+X-CONTRAST-SERIES:Friday
+X-CONTRAST-TYPE:DJ night
+X-CONTRAST-PRICE:5 €
+X-CONTRAST-IMAGE:https://contrast-kn.de/assets/images/venue/contrast-venue-03.jpg
+X-CONTRAST-ARTISTS:DJ Poppyseed|House\, disco and leftfield dance|https://example.com/dj-poppyseed
+END:VEVENT
+BEGIN:VEVENT
+UID:noise-collage-20261024@contrast-kn.de
+DTSTART;TZID=Europe/Berlin:20261024T200000
+DTEND;TZID=Europe/Berlin:20261025T010000
+SUMMARY:Noise Collage — live and listening session
+DESCRIPTION:Live electronics\, tape loops and an open listening session.
+LOCATION:Contrast\, Joseph-Belli-Weg 11\, 78467 Konstanz\, Germany
+X-CONTRAST-SLUG:noise-collage
+X-CONTRAST-SERIES:Saturday
+X-CONTRAST-TYPE:Live music
+X-CONTRAST-PRICE:Donation welcome
+X-CONTRAST-IMAGE:https://contrast-kn.de/assets/images/venue/contrast-venue-04.jpg
+X-CONTRAST-ARTISTS:Static Garden|Experimental electronics from Konstanz|https://example.com/static-garden
+END:VEVENT
+BEGIN:VEVENT
+UID:punk-flea-market-20261119@contrast-kn.de
+DTSTART;TZID=Europe/Berlin:20261119T190000
+DTEND;TZID=Europe/Berlin:20261120T010000
+SUMMARY:Punk Flea Market & Hangout
+DESCRIPTION:Records\, patches\, zines and a punk-night hangout.
+LOCATION:Contrast\, Joseph-Belli-Weg 11\, 78467 Konstanz\, Germany
+X-CONTRAST-SLUG:punk-flea-market
+X-CONTRAST-SERIES:Punk-Kneipe
+CATEGORIES:Punk-Kneipe
+X-CONTRAST-TYPE:Community event
+X-CONTRAST-PRICE:Free entry
+X-CONTRAST-IMAGE:https://contrast-kn.de/assets/images/venue/contrast-venue-05.jpg
+X-CONTRAST-ARTISTS:Local sellers|Bring records\, clothes or zines to swap|https://contrast-kn.de/Punk-Kneipe/
+END:VEVENT
+BEGIN:VEVENT
+UID:print-zine-night-20261030@contrast-kn.de
+DTSTART;TZID=Europe/Berlin:20261030T190000
+DTEND;TZID=Europe/Berlin:20261030T230000
+SUMMARY:Print & Zine Night — Kunst-Kneipe
+DESCRIPTION:An open evening for drawing, collage, copying and swapping small publications.
+LOCATION:Contrast\, Joseph-Belli-Weg 11\, 78467 Konstanz\, Germany
+X-CONTRAST-SLUG:print-zine-night
+X-CONTRAST-SERIES:Kunst-Kneipe
+CATEGORIES:Kunst-Kneipe
+X-CONTRAST-TYPE:Open workshop
+X-CONTRAST-PRICE:Donation welcome
+X-CONTRAST-IMAGE:https://contrast-kn.de/assets/images/venue/contrast-venue-12.webp
+X-CONTRAST-ARTISTS:Kunst-Kneipe hosts|Bring your own ideas and materials|https://contrast-kn.de/Kunst-Kneipe/
+END:VEVENT
+END:VCALENDAR

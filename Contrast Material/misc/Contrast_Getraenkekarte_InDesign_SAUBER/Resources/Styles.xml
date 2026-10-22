@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<idPkg:Styles xmlns:idPkg="http://ns.adobe.com/AdobeInDesign/idml/1.0/packaging" DOMVersion="7.0">
-  <RootParagraphStyleGroup Self="RootParagraphStyleGroup/$ID/RootParagraphStyleGroup" Name="$ID/RootParagraphStyleGroup"/>
-  <RootCharacterStyleGroup Self="RootCharacterStyleGroup/$ID/RootCharacterStyleGroup" Name="$ID/RootCharacterStyleGroup"/>
-  <RootObjectStyleGroup Self="RootObjectStyleGroup/$ID/RootObjectStyleGroup" Name="$ID/RootObjectStyleGroup"/>
-</idPkg:Styles>

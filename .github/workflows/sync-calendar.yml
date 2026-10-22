@@ -1,0 +1,32 @@
+name: Sync programme calendar
+
+on:
+  schedule:
+    - cron: '17 03 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Sync remote ICS
+        env:
+          CALENDAR_ICS_URL: ${{ secrets.CALENDAR_ICS_URL || vars.CALENDAR_ICS_URL }}
+        run: node scripts/sync-calendar.mjs
+      - name: Build generated pages
+        run: node scripts/build-clean-routes.mjs
+      - name: Commit changed calendar source
+        run: |
+          if git diff --quiet -- assets/data/events.ics; then exit 0; fi
+          git config user.name "contrast calendar bot"
+          git config user.email "calendar-bot@users.noreply.github.com"
+          git add assets/data/events.ics
+          git commit -m "Sync programme calendar"
+          git push

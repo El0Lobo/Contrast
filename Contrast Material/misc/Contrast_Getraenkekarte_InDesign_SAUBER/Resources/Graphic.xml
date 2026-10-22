@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<idPkg:Graphic xmlns:idPkg="http://ns.adobe.com/AdobeInDesign/idml/1.0/packaging" DOMVersion="7.0">
-  <Color Self="Color/ChalkWhite" Model="Process" Space="RGB" ColorValue="248 248 242" Name="Chalk White" ColorOverride="Normal" AlternateSpace="NoAlternateColor" AlternateColorValue=""/>
-  <Color Self="Color/FrameGray" Model="Process" Space="RGB" ColorValue="130 130 125" Name="Frame Gray" ColorOverride="Normal" AlternateSpace="NoAlternateColor" AlternateColorValue=""/>
-  <Color Self="Color/Black" Model="Process" Space="RGB" ColorValue="0 0 0" Name="Black" ColorOverride="Normal" AlternateSpace="NoAlternateColor" AlternateColorValue=""/>
-  <Swatch Self="Swatch/None" Name="$ID/None" ColorEditable="false" ColorRemovable="false" Visible="true"/>
-</idPkg:Graphic>

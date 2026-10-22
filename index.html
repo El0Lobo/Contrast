@@ -3,6 +3,9 @@
 
 <head>
 <meta charset="UTF-8">
+  <!-- CSP is generated with exact hashes for this page's JSON-LD at build time. -->
+  <!-- CSP_PLACEHOLDER -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contrast Konstanz | Alternative Music, Art & Culture</title>
   <link rel="canonical" href="https://contrast-kn.de/">
@@ -17,12 +20,10 @@
   <meta name="description" content="Contrast is a self-managed youth club in Konstanz for alternative music, art, culture and an open community.">
   <meta name="author" content="Contrast EV Konstanz">
   <link rel="stylesheet" href="assets/css/styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/site/apple-touch-icon.png">
   <link rel="icon" href="assets/icons/site/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/site/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/site/favicon-16x16.png">
-  <link href='https://fonts.googleapis.com/css?family=Vibur:400' rel='stylesheet' type='text/css'>
   <link rel="manifest" href="assets/icons/site/site.webmanifest">
   <link rel="mask-icon" href="assets/icons/site/safari-pinned-tab.svg" color="#5bbad5">
   <meta name="msapplication-config" content="assets/icons/site/browserconfig.xml">
@@ -33,7 +34,7 @@
   <a class="skip-link" href="#main-content">Skip to content</a>
   <header>
     <div class="header-container">
-      <img src="assets/images/logo-wordmark.png" alt="Contrast" class="title-image">
+      <img src="assets/images/logo-wordmark.webp" alt="Contrast" class="title-image">
       <button class="hamburger" type="button" aria-label="Open navigation" aria-expanded="false"
         aria-controls="site-navigation">☰</button>
     </div>
@@ -46,11 +47,13 @@
       <ul class="menu">
         <li><a href="./" data-route="home">Home</a></li>
         <li><a href="./Queer-Kneipe/" data-route="Queer-Kneipe">Queer Night</a></li>
-        <li><a href="./Das-Labor/" data-route="Das-Labor">Das Labor</a></li>
+        <!-- Das Labor is calendar-only; keep its standalone page out of navigation. -->
+        <!-- <li><a href="./Das-Labor/" data-route="Das-Labor">Das Labor</a></li> -->
         <li><a href="./Punk-Kneipe/" data-route="Punk-Kneipe">Punk Night</a></li>
         <li><a href="./Info-Kneipe/" data-route="Info-Kneipe">Info Night</a></li>
         <li><a href="./Kunst-Kneipe/" data-route="Kunst-Kneipe">Art Night</a></li>
         <li><a href="./Spieleabend/" data-route="Spieleabend">Games Night</a></li>
+        <li><a href="./About/" data-route="About">About</a></li>
         <li><a href="./mitglied/" data-route="mitglied">Become a member</a></li>
         <li><a href="./Kontakt/" data-route="Kontakt">Contact</a></li>
       </ul>
@@ -64,41 +67,17 @@
     <p>Your home for <strong>alternative music, art and culture</strong> in Konstanz,
         <em>free from commercial interests.</em></p>
     <div class="logo-container homepage-logo">
-        <img src="./assets/images/no-nazis.png" alt="No Nazis" class="logo">
+        <img src="./assets/images/no-nazis.webp" alt="No Nazis" class="logo">
     </div>
 
     <p><strong>Sexism, homophobia and fascism</strong>, as well as <strong>any other form of discrimination</strong>, are
         <em>not welcome here.</em></p>
 
-    <section class="about-copy" aria-labelledby="about-heading">
-        <h2 id="about-heading">About us</h2>
-        <p>Contrast is a youth club in Konstanz run by Jugendkultur e.V. Known for its
-            <strong>vibrant subculture atmosphere</strong>, it offers a colourful mix of punk, techno and
-            alternative events.</p>
-        <p>Covered in graffiti, with a <em>welcoming atmosphere</em>, affordable drinks and free
-            table football.</p>
-        <p><strong>Solidarity and acceptance</strong> are especially important at Contrast. Our club is a
-            safer space for everyone,
-            regardless of gender, background or interests. We believe in the importance of community and that
-            everyone is welcome and has a voice.</p>
-        <p>Our walls reflect the creative energy and community spirit of the place. Come by and become part of an
-            <strong>open and diverse community</strong> that welcomes everyone. We look forward to
-            seeing you at one of our upcoming events!</p>
-        <p>For more information and current events, visit our <a
-                href="https://www.facebook.com/Contrastkn/">Facebook page</a> or our <a
-                href="https://www.instagram.com/contrast_kn/">Instagram</a>.</p>
-    </section>
-    <section class="drinks-menu" aria-labelledby="drinks-menu-heading">
-        <div class="drinks-menu__copy">
-            <p class="drinks-menu__eyebrow">At the bar</p>
-            <h2 id="drinks-menu-heading">What are you drinking?</h2>
-            <p>Take a look at our current drinks and prices before your next night at Contrast.</p>
-        </div>
-        <a class="drinks-menu__link" href="./assets/Contrast_Getraenkekarte_A4_Querformat_23.07.26.pdf"
-            target="_blank" rel="noopener">
-            View drinks menu
-            <span aria-hidden="true">↗</span>
-        </a>
+    <section class="home-intro" aria-labelledby="home-intro-heading">
+        <p class="section-kicker">Joseph-Belli-Weg 11 · Konstanz</p>
+        <h2 id="home-intro-heading">Loud nights. Open doors.</h2>
+        <p>Contrast is a self-managed youth club for alternative music, art, culture and solidarity.</p>
+        <a class="text-arrow" href="./About/" data-route="About">Meet Contrast <span aria-hidden="true">→</span></a>
     </section>
     <section class="venue-gallery" aria-labelledby="venue-gallery-heading">
         <div class="venue-gallery__intro">
@@ -113,7 +92,7 @@
                         <img src="./assets/images/venue/contrast-venue-01.jpg" alt="An evening at Contrast">
                     </figure>
                     <figure class="venue-carousel__slide" aria-label="Image 2 of 11">
-                        <img src="./assets/images/venue/contrast-venue-02.png" alt="Table football" loading="lazy">
+                        <img src="./assets/images/venue/contrast-venue-02.webp" alt="Table football" loading="lazy">
                     </figure>
                     <figure class="venue-carousel__slide" aria-label="Image 3 of 11">
                         <img src="./assets/images/venue/contrast-venue-03.jpg" alt="Ready for the next performance" loading="lazy">
@@ -140,7 +119,7 @@
                         <img src="./assets/images/venue/contrast-venue-10.jpg" alt="The stage in red light" loading="lazy">
                     </figure>
                     <figure class="venue-carousel__slide" aria-label="Image 11 of 11">
-                        <img src="./assets/images/venue/contrast-venue-12.png" alt="A round of table football" loading="lazy">
+                        <img src="./assets/images/venue/contrast-venue-12.webp" alt="A round of table football" loading="lazy">
                     </figure>
                 </div>
             </div>
@@ -158,68 +137,35 @@
             </div>
         </div>
     </section>
-    <h2 class="events-heading">Weekly events at Contrast:</h2>
+    <section class="program" aria-labelledby="program-heading">
+        <div class="program__heading">
+            <p class="section-kicker">What’s on</p>
+            <h2 id="program-heading">This week at Contrast.</h2>
+            <p>Regular nights and the newest special event, together in one place.</p>
+        </div>
+        <div class="program__rows">
+            <article class="program-row"><p class="program-row__day">Monday</p><a class="program-row__regular" href="./Queer-Kneipe/" data-route="Queer-Kneipe">Queer Night <span>20:00–01:00</span></a><a class="program-row__special" href="./events/velvet-rupture/">Next special: Velvet Rupture · 9 Nov <span aria-hidden="true">↗</span></a></article>
+            <article class="program-row"><p class="program-row__day">Tuesday</p><span class="program-row__regular">Open for Das Labor <span>21:00–01:00</span></span></article>
+            <article class="program-row"><p class="program-row__day">Wednesday</p><span class="program-row__regular program-row__regular--muted">Closed</span></article>
+            <article class="program-row"><p class="program-row__day">Thursday</p><a class="program-row__regular" href="./Punk-Kneipe/" data-route="Punk-Kneipe">Punk Night <span>20:00–01:00</span></a><a class="program-row__special" href="./events/riot-girls-benefit/">Next special: Riot Grrrl Benefit · 12 Nov <span aria-hidden="true">↗</span></a></article>
+            <article class="program-row"><p class="program-row__day">Friday</p><span class="program-row__regular program-row__regular--muted">Programme announced soon</span><a class="program-row__special" href="./events/low-light-loud-heart/">Next special: Low Light / Loud Heart · 13 Nov <span aria-hidden="true">↗</span></a></article>
+            <article class="program-row"><p class="program-row__day">Saturday</p><span class="program-row__regular program-row__regular--muted">Programme announced soon</span></article>
+            <article class="program-row"><p class="program-row__day">Sunday</p><span class="program-row__regular program-row__regular--muted">Closed</span></article>
+        </div>
+    </section>
 
-    <div class="logo-header">
-        <a class="event-link" href="./Queer-Kneipe/" data-route="Queer-Kneipe">
-            <h2>Monday: <br><span>Queer Night</span></h2>
-            <span class="logo-container">
-                <img src="./assets/icons/events/queer-kneipe.png" alt="" class="logo2">
-            </span>
-        </a>
-    </div>
-
-    <div class="logo-header">
-        <a class="event-link" href="./Das-Labor/" data-route="Das-Labor">
-            <h2>Tuesday: <br><span>Das Labor</span></h2>
-            <span class="logo-container">
-                <img src="./assets/icons/events/das-labor.png" alt="" class="logo2">
-            </span>
-        </a>
-    </div>
-
-    <div class="logo-header">
-        <a class="event-link" href="./Punk-Kneipe/" data-route="Punk-Kneipe">
-            <h2>Thursday: <br><span>Punk Night</span></h2>
-            <span class="logo-container">
-                <img src="./assets/icons/events/punk-kneipe.png" alt="" class="logo2">
-            </span>
-        </a>
-    </div>
-
-    <h2 class="more-events-heading">More events:</h2>
-
-    <div class="logo-header">
-        <a class="event-link" href="./Info-Kneipe/" data-route="Info-Kneipe">
-            <h2>Talks &amp; discussion<br><span>Info Night</span></h2>
-            <span class="logo-container">
-                <img src="./assets/icons/events/info-kneipe.png" alt="" class="logo2">
-            </span>
-        </a>
-    </div>
-
-    <div class="logo-header">
-        <a class="event-link" href="./Kunst-Kneipe/" data-route="Kunst-Kneipe">
-            <h2>Art &amp; creativity<br><span>Art Night</span></h2>
-            <span class="logo-container">
-                <img src="./assets/icons/events/kunstkneipe2.png" alt="" class="logo2">
-            </span>
-        </a>
-    </div>
-
-    <div class="logo-header">
-        <a class="event-link" href="./Spieleabend/" data-route="Spieleabend">
-            <h2>Games &amp; community<br><span>Games Night</span></h2>
-            <span class="logo-container">
-                <img src="./assets/icons/events/spieleabend.png" alt="" class="logo2">
-            </span>
-        </a>
-    </div>
-
-    <p>Find our <a href="./Kontakt/" data-route="Kontakt">opening hours here</a>.</p>
-
-    <iframe src="https://www.instagram.com/contrast_kn/embed" frameborder="0" scrolling="no" allowtransparency="true"
-        class="instagram-embed"></iframe>
+    <section class="instagram-consent" data-embed-url="https://www.instagram.com/contrast_kn/embed"
+        aria-label="Instagram content">
+        <div class="instagram-consent__mark" aria-hidden="true">◎</div>
+        <h2>Instagram content</h2>
+        <p>This content is provided by Instagram. A connection to Meta is made only when you load it. Personal data, such as your IP address, may be transferred and cookies may be set.</p>
+        <button type="button" class="instagram-consent__load">Load Instagram</button>
+        <p class="instagram-consent__links">
+          <a href="https://www.instagram.com/contrast_kn/" target="_blank" rel="noopener noreferrer">Open profile directly</a>
+          <span aria-hidden="true">·</span>
+          <a href="https://privacycenter.instagram.com/policy/" target="_blank" rel="noopener noreferrer">Instagram privacy policy</a>
+        </p>
+    </section>
 
     <section class="home-actions" aria-labelledby="home-actions-heading">
         <p class="home-actions__eyebrow">Help shape Contrast</p>
@@ -239,7 +185,7 @@
         <span class="site-footer__credit">
           Website by
           <a href="https://acme-prototypes.com/" class="acme-link" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/acme-logo.png" alt="ACME" class="acme-logo">
+            <img src="assets/images/acme-logo.webp" alt="ACME" class="acme-logo">
           </a>
         </span>
       </div>
@@ -277,8 +223,7 @@
         </div>
     </div>
   </div>    
-  <script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
-  
+  <script src="assets/js/vendor/cursor-effects.js"></script>
   <script src="assets/js/script.js"></script>
   <script type="application/ld+json">
 {
@@ -287,7 +232,7 @@
   "@id": "https://contrast-kn.de/#contrast",
   "name": "Contrast",
   "url": "https://contrast-kn.de/",
-  "logo": "https://contrast-kn.de/assets/images/logo-original.png",
+  "logo": "https://contrast-kn.de/assets/images/logo-original.webp",
   "image": [
     "https://contrast-kn.de/assets/images/venue/contrast-venue-01.jpg",
     "https://contrast-kn.de/assets/images/venue/contrast-venue-06.jpg"
