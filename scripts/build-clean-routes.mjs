@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { locales, routes } from '../content/routes.mjs';
+import { generateAssetManifest } from './generate-asset-manifest.mjs';
 
 const projectDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const outputDir = path.join(projectDir, 'dist');
@@ -238,24 +239,25 @@ function eventOffer(event) {
   return { '@type': 'Offer', priceSpecification, availability: 'https://schema.org/InStock' };
 }
 
-function eventStructuredData(event) {
+function eventStructuredData(event, locale = 'de') {
   const image = safeExternalUrl(event['X-CONTRAST-IMAGE']) || `${siteUrl}/assets/images/venue/contrast-venue-04.jpg`;
   const offer = eventOffer(event);
   const musicEvent = /concert|dj|live music/i.test(event['X-CONTRAST-TYPE'] || '');
+  const localePrefix = locale === 'en' ? 'en/' : '';
   const schema = {
     '@context': 'https://schema.org',
     '@type': musicEvent ? 'MusicEvent' : 'Event',
-    '@id': `${siteUrl}/events/${event['X-CONTRAST-SLUG']}/#event`,
+    '@id': `${siteUrl}/${localePrefix}events/${event['X-CONTRAST-SLUG']}/#event`,
     name: event.SUMMARY,
-    url: `${siteUrl}/events/${event['X-CONTRAST-SLUG']}/`,
-    mainEntityOfPage: `${siteUrl}/events/${event['X-CONTRAST-SLUG']}/`,
+    url: `${siteUrl}/${localePrefix}events/${event['X-CONTRAST-SLUG']}/`,
+    mainEntityOfPage: `${siteUrl}/${localePrefix}events/${event['X-CONTRAST-SLUG']}/`,
     description: (event.DESCRIPTION || event.SUMMARY).replace(/\n/g, ' '),
     image: [image],
     startDate: eventIso(event.DTSTART),
     endDate: eventIso(event.DTEND || event.DTSTART),
     eventStatus: 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-    inLanguage: 'en',
+    inLanguage: locale,
     keywords: event['X-CONTRAST-TAGS'] || undefined,
     location: { '@id': structuredData['@id'], '@type': 'MusicVenue', name: 'Contrast', address: structuredData.address },
     organizer: { '@type': 'Organization', name: 'Contrast e.V.', url: siteUrl },
@@ -265,17 +267,21 @@ function eventStructuredData(event) {
   return Object.fromEntries(Object.entries(schema).filter(([, value]) => value !== undefined));
 }
 
-function eventPage(event) {
+function eventPage(event, locale = 'de') {
+  const de = locale === 'de';
+  const copy = de
+    ? { back: '← Zurück zum Programm', when: 'Wann', where: 'Wo', entry: 'Eintritt', details: 'Details folgen', lineup: 'Line-up', lineupHeading: 'Die Menschen, die den Lärm machen.', atmosphere: 'Eindruck von' }
+    : { back: '← Back to programme', when: 'When', where: 'Where', entry: 'Entry', details: 'Details soon', lineup: 'Line-up', lineupHeading: 'The people making the noise.', atmosphere: 'Atmosphere at' };
   const start = eventDate(event.DTSTART);
   const end = eventDate(event.DTEND || event.DTSTART);
-  const date = new Intl.DateTimeFormat('en-GB', { dateStyle: 'full', timeZone: 'Europe/Berlin' }).format(start);
+  const date = new Intl.DateTimeFormat(de ? 'de-DE' : 'en-GB', { dateStyle: 'full', timeZone: 'Europe/Berlin' }).format(start);
   const artists = event.artists.map(([name, bio = '', url = '']) => {
     const artistUrl = safeExternalUrl(url);
     return `<li><strong>${escapeHtml(name)}</strong><span>${escapeHtml(bio)}</span>${artistUrl ? `<a href="${escapeHtml(artistUrl)}" target="_blank" rel="noopener noreferrer">Artist site ↗</a>` : ''}</li>`;
   }).join('');
   const image = safeExternalUrl(event['X-CONTRAST-IMAGE']) || `${siteUrl}/assets/images/venue/contrast-venue-04.jpg`;
   const description = event.DESCRIPTION || event.SUMMARY;
-  return `<main id="main-content" tabindex="-1" data-route="event"><article class="event-page"><a class="event-page__back" href="../../">← Back to programme</a><p class="section-kicker">${escapeHtml(event['X-CONTRAST-TYPE'] || 'Event')} · Contrast Konstanz</p><h1>${escapeHtml(event.SUMMARY)}</h1><p class="event-page__lead">${escapeHtml(description).replace(/\n/g, '<br>')}</p><div class="event-page__meta"><p><strong>When</strong><span>${date}<br>${eventTime(event.DTSTART)}–${eventTime(event.DTEND || event.DTSTART)}</span></p><p><strong>Where</strong><span>Contrast<br>Joseph-Belli-Weg 11, Konstanz</span></p><p><strong>Entry</strong><span>${escapeHtml(event['X-CONTRAST-PRICE'] || 'Details soon')}</span></p></div><img class="event-page__image" src="${escapeHtml(image)}" alt="Atmosphere at ${escapeHtml(event.SUMMARY)}"><section class="event-page__lineup"><p class="section-kicker">Line-up</p><h2>The people making the noise.</h2><ul>${artists}</ul></section><p class="event-page__tags">${escapeHtml(event['X-CONTRAST-TAGS'] || '')}</p></article></main>`;
+  return `<main id="main-content" tabindex="-1" data-route="event"><article class="event-page"><a class="event-page__back" href="./${de ? '' : 'en/'}">${copy.back}</a><p class="section-kicker">${escapeHtml(event['X-CONTRAST-TYPE'] || 'Event')} · Contrast Konstanz</p><h1>${escapeHtml(event.SUMMARY)}</h1><p class="event-page__lead">${escapeHtml(description).replace(/\n/g, '<br>')}</p><div class="event-page__meta"><p><strong>${copy.when}</strong><span>${date}<br>${eventTime(event.DTSTART)}–${eventTime(event.DTEND || event.DTSTART)}</span></p><p><strong>${copy.where}</strong><span>Contrast<br>Joseph-Belli-Weg 11, Konstanz</span></p><p><strong>${copy.entry}</strong><span>${escapeHtml(event['X-CONTRAST-PRICE'] || copy.details)}</span></p></div><img class="event-page__image" src="${escapeHtml(image)}" alt="${copy.atmosphere} ${escapeHtml(event.SUMMARY)}"><section class="event-page__lineup"><p class="section-kicker">${copy.lineup}</p><h2>${copy.lineupHeading}</h2><ul>${artists}</ul></section><p class="event-page__tags">${escapeHtml(event['X-CONTRAST-TAGS'] || '')}</p></article></main>`;
 }
 
 function mainMarkup(contentFile) {
@@ -367,9 +373,12 @@ if (fs.existsSync(outputDir)) {
   removeDirectory(outputDir);
 }
 fs.mkdirSync(outputDir, { recursive: true });
+generateAssetManifest();
 copyDirectory(path.join(projectDir, 'assets'), path.join(outputDir, 'assets'));
 copyDirectory(path.join(projectDir, 'pages'), path.join(outputDir, 'pages'));
 fs.copyFileSync(path.join(projectDir, 'robots.txt'), path.join(outputDir, 'robots.txt'));
+const assetBrowser = fs.readFileSync(path.join(projectDir, 'asset-browser.html'), 'utf8');
+fs.writeFileSync(path.join(outputDir, 'asset-browser.html'), applyContentSecurityPolicy(assetBrowser));
 
 let template = fs.readFileSync(path.join(projectDir, 'index.html'), 'utf8');
 template = setMeta(template, pages.home, true);
@@ -410,7 +419,7 @@ function seriesListings(series, locale = 'en') {
   const now = new Date('2026-10-21T12:00:00+02:00'); // sample programme week; replace with live build date on calendar sync
   const entries = calendarEvents.filter((event) => eventSeries(event) === series);
   const format = new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/Berlin' });
-  const item = (event) => `<li><time datetime="${eventIso(event.DTSTART)}">${format.format(eventDate(event.DTSTART))}</time><a href="${locale === 'en' ? '../../events/' : '../events/'}${event['X-CONTRAST-SLUG']}/">${escapeHtml(event.SUMMARY)}</a></li>`;
+  const item = (event) => `<li><time datetime="${eventIso(event.DTSTART)}">${format.format(eventDate(event.DTSTART))}</time><a href="./${locale === 'en' ? 'en/' : ''}events/${event['X-CONTRAST-SLUG']}/">${escapeHtml(event.SUMMARY)}</a></li>`;
   const upcoming = entries.filter((event) => eventDate(event.DTSTART) >= now).sort((a, b) => a.DTSTART.localeCompare(b.DTSTART)).slice(0, 3);
   const past = entries.filter((event) => eventDate(event.DTSTART) < now).sort((a, b) => b.DTSTART.localeCompare(a.DTSTART)).slice(0, 4);
   const labels = locale === 'de' ? { upcoming: 'Als Nächstes', past: 'Vergangene Abende', empty: 'Gerade keine Specials angekündigt.' } : { upcoming: 'Coming up', past: 'Previous nights', empty: 'No special dates announced yet.' };
@@ -423,27 +432,31 @@ function nextOccurrence(series, locale = 'en') {
   const copy = locale === 'de' ? { label: 'Nächster Termin', empty: 'Der nächste Termin wird bald angekündigt.' } : { label: 'Next occurrence', empty: 'The next date will be announced soon.' };
   if (!next) return `<section class="next-occurrence"><p class="section-kicker">${copy.label}</p><p>${copy.empty}</p></section>`;
   const date = new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Berlin' }).format(eventDate(next.DTSTART));
-  return `<section class="next-occurrence"><p class="section-kicker">${copy.label}</p><p><time datetime="${eventIso(next.DTSTART)}">${date} · ${eventTime(next.DTSTART)}</time></p><a href="${locale === 'en' ? '../../events/' : '../events/'}${next['X-CONTRAST-SLUG']}/">${escapeHtml(next.SUMMARY)} <span aria-hidden="true">→</span></a></section>`;
+  return `<section class="next-occurrence"><p class="section-kicker">${copy.label}</p><p><time datetime="${eventIso(next.DTSTART)}">${date} · ${eventTime(next.DTSTART)}</time></p><a href="./${locale === 'en' ? 'en/' : ''}events/${next['X-CONTRAST-SLUG']}/">${escapeHtml(next.SUMMARY)} <span aria-hidden="true">→</span></a></section>`;
 }
 for (const event of calendarEvents) {
   const slug = event['X-CONTRAST-SLUG'];
-  const page = {
-    path: `events/${slug}`,
-    title: `${event.SUMMARY} | Contrast Konstanz`,
-    description: (event.DESCRIPTION || event.SUMMARY).replace(/\n/g, ' ').slice(0, 155),
-    image: (safeExternalUrl(event['X-CONTRAST-IMAGE']) || '').replace(`${siteUrl}/`, '') || 'assets/images/venue/contrast-venue-04.jpg'
-  };
-  let html = template.replace(/<main id="main-content"[\s\S]*?<\/main>/i, eventPage(event));
-  html = setMeta(html, page, false);
-  html = html.replace('</head>', `  <script type="application/ld+json">${JSON.stringify(eventStructuredData(event))}</script>\n</head>`);
-  const routeDir = path.join(outputDir, page.path);
-  fs.mkdirSync(routeDir, { recursive: true });
-  fs.writeFileSync(path.join(routeDir, 'index.html'), applyContentSecurityPolicy(html));
+  for (const locale of ['de', 'en']) {
+    const localePrefix = locale === 'en' ? 'en/' : '';
+    const page = {
+      path: `${localePrefix}events/${slug}`,
+      title: `${event.SUMMARY} | Contrast Konstanz`,
+      description: (event.DESCRIPTION || event.SUMMARY).replace(/\n/g, ' ').slice(0, 155),
+      image: (safeExternalUrl(event['X-CONTRAST-IMAGE']) || '').replace(`${siteUrl}/`, '') || 'assets/images/venue/contrast-venue-04.jpg'
+    };
+    let html = template.replace(/<main id="main-content"[\s\S]*?<\/main>/i, eventPage(event, locale));
+    html = setMeta(html, page, false);
+    html = html.replace('<html lang="en">', `<html lang="${locale}" data-static-locale="${locale}">`);
+    html = html.replace('</head>', `  <script type="application/ld+json">${JSON.stringify(eventStructuredData(event, locale))}</script>\n</head>`);
+    const routeDir = path.join(outputDir, page.path);
+    fs.mkdirSync(routeDir, { recursive: true });
+    fs.writeFileSync(path.join(routeDir, 'index.html'), applyContentSecurityPolicy(html));
+  }
 }
 
 const sitemapUrls = [
   ...Object.values(pages).map((page) => `${siteUrl}/${page.path ? `${page.path}/` : ''}`),
-  ...calendarEvents.map((event) => `${siteUrl}/events/${event['X-CONTRAST-SLUG']}/`)
+  ...calendarEvents.flatMap((event) => [`${siteUrl}/events/${event['X-CONTRAST-SLUG']}/`, `${siteUrl}/en/events/${event['X-CONTRAST-SLUG']}/`])
 ];
 fs.writeFileSync(path.join(outputDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls.map((url) => `  <url><loc>${url}</loc></url>`).join('\n')}\n</urlset>\n`);
 

@@ -1024,11 +1024,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const language = button.dataset.language;
             if (language === currentLanguage) return;
             if (staticLocale) {
-                const path = window.location.pathname;
-                const target = language === 'en'
-                    ? `/en${path === '/' ? '/' : path}`
-                    : (path.replace(/^\/en(?=\/|$)/, '') || '/');
-                window.location.assign(target);
+                // Keep the GitHub Pages project directory (for example
+                // /Contrast/) in front of the locale segment.
+                const currentPath = window.location.pathname.slice(siteRoot.pathname.length).replace(/^\/+/, '');
+                const routePath = currentPath.replace(/^en\/?/, '');
+                const target = new URL(language === 'en' ? `en/${routePath}` : routePath || './', siteRoot);
+                target.search = window.location.search;
+                target.hash = window.location.hash;
+                window.location.assign(target.href);
                 return;
             }
             currentLanguage = language;
