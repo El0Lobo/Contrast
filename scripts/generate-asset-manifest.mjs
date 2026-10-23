@@ -31,6 +31,7 @@ export function generateAssetManifest() {
       return {
         name: path.basename(file),
         path: relativePath,
+        collection: relativePath.startsWith('assets/archive/Contrast-Material/') ? 'contrast-material' : 'website',
         extension,
         isIcon: relativePath.startsWith('assets/icons/') || relativePath.includes('/Vector/'),
         kind: imageExtensions.has(extension)

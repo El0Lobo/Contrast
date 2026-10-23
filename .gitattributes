@@ -1,0 +1,4 @@
+# The preserved Contrast Material is an archival source collection.  Keep its
+# original bytes intact and prevent Git text/whitespace checks from parsing
+# PDFs, InDesign packages and generated vector exports as source code.
+assets/archive/Contrast-Material/** -text -diff

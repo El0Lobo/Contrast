@@ -48,6 +48,16 @@ X-CONTRAST-TAGS:punk,live music,Konstanz
 
 For an event belonging to a recurring Contrast format, add standard ICS `CATEGORIES`, for example `CATEGORIES:Info-Kneipe` or `CATEGORIES:Kunst-Kneipe`. This is what the site uses to identify and show the next occurrence; unlike a custom field it is preserved by ordinary calendar software. `X-CONTRAST-SERIES` remains a fallback.
 
+## Add a real act to the Band-Archiv
+
+For a confirmed concert, add this field to the event:
+
+```ics
+X-CONTRAST-ARCHIVE:TRUE
+```
+
+At build time, every credited `X-CONTRAST-ARTISTS` name that is not already in the Band-Archiv is added with the event’s exact date and its event URL as source. Do **not** use this for placeholder, draft or recurring-host entries. This keeps the public archive free of sample acts while making real programme entries carry their history forward automatically.
+
 ## Importing a calendar later
 
 The static site deliberately does not fetch a third-party calendar in visitors’ browsers: that would require CORS, make programme content disappear when the external service is down, and would not reliably create SEO pages. Instead, sync the remote ICS into `assets/data/events.ics` during deployment (GitHub Action, scheduled job or CMS export), then run `node scripts/build-clean-routes.mjs`. The generated event pages and sitemap are ready before Google or visitors reach the site.

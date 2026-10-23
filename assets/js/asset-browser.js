@@ -4,19 +4,26 @@
   const template = document.querySelector('#asset-card-template');
   const search = document.querySelector('#asset-search');
   const filters = [...document.querySelectorAll('[data-filter]')];
+  const collections = [...document.querySelectorAll('[data-collection]')];
   const count = document.querySelector('#visible-count');
   const status = document.querySelector('#asset-status');
   const empty = document.querySelector('#asset-empty');
   const dialog = document.querySelector('#asset-dialog');
   let activeFilter = 'all';
+  let activeCollection = 'all';
 
   const imageExtensions = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'avif']);
 
   function matchesFilter(asset) {
     if (activeFilter === 'all') return true;
+    if (activeFilter === 'svg') return asset.extension === 'svg';
     if (activeFilter === 'image') return asset.kind === 'image' && !asset.isIcon;
     if (activeFilter === 'icon') return asset.isIcon;
     return asset.kind === activeFilter;
+  }
+
+  function matchesCollection(asset) {
+    return activeCollection === 'all' || (asset.collection || 'website') === activeCollection;
   }
 
   function copyPath(path, button) {
@@ -57,7 +64,9 @@
     const preview = card.querySelector('.asset-preview');
     const previewIcon = card.querySelector('.asset-file-icon');
     card.querySelector('.asset-name').textContent = asset.name;
-    card.querySelector('.asset-path').textContent = asset.path.replace(/^assets\//, '');
+    card.querySelector('.asset-path').textContent = asset.path
+      .replace(/^assets\/archive\/Contrast-Material\//, '')
+      .replace(/^assets\//, '');
     preview.setAttribute('aria-label', `Preview ${asset.name}`);
 
     if (imageExtensions.has(asset.extension)) {
@@ -81,7 +90,8 @@
 
   function render() {
     const query = search.value.trim().toLocaleLowerCase();
-    const visible = assets.filter(asset => {
+    const collectionAssets = assets.filter(matchesCollection);
+    const visible = collectionAssets.filter(asset => {
       const searchText = `${asset.name} ${asset.path} ${asset.extension} ${asset.kind}`.toLocaleLowerCase();
       return matchesFilter(asset) && (!query || searchText.includes(query));
     });
@@ -89,8 +99,8 @@
     grid.replaceChildren(...visible.map(createCard));
     count.textContent = visible.length;
     status.textContent = query || activeFilter !== 'all'
-      ? `Showing ${visible.length} of ${assets.length}`
-      : `${assets.length} reusable files`;
+      ? `Showing ${visible.length} of ${collectionAssets.length}`
+      : `${collectionAssets.length} reusable files`;
     empty.hidden = visible.length !== 0;
     grid.hidden = visible.length === 0;
   }
@@ -99,6 +109,11 @@
   filters.forEach(button => button.addEventListener('click', () => {
     activeFilter = button.dataset.filter;
     filters.forEach(filter => filter.classList.toggle('is-active', filter === button));
+    render();
+  }));
+  collections.forEach(button => button.addEventListener('click', () => {
+    activeCollection = button.dataset.collection;
+    collections.forEach(collection => collection.classList.toggle('is-active', collection === button));
     render();
   }));
   empty.querySelector('button').addEventListener('click', () => {

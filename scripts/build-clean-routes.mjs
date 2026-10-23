@@ -10,6 +10,10 @@ const outputDir = path.join(projectDir, 'dist');
 const siteUrl = 'https://contrast-kn.de';
 const cspPlaceholder = '<!-- CSP_PLACEHOLDER -->';
 const historyBands = JSON.parse(fs.readFileSync(path.join(projectDir, 'content/history-bands.json'), 'utf8'));
+const artistProfilesPath = path.join(projectDir, 'content', 'artists.json');
+const artistProfiles = fs.existsSync(artistProfilesPath)
+  ? JSON.parse(fs.readFileSync(artistProfilesPath, 'utf8')).artists || {}
+  : {};
 // VS Code Live Server injects this exact reload helper in local previews.
 // A hash permits only this byte-for-byte script; arbitrary inline JS remains blocked.
 const liveServerReloadHash = "'sha256-vvt4KWwuNr51XfE5m+hzeNEGhiOfZzG97ccfqGsPwvE='";
@@ -261,10 +265,64 @@ function eventStructuredData(event, locale = 'de') {
     keywords: event['X-CONTRAST-TAGS'] || undefined,
     location: { '@id': structuredData['@id'], '@type': 'MusicVenue', name: 'Contrast', address: structuredData.address },
     organizer: { '@type': 'Organization', name: 'Contrast e.V.', url: siteUrl },
-    performer: event.artists.length ? event.artists.map(([name, bio, url]) => ({ '@type': 'PerformingGroup', name, description: bio || undefined, url: safeExternalUrl(url) || undefined })) : undefined,
+    performer: event.artists.length ? event.artists.map(([name, bio, url]) => {
+      const artist = artistDirectory.get(artistKey(name));
+      const profileUrl = artist ? `${siteUrl}/${localePrefix}artists/${artist.slug}/` : undefined;
+      return {
+        '@type': /^dj\b/i.test(name) ? 'Person' : 'MusicGroup',
+        name,
+        description: bio || undefined,
+        url: profileUrl || safeExternalUrl(url) || undefined,
+        sameAs: safeExternalUrl(url) || undefined
+      };
+    }) : undefined,
     offers: offer
   };
   return Object.fromEntries(Object.entries(schema).filter(([, value]) => value !== undefined));
+}
+
+function publicEvent(event) {
+  const slug = event['X-CONTRAST-SLUG'];
+  const url = `${siteUrl}/events/${slug}/`;
+  const image = safeExternalUrl(event['X-CONTRAST-IMAGE']) || `${siteUrl}/assets/images/venue/contrast-venue-04.jpg`;
+  return {
+    id: event.UID || `${slug}@contrast-kn.de`, url, title: event.SUMMARY,
+    description: event.DESCRIPTION || '', startDate: eventIso(event.DTSTART), endDate: eventIso(event.DTEND || event.DTSTART),
+    timezone: 'Europe/Berlin', status: 'scheduled', eventType: event['X-CONTRAST-TYPE'] || 'Event',
+    categories: (event.CATEGORIES || event['X-CONTRAST-SERIES'] || '').split(',').map((value) => value.trim()).filter(Boolean),
+    tags: (event['X-CONTRAST-TAGS'] || '').split(',').map((value) => value.trim()).filter(Boolean),
+    price: event['X-CONTRAST-PRICE'] || null, image,
+    location: { name: 'Contrast', address: 'Joseph-Belli-Weg 11, 78467 Konstanz, Germany', url: siteUrl },
+    artists: event.artists.map(([name, description = '', artistUrl = '']) => ({ name, description: description || null, url: safeExternalUrl(artistUrl) || null }))
+  };
+}
+
+const escapeXml = (value = '') => String(value).replace(/[<>&'\"]/g, (character) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[character]));
+const escapeIcs = (value = '') => String(value).replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+
+function publicIcs(events) {
+  const eventLines = events.map((event) => {
+    const categories = (event.CATEGORIES || event['X-CONTRAST-SERIES'] || '').split(',').map((value) => value.trim()).filter(Boolean);
+    const dated = /^\d{8}$/.test(event.DTSTART);
+    const start = dated ? `DTSTART;VALUE=DATE:${event.DTSTART}` : `DTSTART;TZID=Europe/Berlin:${event.DTSTART}`;
+    const end = dated ? `DTEND;VALUE=DATE:${event.DTEND || event.DTSTART}` : `DTEND;TZID=Europe/Berlin:${event.DTEND || event.DTSTART}`;
+    return ['BEGIN:VEVENT', `UID:${escapeIcs(event.UID || `${event['X-CONTRAST-SLUG']}@contrast-kn.de`)}`, start, end,
+      `SUMMARY:${escapeIcs(event.SUMMARY)}`, `DESCRIPTION:${escapeIcs(event.DESCRIPTION || '')}`,
+      'LOCATION:Contrast\\, Joseph-Belli-Weg 11\\, 78467 Konstanz\\, Germany',
+      `URL:${siteUrl}/events/${event['X-CONTRAST-SLUG']}/`, categories.length ? `CATEGORIES:${categories.map(escapeIcs).join(',')}` : ''
+    ].filter(Boolean).join('\r\n') + '\r\nEND:VEVENT';
+  }).join('\r\n');
+  return `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Contrast Konstanz//Programme//EN\r\nCALSCALE:GREGORIAN\r\nX-WR-CALNAME:Contrast programme\r\n${eventLines}\r\nEND:VCALENDAR\r\n`;
+}
+
+function writePublicEventFeeds(events) {
+  const eventsData = events.map(publicEvent);
+  const venue = { name: 'Contrast', address: 'Joseph-Belli-Weg 11, 78467 Konstanz, Germany', url: siteUrl };
+  fs.writeFileSync(path.join(outputDir, 'events.json'), `${JSON.stringify({ version: 1, title: 'Contrast programme', home_page_url: siteUrl, venue, events: eventsData }, null, 2)}\n`);
+  fs.writeFileSync(path.join(outputDir, 'feed.json'), `${JSON.stringify({ version: 'https://jsonfeed.org/version/1.1', title: 'Contrast programme', home_page_url: siteUrl, feed_url: `${siteUrl}/feed.json`, items: eventsData.map((event) => ({ id: event.id, url: event.url, title: event.title, content_text: event.description, date_published: event.startDate, tags: [...event.categories, ...event.tags], image: event.image, authors: event.artists.map((artist) => ({ name: artist.name, url: artist.url || undefined })) })) }, null, 2)}\n`);
+  const items = eventsData.map((event) => `    <item><guid isPermaLink="true">${escapeXml(event.url)}</guid><title>${escapeXml(event.title)}</title><link>${escapeXml(event.url)}</link><description>${escapeXml(event.description)}</description><pubDate>${new Date(event.startDate).toUTCString()}</pubDate>${event.categories.map((category) => `<category>${escapeXml(category)}</category>`).join('')}</item>`).join('\n');
+  fs.writeFileSync(path.join(outputDir, 'feed.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>Contrast programme</title><link>${siteUrl}/events/</link><description>Upcoming and past events at Contrast Konstanz.</description>\n${items}\n</channel></rss>\n`);
+  fs.writeFileSync(path.join(outputDir, 'events.ics'), publicIcs(events));
 }
 
 function eventPage(event, locale = 'de') {
@@ -277,7 +335,11 @@ function eventPage(event, locale = 'de') {
   const date = new Intl.DateTimeFormat(de ? 'de-DE' : 'en-GB', { dateStyle: 'full', timeZone: 'Europe/Berlin' }).format(start);
   const artists = event.artists.map(([name, bio = '', url = '']) => {
     const artistUrl = safeExternalUrl(url);
-    return `<li><strong>${escapeHtml(name)}</strong><span>${escapeHtml(bio)}</span>${artistUrl ? `<a href="${escapeHtml(artistUrl)}" target="_blank" rel="noopener noreferrer">Artist site ↗</a>` : ''}</li>`;
+    const artist = artistDirectory.get(artistKey(name));
+    const profileUrl = artist ? `./${de ? '' : 'en/'}artists/${artist.slug}/` : '';
+    const profile = profileUrl ? `<a href="${profileUrl}">${escapeHtml(name)}</a>` : escapeHtml(name);
+    const site = artistUrl ? `<a href="${escapeHtml(artistUrl)}" target="_blank" rel="noopener noreferrer">${de ? 'Offizielle Seite' : 'Official site'} ↗</a>` : '';
+    return `<li><strong>${profile}</strong><span>${escapeHtml(bio)}</span>${site}</li>`;
   }).join('');
   const image = safeExternalUrl(event['X-CONTRAST-IMAGE']) || `${siteUrl}/assets/images/venue/contrast-venue-04.jpg`;
   const description = event.DESCRIPTION || event.SUMMARY;
@@ -295,7 +357,7 @@ function mainMarkup(contentFile) {
 function historyArchiveMarkup(locale) {
   const de = locale === 'de';
   const grouped = new Map();
-  historyBands.forEach((band) => {
+  archiveBands.forEach((band) => {
     const era = band.era || (de ? 'Ohne Zuordnung' : 'Unassigned');
     if (!grouped.has(era)) grouped.set(era, []);
     grouped.get(era).push(band);
@@ -303,7 +365,42 @@ function historyArchiveMarkup(locale) {
   const copy = de
     ? { search: 'Bands suchen', searchHint: 'Name eingeben', sort: 'Sortieren', name: 'Name A–Z', newest: 'Datum: neu zuerst', oldest: 'Datum: alt zuerst', noResults: 'Keine passende Band gefunden.' }
     : { search: 'Search bands', searchHint: 'Enter a name', sort: 'Sort', name: 'Name A–Z', newest: 'Date: newest first', oldest: 'Date: oldest first', noResults: 'No matching band found.' };
-  return `<div class="history-archive__controls"><label><span>${copy.search}</span><input type="search" data-history-search placeholder="${copy.searchHint}" autocomplete="off"></label><label><span>${copy.sort}</span><select data-history-sort><option value="name">${copy.name}</option><option value="date-desc">${copy.newest}</option><option value="date-asc">${copy.oldest}</option></select></label></div><p class="history-archive__empty" data-history-empty hidden>${copy.noResults}</p><div class="history-archive__groups">${[...grouped.entries()].map(([era, bands]) => `<details class="history-archive__era"><summary>${escapeHtml(era)} <span data-history-count>${bands.length}</span></summary><ul>${bands.map((band) => `<li data-history-band data-name="${escapeHtml(band.artist.toLocaleLowerCase())}" data-date="${escapeHtml(band.dates || '')}"><strong>${escapeHtml(band.artist)}</strong>${band.dates ? `<time>${escapeHtml(band.dates)}</time>` : ''}${band.sourceUrl ? `<a href="${escapeHtml(band.sourceUrl)}" target="_blank" rel="noopener noreferrer">${de ? 'Quelle' : 'Source'} ↗</a>` : ''}</li>`).join('')}</ul></details>`).join('')}</div>`;
+  const recoveredDate = (value = '') => {
+    const date = value.trim();
+    return date && !/^date not recovered$/i.test(date) ? `<time>${escapeHtml(date)}</time>` : '';
+  };
+  const source = (band) => band.sourceUrl
+    ? `<a href="${escapeHtml(band.sourceUrl)}" target="_blank" rel="noopener noreferrer">${de ? 'Quelle' : 'Source'} ↗</a>`
+    : band.sourceLabel ? `<span class="history-archive__evidence">${escapeHtml(band.sourceLabel)}</span>` : '';
+  const mauerbluemchen = de
+    ? { title: 'Mauerblümchen', text: 'Die Vorgeschichte des Contrast ist belegt, aber bisher ist keine belastbare Band- oder Programmquelle aus der Mauerblümchen-Zeit aufgetaucht. Dieser Teil des Archivs bleibt bewusst offen, bis Flyer, Programme oder Zeitzeug*innen einen Namen und Zeitraum belegen.', source: 'Zur Ortsgeschichte' }
+    : { title: 'Mauerblümchen', text: 'The venue’s history before Contrast is documented, but no reliable band or programme source from the Mauerblümchen period has surfaced yet. This part of the archive deliberately remains open until flyers, programmes or witnesses establish a name and period.', source: 'Venue history' };
+  const mauerNote = grouped.has('Mauerblümchen') ? '' : `<section class="history-archive__mauerbluemchen"><p class="section-kicker">${mauerbluemchen.title}</p><p>${mauerbluemchen.text}</p><a href="https://archiv.seemoz.de/lokal_regional/die-provinz-lebt-21-jugendkultur-contrast/" target="_blank" rel="noopener noreferrer">${mauerbluemchen.source} ↗</a></section>`;
+  return `<div class="history-archive__controls"><label><span>${copy.search}</span><input type="search" data-history-search placeholder="${copy.searchHint}" autocomplete="off"></label><label><span>${copy.sort}</span><select data-history-sort><option value="name">${copy.name}</option><option value="date-desc">${copy.newest}</option><option value="date-asc">${copy.oldest}</option></select></label></div><p class="history-archive__empty" data-history-empty hidden>${copy.noResults}</p><div class="history-archive__groups">${[...grouped.entries()].map(([era, bands]) => `<details class="history-archive__era"><summary>${escapeHtml(era)} <span data-history-count>${bands.length}</span></summary><ul>${bands.map((band) => `<li data-history-band data-name="${escapeHtml(band.artist.toLocaleLowerCase())}" data-date="${escapeHtml(band.dates || '')}"><strong>${escapeHtml(band.artist)}</strong>${recoveredDate(band.dates)}${source(band)}</li>`).join('')}</ul></details>`).join('')}${mauerNote}</div>`;
+}
+
+function archiveBandsFromCalendar(events) {
+  const archiveArtistKey = (name = '') => name.trim().toLocaleLowerCase('de').replace(/\s+/g, ' ');
+  const known = new Set(historyBands.map((band) => archiveArtistKey(band.artist)));
+  const additions = [];
+  for (const event of events) {
+    if (!/^(true|yes|1)$/i.test(event['X-CONTRAST-ARCHIVE'] || '')) continue;
+    const compact = (event.DTSTART || '').replace(/\D/g, '').slice(0, 8);
+    if (!/^\d{8}$/.test(compact)) continue;
+    const date = `${compact.slice(6, 8)}.${compact.slice(4, 6)}.${compact.slice(0, 4)}`;
+    for (const [name] of event.artists) {
+      const key = archiveArtistKey(name);
+      if (!key || known.has(key)) continue;
+      known.add(key);
+      additions.push({
+        artist: name.trim(),
+        era: 'Contrast',
+        dates: date,
+        sourceUrl: safeExternalUrl(event.URL) || ''
+      });
+    }
+  }
+  return [...historyBands, ...additions];
 }
 
 function setMeta(html, page, isRoot) {
@@ -322,10 +419,13 @@ function setMeta(html, page, isRoot) {
   );
   html = html.replace(/\s*<meta name="keywords"[^>]*>/i, '');
   html = html.replace(/\s*<link rel="canonical"[^>]*>/i, '');
+  html = html.replace(/\s*<link rel="alternate" type="application\/(?:rss\+xml|feed\+json)"[^>]*>/gi, '');
   html = html.replace(/\s*<meta property="og:[^>]*>/gi, '');
   html = html.replace(/\s*<meta name="twitter:card"[^>]*>/gi, '');
   const socialMeta = `
   <link rel="canonical" href="${canonical}">
+  <link rel="alternate" type="application/rss+xml" title="Contrast programme" href="${siteUrl}/feed.xml">
+  <link rel="alternate" type="application/feed+json" title="Contrast programme JSON Feed" href="${siteUrl}/feed.json">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_GB">
   <meta property="og:site_name" content="Contrast">
@@ -393,12 +493,18 @@ for (const [route, page] of Object.entries(pages)) {
   fs.writeFileSync(path.join(routeDir, 'index.html'), applyContentSecurityPolicy(html));
 }
 
+const calendarEvents = parseIcsEvents().filter((event) => !/^(true|yes|1)$/i.test(event['X-CONTRAST-CLOSURE'] || ''));
+const archiveBands = archiveBandsFromCalendar(calendarEvents);
+
 // Locale output is generated from the registry above. German is the canonical
 // root language; English lives under /en/. These are static documents, so a
 // crawler never depends on JavaScript or browser-language detection.
 for (const [locale, localeInfo] of Object.entries(locales)) {
   for (const [routeName, route] of Object.entries(routes)) {
-    const content = localizedContent(route, locale, template).replace('<!-- HISTORY_ARCHIVE -->', historyArchiveMarkup(locale));
+    const content = localizedContent(route, locale, template)
+      .replace('<!-- HISTORY_ARCHIVE -->', historyArchiveMarkup(locale))
+      .replace('308 entries', `${archiveBands.length} entries`)
+      .replace('308 Einträge', `${archiveBands.length} Einträge`);
     const publicPath = [localeInfo.prefix, route.path].filter(Boolean).join('/');
     const fallback = pages[routeName] || pages.home;
     const page = { ...fallback, path: publicPath };
@@ -413,7 +519,91 @@ for (const [locale, localeInfo] of Object.entries(locales)) {
   }
 }
 
-const calendarEvents = parseIcsEvents().filter((event) => !/^(true|yes|1)$/i.test(event['X-CONTRAST-CLOSURE'] || ''));
+writePublicEventFeeds(calendarEvents);
+
+// Artist pages intentionally stay modest: the programme itself is enough to
+// give a small band a useful, durable profile without inventing a biography.
+const artistKey = (name = '') => name.trim().toLocaleLowerCase('de').replace(/\s+/g, ' ');
+const artistBaseSlug = (name = '') => name.toLocaleLowerCase('de')
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'artist';
+const artistDirectory = new Map();
+const artistSlugs = new Map();
+
+for (const event of calendarEvents) {
+  for (const [name, description = '', url = ''] of event.artists) {
+    const key = artistKey(name);
+    if (!key) continue;
+    let artist = artistDirectory.get(key);
+    if (!artist) {
+      const baseSlug = artistBaseSlug(name);
+      const seen = artistSlugs.get(baseSlug) || 0;
+      artistSlugs.set(baseSlug, seen + 1);
+      artist = { name: name.trim(), slug: seen ? `${baseSlug}-${seen + 1}` : baseSlug, description: '', url: '', events: [] };
+      artistDirectory.set(key, artist);
+    }
+    if (!artist.description && description.trim()) artist.description = description.trim();
+    if (!artist.url && safeExternalUrl(url)) artist.url = safeExternalUrl(url);
+    artist.events.push(event);
+  }
+}
+
+for (const artist of artistDirectory.values()) {
+  const profile = artistProfiles[artist.name] || artistProfiles[artist.slug];
+  if (!profile || typeof profile !== 'object') continue;
+  if (profile.description && !artist.description) artist.description = String(profile.description).trim();
+  if (profile.url && !artist.url) artist.url = safeExternalUrl(profile.url) || '';
+  // Local artwork is opt-in. A missing file simply means the clean text-only profile stays in place.
+  if (typeof profile.image === 'string' && /^assets\/images\/artists\/[a-z0-9._/-]+$/i.test(profile.image)) {
+    const imageFile = path.join(projectDir, profile.image);
+    if (fs.existsSync(imageFile)) artist.image = profile.image;
+  }
+}
+
+function artistStructuredData(artist, locale = 'de') {
+  const localePrefix = locale === 'en' ? 'en/' : '';
+  const profileUrl = `${siteUrl}/${localePrefix}artists/${artist.slug}/`;
+  return Object.fromEntries(Object.entries({
+    '@context': 'https://schema.org',
+    '@type': /^dj\b/i.test(artist.name) ? 'Person' : 'MusicGroup',
+    '@id': `${profileUrl}#artist`,
+    name: artist.name,
+    url: profileUrl,
+    description: artist.description || undefined,
+    sameAs: artist.url || undefined,
+    inLanguage: locale
+  }).filter(([, value]) => value !== undefined));
+}
+
+function artistPage(artist, locale = 'de') {
+  const de = locale === 'de';
+  const copy = de
+    ? { kicker: 'Band- & Künstler*innenarchiv', back: '← Zum Programm', appearances: 'Auftritte im Contrast', noInfo: 'Infos folgen.', official: 'Offizielle Seite ↗' }
+    : { kicker: 'Band & artist archive', back: '← Back to programme', appearances: 'Appearances at Contrast', noInfo: 'More information to follow.', official: 'Official site ↗' };
+  const format = new Intl.DateTimeFormat(de ? 'de-DE' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/Berlin' });
+  const appearances = [...artist.events].sort((a, b) => b.DTSTART.localeCompare(a.DTSTART)).map((event) => `<li><time datetime="${eventIso(event.DTSTART)}">${format.format(eventDate(event.DTSTART))}</time><a href="./${de ? '' : 'en/'}events/${event['X-CONTRAST-SLUG']}/">${escapeHtml(event.SUMMARY)} <span aria-hidden="true">→</span></a></li>`).join('');
+  const logo = artist.image ? `<img class="artist-page__logo" src="${escapeHtml(artist.image)}" alt="${escapeHtml(artist.name)}">` : '';
+  return `<main id="main-content" tabindex="-1" data-route="artist"><article class="event-page artist-page"><a class="event-page__back" href="./${de ? '' : 'en/'}events/">${copy.back}</a><p class="section-kicker">${copy.kicker}</p><div class="artist-page__heading"><div><h1>${escapeHtml(artist.name)}</h1><p class="event-page__lead">${escapeHtml(artist.description || copy.noInfo)}</p></div>${logo}</div>${artist.url ? `<p class="artist-page__site"><a href="${escapeHtml(artist.url)}" target="_blank" rel="noopener noreferrer">${copy.official}</a></p>` : ''}<section class="event-page__lineup artist-page__appearances"><p class="section-kicker">${copy.appearances}</p><ul>${appearances}</ul></section></article></main>`;
+}
+
+function eventsOverviewMarkup(locale = 'de') {
+  const de = locale === 'de';
+  const now = new Date('2026-10-21T12:00:00+02:00');
+  const copy = de
+    ? { kicker: '', title: 'Programm', intro: 'Konzerte, Partys, Soli-Abende und alles, was gerade im Contrast passiert.', upcoming: 'Als Nächstes', noUpcoming: 'Neue Termine folgen bald.', past: 'Archiv', search: 'Programm durchsuchen', searchHint: 'Nach Name suchen', includePast: 'Archiv einbeziehen', noResults: 'Keine passenden Einträge gefunden.', subscribe: 'Kalender & Feed', calendar: 'Ganzer Kalender (.ics)', rss: 'RSS-Feed', choose: 'Kalender nach Kategorien herunterladen', download: 'Auswahl herunterladen' }
+    : { kicker: 'Programme', title: 'Coming up.', intro: 'Concerts, parties, solidarity events and everything happening at Contrast.', upcoming: 'Coming up', noUpcoming: 'New dates will be announced soon.', past: 'Past events', search: 'Search the programme', searchHint: 'Search by name', includePast: 'Include past events', noResults: 'No matching events found.', subscribe: 'Calendar & feed', calendar: 'Full calendar (.ics)', rss: 'RSS feed', choose: 'Download a calendar by category', download: 'Download selection' };
+  const format = new Intl.DateTimeFormat(de ? 'de-DE' : 'en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/Berlin' });
+  const link = (event) => `./${de ? '' : 'en/'}events/${event['X-CONTRAST-SLUG']}/`;
+  const item = (event, past = false) => {
+    const index = [event.SUMMARY, event.CATEGORIES, event['X-CONTRAST-SERIES'], event['X-CONTRAST-TYPE'], event['X-CONTRAST-TAGS'], ...event.artists.map(([name, bio]) => `${name} ${bio || ''}`)].filter(Boolean).join(' ').toLocaleLowerCase('de');
+    return `<li data-events-item data-events-index="${escapeHtml(index)}"${past ? ' data-events-past-item' : ''}><time datetime="${eventIso(event.DTSTART)}">${format.format(eventDate(event.DTSTART))} · ${eventTime(event.DTSTART)}</time><a href="${link(event)}">${escapeHtml(event.SUMMARY)}</a>${event['X-CONTRAST-PRICE'] ? `<span class="events-overview__price">${escapeHtml(event['X-CONTRAST-PRICE'])}</span>` : ''}</li>`;
+  };
+  const upcoming = calendarEvents.filter((event) => eventDate(event.DTSTART) >= now).sort((a, b) => a.DTSTART.localeCompare(b.DTSTART));
+  const past = calendarEvents.filter((event) => eventDate(event.DTSTART) < now).sort((a, b) => b.DTSTART.localeCompare(a.DTSTART));
+  const categories = [...new Set(calendarEvents.flatMap((event) => (event.CATEGORIES || event['X-CONTRAST-SERIES'] || '').split(',').map((value) => value.trim()).filter(Boolean)))].sort((a, b) => a.localeCompare(b, de ? 'de' : 'en'));
+  const feeds = `<section class="events-feeds" aria-label="${copy.subscribe}"><p class="section-kicker">${copy.subscribe}</p><div class="events-feeds__links"><a href="./events.ics">${copy.calendar} ↓</a><a href="./feed.xml">${copy.rss} ↗</a></div><form class="events-feeds__picker" data-calendar-picker><fieldset><legend>${copy.choose}</legend><div>${categories.map((category) => `<label><input type="checkbox" value="${escapeHtml(category)}" checked> ${escapeHtml(category)}</label>`).join('')}</div></fieldset><button type="submit">${copy.download} ↓</button></form></section>`;
+  return `<main id="main-content" tabindex="-1" data-route="events"><section class="events-overview__hero">${copy.kicker ? `<p class="section-kicker">${copy.kicker}</p>` : ''}<h1>${copy.title}</h1><p>${copy.intro}</p><div class="events-overview__search"><label><span>${copy.search}</span><input type="search" data-events-search placeholder="${copy.searchHint}" autocomplete="off"></label><label class="events-overview__include"><input type="checkbox" data-events-include-past><span>${copy.includePast}</span></label><p class="events-overview__empty" data-events-empty hidden>${copy.noResults}</p></div></section><section class="events-overview" aria-labelledby="events-upcoming"><p class="section-kicker" id="events-upcoming">${copy.upcoming}</p>${upcoming.length ? `<ul class="events-overview__list" data-events-upcoming-list>${upcoming.map((event) => item(event)).join('')}</ul>` : `<p class="events-overview__empty">${copy.noUpcoming}</p>`}</section><section class="events-overview events-overview--past"><details><summary>${copy.past} <span>${past.length}</span></summary><div><ul class="events-overview__list" data-events-past-list>${past.map((event) => item(event, true)).join('')}</ul></div></details></section>${feeds}</main>`;
+}
 
 function seriesListings(series, locale = 'en') {
   const now = new Date('2026-10-21T12:00:00+02:00'); // sample programme week; replace with live build date on calendar sync
@@ -454,9 +644,47 @@ for (const event of calendarEvents) {
   }
 }
 
+for (const artist of artistDirectory.values()) {
+  for (const locale of ['de', 'en']) {
+    const localePrefix = locale === 'en' ? 'en/' : '';
+    const page = {
+      path: `${localePrefix}artists/${artist.slug}`,
+      title: `${artist.name} | Contrast Konstanz`,
+      description: (artist.description || `${artist.name} ${locale === 'de' ? 'im Contrast Konstanz.' : 'at Contrast Konstanz.'}`).slice(0, 155),
+      image: 'assets/images/venue/contrast-venue-04.jpg'
+    };
+    let html = template.replace(/<main id="main-content"[\s\S]*?<\/main>/i, artistPage(artist, locale));
+    html = setMeta(html, page, false);
+    html = html.replace('<html lang="en">', `<html lang="${locale}" data-static-locale="${locale}">`);
+    html = html.replace('</head>', `  <script type="application/ld+json">${JSON.stringify(artistStructuredData(artist, locale))}</script>\n</head>`);
+    const routeDir = path.join(outputDir, page.path);
+    fs.mkdirSync(routeDir, { recursive: true });
+    fs.writeFileSync(path.join(routeDir, 'index.html'), applyContentSecurityPolicy(html));
+  }
+}
+
+for (const locale of ['de', 'en']) {
+  const localePrefix = locale === 'en' ? 'en/' : '';
+  const page = {
+    path: `${localePrefix}events`,
+    title: locale === 'de' ? 'Programm & Veranstaltungen | Contrast Konstanz' : 'Programme & events | Contrast Konstanz',
+    description: locale === 'de' ? 'Kommende und vergangene Veranstaltungen im Contrast Konstanz.' : 'Upcoming and past events at Contrast Konstanz.',
+    image: 'assets/images/venue/contrast-venue-04.jpg'
+  };
+  let html = template.replace(/<main id="main-content"[\s\S]*?<\/main>/i, eventsOverviewMarkup(locale));
+  html = setMeta(html, page, false);
+  html = html.replace('<html lang="en">', `<html lang="${locale}" data-static-locale="${locale}">`);
+  const routeDir = path.join(outputDir, page.path);
+  fs.mkdirSync(routeDir, { recursive: true });
+  fs.writeFileSync(path.join(routeDir, 'index.html'), applyContentSecurityPolicy(html));
+}
+
 const sitemapUrls = [
   ...Object.values(pages).map((page) => `${siteUrl}/${page.path ? `${page.path}/` : ''}`),
-  ...calendarEvents.flatMap((event) => [`${siteUrl}/events/${event['X-CONTRAST-SLUG']}/`, `${siteUrl}/en/events/${event['X-CONTRAST-SLUG']}/`])
+  `${siteUrl}/events/`,
+  `${siteUrl}/en/events/`,
+  ...calendarEvents.flatMap((event) => [`${siteUrl}/events/${event['X-CONTRAST-SLUG']}/`, `${siteUrl}/en/events/${event['X-CONTRAST-SLUG']}/`]),
+  ...[...artistDirectory.values()].flatMap((artist) => [`${siteUrl}/artists/${artist.slug}/`, `${siteUrl}/en/artists/${artist.slug}/`])
 ];
 fs.writeFileSync(path.join(outputDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls.map((url) => `  <url><loc>${url}</loc></url>`).join('\n')}\n</urlset>\n`);
 
@@ -481,4 +709,4 @@ for (const series of ['Info-Kneipe', 'Kunst-Kneipe']) {
   }
 }
 
-console.log(`Generated ${Object.keys(pages).length + calendarEvents.length} indexable routes in dist/.`);
+console.log(`Generated ${Object.keys(pages).length + calendarEvents.length + artistDirectory.size} indexable routes in dist/.`);

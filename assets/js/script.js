@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLanguage = staticLocale || (browserLanguage.toLowerCase().startsWith('de') ? 'de' : 'en');
     const validRoutes = new Set([
         'home', 'Queer-Kneipe', /* 'Das-Labor', calendar-only */ 'Punk-Kneipe', 'Info-Kneipe',
-        'Kunst-Kneipe', 'Spieleabend', 'mitglied', 'Kontakt', 'About'
+        'Kunst-Kneipe', 'Spieleabend', 'mitglied', 'Kontakt', 'About', 'Archiv', 'events'
     ]);
     const routeMetadata = {
       en: {
@@ -78,6 +78,16 @@ document.addEventListener('DOMContentLoaded', () => {
             title: 'About Contrast Konstanz | Community, Culture & Club',
             description: 'Learn about Contrast, the self-managed youth club in Konstanz for alternative culture, music and community.',
             image: 'assets/images/venue/contrast-venue-06.jpg'
+        },
+        Archiv: {
+            title: 'Band archive | Contrast Konstanz',
+            description: 'Bands documented at Mauerblümchen, Outback and Contrast in Konstanz.',
+            image: 'assets/images/venue/contrast-venue-06.jpg'
+        },
+        events: {
+            title: 'Programme & events | Contrast Konstanz',
+            description: 'Upcoming and past events at Contrast Konstanz.',
+            image: 'assets/images/venue/contrast-venue-04.jpg'
         }
       },
       de: {
@@ -90,7 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
         Spieleabend: { title: 'Spieleabend in Konstanz | Contrast', description: 'Brettspiele, Kartenspiele und eine offene Gemeinschaft: Informiere dich über den nächsten Spieleabend im Contrast Konstanz.', image: 'assets/icons/events/spieleabend.webp' },
         mitglied: { title: 'Mitglied werden | Contrast Konstanz', description: 'Werde Mitglied im Contrast und gestalte alternative Musik, Kunst, Kultur und gemeinschaftliche Veranstaltungen in Konstanz mit.', image: 'assets/images/membership-poster.webp' },
         Kontakt: { title: 'Kontakt, Anfahrt & Öffnungszeiten | Contrast Konstanz', description: 'Adresse, Anfahrt, Öffnungszeiten und Booking-Kontakt des Contrast am Joseph-Belli-Weg 11 in Konstanz.', image: 'assets/images/map.webp' },
-        About: { title: 'Über das Contrast Konstanz | Gemeinschaft, Kultur & Club', description: 'Erfahre mehr über das Contrast, den selbstverwalteten Jugendclub für alternative Kultur, Musik und Gemeinschaft in Konstanz.', image: 'assets/images/venue/contrast-venue-06.jpg' }
+        About: { title: 'Über das Contrast Konstanz | Gemeinschaft, Kultur & Club', description: 'Erfahre mehr über das Contrast, den selbstverwalteten Jugendclub für alternative Kultur, Musik und Gemeinschaft in Konstanz.', image: 'assets/images/venue/contrast-venue-06.jpg' },
+        Archiv: { title: 'Band-Archiv | Contrast Konstanz', description: 'Bands aus Mauerblümchen, Outback und Contrast in Konstanz.', image: 'assets/images/venue/contrast-venue-06.jpg' },
+        events: { title: 'Programm & Veranstaltungen | Contrast Konstanz', description: 'Kommende und vergangene Veranstaltungen im Contrast Konstanz.', image: 'assets/images/venue/contrast-venue-04.jpg' }
       }
     };
     let cursorEffectInstance = null; // Track cursor effect instance
@@ -211,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const chromeCopy = {
         en: {
             skip: 'Skip to content',
-            nav: { home: 'Home', About: 'About', 'Queer-Kneipe': 'Queer Night', 'Punk-Kneipe': 'Punk Night', 'Info-Kneipe': 'Info Night', 'Kunst-Kneipe': 'Art Night', Spieleabend: 'Games Night', mitglied: 'Become a member', Kontakt: 'Contact' },
+            nav: { home: 'Home', events: 'Events', About: 'About', 'Queer-Kneipe': 'Queer Night', 'Punk-Kneipe': 'Punk Night', 'Info-Kneipe': 'Info Night', 'Kunst-Kneipe': 'Art Night', Spieleabend: 'Games Night', mitglied: 'Become a member', Kontakt: 'Contact' },
             navLabel: 'Main navigation',
             openNav: 'Open navigation',
             closeNav: 'Close navigation',
@@ -223,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         de: {
             skip: 'Zum Inhalt springen',
-            nav: { home: 'Home', About: 'Über uns', 'Queer-Kneipe': 'Queer-Kneipe', 'Punk-Kneipe': 'Punk-Kneipe', 'Info-Kneipe': 'Info-Kneipe', 'Kunst-Kneipe': 'Kunst-Kneipe', Spieleabend: 'Spieleabend', mitglied: 'Mitglied werden', Kontakt: 'Kontakt' },
+            nav: { home: 'Home', events: 'Programm', About: 'Über uns', 'Queer-Kneipe': 'Queer-Kneipe', 'Punk-Kneipe': 'Punk-Kneipe', 'Info-Kneipe': 'Info-Kneipe', 'Kunst-Kneipe': 'Kunst-Kneipe', Spieleabend: 'Spieleabend', mitglied: 'Mitglied werden', Kontakt: 'Kontakt' },
             navLabel: 'Hauptnavigation',
             openNav: 'Navigation öffnen',
             closeNav: 'Navigation schließen',
@@ -501,6 +513,86 @@ document.addEventListener('DOMContentLoaded', () => {
         update();
     }
 
+    function initializeEventsArchive() {
+        const eventsPage = main.querySelector('[data-events-search]')?.closest('main');
+        const search = eventsPage?.querySelector('[data-events-search]');
+        const includePast = eventsPage?.querySelector('[data-events-include-past]');
+        const archive = eventsPage?.querySelector('.events-overview--past');
+        const entries = eventsPage ? [...eventsPage.querySelectorAll('[data-events-item]')] : [];
+        const empty = eventsPage?.querySelector('[data-events-empty]');
+        const disclosure = archive?.querySelector('details');
+        if (!eventsPage || !search || !includePast || !archive || eventsPage.dataset.eventsReady) return;
+        eventsPage.dataset.eventsReady = 'true';
+
+        const update = () => {
+            const normalise = (value = '') => value.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const term = normalise(search.value.trim());
+            let matches = 0;
+            entries.forEach((entry) => {
+                const searchable = !entry.hasAttribute('data-events-past-item') || includePast.checked;
+                const visible = !term || (searchable && normalise(entry.dataset.eventsIndex || '').includes(term));
+                entry.hidden = !visible;
+                if (visible) matches += 1;
+            });
+            empty.hidden = !term || matches !== 0;
+            archive.hidden = Boolean(term && !includePast.checked);
+            if (term && includePast.checked) disclosure.open = true;
+        };
+
+        search.addEventListener('input', update);
+        includePast.addEventListener('change', update);
+        update();
+    }
+
+    function initializeCalendarDownload() {
+        const picker = main.querySelector('[data-calendar-picker]');
+        if (!picker || picker.dataset.calendarReady) return;
+        picker.dataset.calendarReady = 'true';
+
+        const escapeIcs = (value = '') => String(value)
+            .replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n')
+            .replace(/,/g, '\\,').replace(/;/g, '\\;');
+        const icsTime = (value) => new Date(value).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+        const icsFor = (events) => {
+            const entries = events.map((event) => [
+                'BEGIN:VEVENT',
+                `UID:${escapeIcs(event.id)}`,
+                `DTSTART:${icsTime(event.startDate)}`,
+                `DTEND:${icsTime(event.endDate || event.startDate)}`,
+                `SUMMARY:${escapeIcs(event.title)}`,
+                `DESCRIPTION:${escapeIcs(event.description || '')}`,
+                `LOCATION:${escapeIcs('Contrast, Joseph-Belli-Weg 11, 78467 Konstanz, Germany')}`,
+                `URL:${escapeIcs(event.url)}`,
+                event.categories?.length ? `CATEGORIES:${event.categories.map(escapeIcs).join(',')}` : '',
+                'END:VEVENT'
+            ].filter(Boolean).join('\r\n')).join('\r\n');
+            return `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Contrast Konstanz//Programme//EN\r\nCALSCALE:GREGORIAN\r\nX-WR-CALNAME:Contrast programme\r\n${entries}\r\nEND:VCALENDAR\r\n`;
+        };
+
+        picker.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const chosen = new Set([...picker.querySelectorAll('input:checked')].map((input) => input.value));
+            if (!chosen.size) return;
+            try {
+                const response = await fetch(new URL('events.json', siteRoot.href));
+                if (!response.ok) throw new Error('events.json unavailable');
+                const data = await response.json();
+                const selected = data.events.filter((entry) => entry.categories?.some((category) => chosen.has(category)));
+                const blob = new Blob([icsFor(selected)], { type: 'text/calendar;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'contrast-programm.ics';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                window.location.assign(new URL('events.ics', siteRoot.href));
+            }
+        });
+    }
+
     // Toggle menu visibility
     if (hamburger && menu) {
         hamburger.addEventListener('click', () => {
@@ -623,6 +715,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     enableFacebookEmbeds();
                     initializeVenueCarousel();
                     initializeBandArchive();
+                    initializeEventsArchive();
+                    initializeCalendarDownload();
                     positionHomeProgramme();
                     initializeProgrammeControls();
     
@@ -999,6 +1093,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (event) => {
         const link = event.target.closest('a[data-route]');
         if (!link || !validRoutes.has(link.dataset.route)) return;
+        // The events overview is a generated, fully static page. Let the
+        // browser load it instead of asking the legacy fragment loader for a
+        // non-existent pages/events.html file.
+        if (link.dataset.route === 'events') return;
         if (staticLocale) return;
 
         event.preventDefault();
@@ -1062,6 +1160,8 @@ document.addEventListener('DOMContentLoaded', () => {
         enableFacebookEmbeds();
         initializeVenueCarousel();
         initializeBandArchive();
+        initializeEventsArchive();
+        initializeCalendarDownload();
         positionHomeProgramme();
         initializeProgrammeControls();
         updateActiveLink(initialFile);

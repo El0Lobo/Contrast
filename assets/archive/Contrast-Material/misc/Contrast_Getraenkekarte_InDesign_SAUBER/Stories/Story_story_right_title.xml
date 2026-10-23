@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<idPkg:Story xmlns:idPkg="http://ns.adobe.com/AdobeInDesign/idml/1.0/packaging" DOMVersion="7.0">
+  <Story Self="story_right_title" TrackChanges="false" StoryTitle="$ID/">
+    <ParagraphStyleRange Justification="LeftAlign" SpaceBefore="0" SpaceAfter="0" Hyphenation="false">
+      <CharacterStyleRange PointSize="30" FillColor="Color/ChalkWhite" FontStyle="Regular" Tracking="0" HorizontalScale="100" VerticalScale="100">
+        <Properties>
+          <AppliedFont type="string">Chalkboy Free Trial</AppliedFont>
+          <Leading type="unit">32</Leading>
+        </Properties>
+        <Content>SOFTDRINKS</Content>
+      </CharacterStyleRange>
+    </ParagraphStyleRange>
+  </Story>
+</idPkg:Story>

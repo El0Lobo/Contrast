@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<idPkg:Fonts xmlns:idPkg="http://ns.adobe.com/AdobeInDesign/idml/1.0/packaging" DOMVersion="7.0">
+  <FontFamily Self="FontFamily/Chalkboy Free Trial" Name="Chalkboy Free Trial">
+    <Font Self="Font/Chalkboy-Regular" FontFamily="Chalkboy Free Trial" Name="Chalkboy Regular" PostScriptName="Chalkboy-Regular" Status="Installed" FontStyleName="Regular" FontType="TrueType" WritingScript="0" FullName="Chalkboy Regular" FullNameNative="Chalkboy Regular" FontStyleNameNative="Regular" PlatformName="$ID/" Version="1.0" TypekitID="$ID/"/>
+  </FontFamily>
+</idPkg:Fonts>

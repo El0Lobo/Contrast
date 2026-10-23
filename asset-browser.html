@@ -29,11 +29,17 @@
         <input id="asset-search" type="search" placeholder="Search by name, folder or type…" autocomplete="off">
         <kbd>/</kbd>
       </label>
+      <div class="asset-collections" role="group" aria-label="Asset collection">
+        <button class="is-active" type="button" data-collection="all">All assets</button>
+        <button type="button" data-collection="website">Website</button>
+        <button type="button" data-collection="contrast-material">Contrast Material</button>
+      </div>
     </section>
     <section class="asset-type-row" aria-label="File type filters">
       <div class="asset-filters" role="group" aria-label="File type">
         <button class="is-active" type="button" data-filter="all">All</button>
         <button type="button" data-filter="image">Images</button>
+        <button type="button" data-filter="svg">SVG</button>
         <button type="button" data-filter="icon">Icons</button>
         <button type="button" data-filter="code">Code</button>
         <button type="button" data-filter="document">Documents</button>
