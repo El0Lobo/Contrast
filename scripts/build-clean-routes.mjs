@@ -18,7 +18,35 @@ const artistProfiles = fs.existsSync(artistProfilesPath)
 // A hash permits only this byte-for-byte script; arbitrary inline JS remains blocked.
 const liveServerReloadHash = "'sha256-vvt4KWwuNr51XfE5m+hzeNEGhiOfZzG97ccfqGsPwvE='";
 
+function decorateStaticNavigation(html) {
+  const locale = html.match(/<html\b[^>]*\bdata-static-locale="(de|en)"/i)?.[1];
+  const route = html.match(/<main\b[^>]*\bdata-route="([^"]+)"/i)?.[1];
+  if (!locale) return html;
+
+  // These states are in the document itself, rather than relying only on
+  // JavaScript. Visitors can therefore identify their selected language and
+  // page even if a script is delayed, blocked, or fails to load.
+  html = html.replace(
+    /(<button\b[^>]*\bdata-language="de"[^>]*)(>)/i,
+    `$1 aria-pressed="${locale === 'de'}"$2`
+  );
+  html = html.replace(
+    /(<button\b[^>]*\bdata-language="en"[^>]*)(>)/i,
+    `$1 aria-pressed="${locale === 'en'}"$2`
+  );
+  const navigationRoute = ['event', 'artist'].includes(route) ? 'events' : route;
+  if (navigationRoute) {
+    const escapedRoute = navigationRoute.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    html = html.replace(
+      new RegExp(`(<a\\b[^>]*\\bdata-route="${escapedRoute}"[^>]*)>`, 'i'),
+      '$1 class="is-active" aria-current="page">'
+    );
+  }
+  return html;
+}
+
 function applyContentSecurityPolicy(html) {
+  html = decorateStaticNavigation(html);
   const hashes = [liveServerReloadHash, ...[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
     .filter(([, attributes]) => !/\bsrc\s*=/.test(attributes))
     .map(([, , content]) => `'sha256-${crypto.createHash('sha256').update(content).digest('base64')}'`)];

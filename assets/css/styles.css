@@ -491,6 +491,10 @@ footer {
   overflow: auto;
 }
 
+.modal:not([hidden]) {
+  display: block;
+}
+
 .modal-content {
   background-color: white;
   margin: 10% auto;
@@ -2089,6 +2093,10 @@ a:hover {
   backdrop-filter: blur(0.5rem);
 }
 
+.image-modal[hidden] {
+  display: none;
+}
+
 .image-modal.is-open {
   display: flex;
   animation: image-modal-in 220ms ease both;
@@ -3418,9 +3426,20 @@ main .image {
     scroll-behavior: auto;
   }
 
-  main > *,
-  .logo2 {
-    animation: none;
-    transition: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Preserve clear interaction cues when a visitor uses Windows high contrast. */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 3px;
   }
 }

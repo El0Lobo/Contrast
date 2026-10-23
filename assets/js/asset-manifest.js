@@ -933,7 +933,7 @@ window.CONTRAST_ASSETS = [
     "extension": "css",
     "isIcon": false,
     "kind": "code",
-    "sizeLabel": "64.9 KB"
+    "sizeLabel": "65.3 KB"
   },
   {
     "name": "events.ics",
@@ -1284,7 +1284,7 @@ window.CONTRAST_ASSETS = [
     "extension": "js",
     "isIcon": false,
     "kind": "code",
-    "sizeLabel": "62.3 KB"
+    "sizeLabel": "62.8 KB"
   },
   {
     "name": "cursor-effects.js",

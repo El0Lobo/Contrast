@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
     imageModal.setAttribute('role', 'dialog');
     imageModal.setAttribute('aria-modal', 'true');
     imageModal.setAttribute('aria-label', 'Image view');
-    imageModal.setAttribute('aria-hidden', 'true');
+    imageModal.hidden = true;
     imageModal.innerHTML = `
         <div class="image-modal__content">
             <button class="image-modal__close" type="button" aria-label="Close image view">&times;</button>
@@ -129,7 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageModalClose = imageModal.querySelector('.image-modal__close');
 
     function enhanceZoomableImages() {
-        main.querySelectorAll('img:not(.logo2)').forEach((image) => {
+        // Do not turn images that are already inside links into a second,
+        // competing control. Linked images retain their normal link behaviour.
+        main.querySelectorAll('img:not(.logo2):not(a img)').forEach((image) => {
             image.classList.add('is-zoomable');
             image.setAttribute('tabindex', '0');
             image.setAttribute('role', 'button');
@@ -145,8 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
         imageModalImage.alt = image.alt || '';
         imageModalCaption.textContent = image.alt || '';
         imageModalCaption.hidden = !image.alt;
+        imageModal.hidden = false;
         imageModal.classList.add('is-open');
-        imageModal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('modal-open');
         imageModalClose.focus();
     }
@@ -154,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeImageModal() {
         if (!imageModal.classList.contains('is-open')) return;
         imageModal.classList.remove('is-open');
-        imageModal.setAttribute('aria-hidden', 'true');
+        imageModal.hidden = true;
         imageModalImage.src = '';
         document.body.classList.remove('modal-open');
         imageModalTrigger?.focus();
@@ -275,10 +277,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const copy = chromeCopy[currentLanguage];
         document.documentElement.lang = currentLanguage;
         document.querySelector('meta[property="og:locale"]')?.setAttribute('content', currentLanguage === 'de' ? 'de_DE' : 'en_GB');
-        document.querySelector('.skip-link')?.textContent = copy.skip;
+        const skipLink = document.querySelector('.skip-link');
+        if (skipLink) skipLink.textContent = copy.skip;
         document.querySelector('#site-navigation')?.setAttribute('aria-label', copy.navLabel);
         menu?.querySelectorAll('a').forEach((link) => { link.textContent = copy.nav[link.dataset.route] || link.textContent; });
-        document.querySelector('.impressum-button')?.textContent = copy.legal;
+        const legalButton = document.querySelector('.impressum-button');
+        if (legalButton) legalButton.textContent = copy.legal;
         document.querySelector('.modal .close')?.setAttribute('aria-label', copy.closeLegal);
         document.querySelector('.image-modal')?.setAttribute('aria-label', copy.imageView);
         document.querySelector('.image-modal__close')?.setAttribute('aria-label', copy.closeImage);
@@ -431,7 +435,14 @@ document.addEventListener('DOMContentLoaded', () => {
             currentLabel.textContent = String(currentIndex + 1).padStart(2, '0');
 
             slides.forEach((slide, slideIndex) => {
-                slide.setAttribute('aria-hidden', slideIndex !== currentIndex ? 'true' : 'false');
+                const isCurrent = slideIndex === currentIndex;
+                slide.setAttribute('aria-hidden', isCurrent ? 'false' : 'true');
+                // Hidden slides must not contain keyboard-focusable controls:
+                // that would expose a control to keyboard users while hiding it
+                // from screen readers.
+                slide.querySelectorAll('.is-zoomable').forEach((image) => {
+                    image.tabIndex = isCurrent ? 0 : -1;
+                });
             });
 
             dots.forEach((dot, dotIndex) => {
@@ -606,15 +617,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Modal functionality
     function openModal() {
         modalTrigger = document.activeElement;
-        modal.style.display = 'block';
-        modal.setAttribute('aria-hidden', 'false');
+        modal.hidden = false;
         document.body.classList.add('modal-open');
         closeButton.focus();
     }
 
     function closeModal() {
-        modal.style.display = 'none';
-        modal.setAttribute('aria-hidden', 'true');
+        modal.hidden = true;
         document.body.classList.remove('modal-open');
         modalTrigger?.focus();
     }
