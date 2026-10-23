@@ -1284,7 +1284,7 @@ window.CONTRAST_ASSETS = [
     "extension": "js",
     "isIcon": false,
     "kind": "code",
-    "sizeLabel": "62.0 KB"
+    "sizeLabel": "62.3 KB"
   },
   {
     "name": "cursor-effects.js",

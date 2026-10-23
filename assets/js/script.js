@@ -275,13 +275,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const copy = chromeCopy[currentLanguage];
         document.documentElement.lang = currentLanguage;
         document.querySelector('meta[property="og:locale"]')?.setAttribute('content', currentLanguage === 'de' ? 'de_DE' : 'en_GB');
-        document.querySelector('.skip-link').textContent = copy.skip;
-        document.querySelector('#site-navigation').setAttribute('aria-label', copy.navLabel);
+        document.querySelector('.skip-link')?.textContent = copy.skip;
+        document.querySelector('#site-navigation')?.setAttribute('aria-label', copy.navLabel);
         menu?.querySelectorAll('a').forEach((link) => { link.textContent = copy.nav[link.dataset.route] || link.textContent; });
-        document.querySelector('.impressum-button').textContent = copy.legal;
-        document.querySelector('.modal .close').setAttribute('aria-label', copy.closeLegal);
-        document.querySelector('.image-modal').setAttribute('aria-label', copy.imageView);
-        document.querySelector('.image-modal__close').setAttribute('aria-label', copy.closeImage);
+        document.querySelector('.impressum-button')?.textContent = copy.legal;
+        document.querySelector('.modal .close')?.setAttribute('aria-label', copy.closeLegal);
+        document.querySelector('.image-modal')?.setAttribute('aria-label', copy.imageView);
+        document.querySelector('.image-modal__close')?.setAttribute('aria-label', copy.closeImage);
         const isOpen = menu?.classList.contains('active');
         hamburger?.setAttribute('aria-label', isOpen ? copy.closeNav : copy.openNav);
         languageButtons.forEach((button) => {
@@ -777,7 +777,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function dateOnly(date) { return new Date(date.getFullYear(), date.getMonth(), date.getDate()); }
         function berlinToday() {
-            const values = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()).filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]));
+            // Do not use the browser's local date here: a visitor west or east
+            // of Germany must still see the Contrast programme's current day.
+            // Build the parts explicitly for compatibility with older browsers
+            // that do not implement Object.fromEntries.
+            const values = {};
+            new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' })
+                .formatToParts(new Date())
+                .forEach((part) => { if (part.type !== 'literal') values[part.type] = part.value; });
             return new Date(+values.year, +values.month - 1, +values.day);
         }
         function addDays(date, days) { const next = new Date(date); next.setDate(next.getDate() + days); return next; }

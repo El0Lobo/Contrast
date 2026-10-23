@@ -446,6 +446,42 @@ function setMeta(html, page, isRoot) {
   return html;
 }
 
+// The home-page schedule is useful before its JavaScript enhancement has
+// loaded (or when a privacy extension blocks it). Keep that fallback in the
+// same compact form as the enhanced calendar and mark the Berlin day at build
+// time. The client-side calendar refreshes the marker on later days.
+function decorateHomeProgrammeFallback(html, locale) {
+  const labels = locale === 'de'
+    ? ['MO', 'DI', 'MI', 'DO', 'FR', 'SA', 'SO']
+    : ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+  const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'short', timeZone: 'Europe/Berlin' }).format(new Date());
+  const today = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(weekday);
+  const mondayIndex = today === 0 ? 6 : today - 1;
+  let row = 0;
+  return html.replace(
+    /<article class="program-row"><p class="program-row__day">[^<]*<\/p>/g,
+    () => `<article class="program-row${row === mondayIndex ? ' is-today' : ''}"><p class="program-row__day">${labels[row++]}</p>`
+  );
+}
+
+// Do this while generating the static documents, rather than after page load.
+// Otherwise an Instagram iframe can connect (and log its own errors) before
+// the client-side consent replacement gets a chance to remove it.
+function replaceInstagramEmbeds(html, locale) {
+  const de = locale === 'de';
+  const heading = de ? 'Instagram-Inhalt' : 'Instagram content';
+  const explanation = de
+    ? 'Dieser Inhalt wird von Instagram bereitgestellt. Erst wenn du ihn lädst, wird eine Verbindung zu Meta hergestellt.'
+    : 'This content is provided by Instagram. A connection to Meta is made only when you load it.';
+  const load = de ? 'Instagram laden' : 'Load Instagram';
+  const profile = de ? 'Profil direkt öffnen' : 'Open profile directly';
+  const privacy = de ? 'Datenschutzhinweise von Instagram' : 'Instagram privacy policy';
+  return html.replace(/<iframe\b[^>]*\bsrc=["'](https:\/\/(?:www\.)?instagram\.com\/[^"'?/]+\/embed\/?)[^"']*["'][^>]*>[\s\S]*?<\/iframe>/gi, (_match, embedUrl) => {
+    const profileUrl = embedUrl.replace(/\/embed\/?$/, '/');
+    return `<section class="instagram-consent" data-embed-url="${embedUrl}" aria-label="${heading}"><div class="instagram-consent__mark" aria-hidden="true">◎</div><h2>${heading}</h2><p>${explanation}</p><button type="button" class="instagram-consent__load">${load}</button><p class="instagram-consent__links"><a href="${profileUrl}" target="_blank" rel="noopener noreferrer">${profile}</a><span aria-hidden="true">·</span><a href="https://privacycenter.instagram.com/policy/" target="_blank" rel="noopener noreferrer">${privacy}</a></p></section>`;
+  });
+}
+
 function copyDirectory(source, destination) {
   fs.mkdirSync(destination, { recursive: true });
   for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
@@ -501,7 +537,7 @@ const archiveBands = archiveBandsFromCalendar(calendarEvents);
 // crawler never depends on JavaScript or browser-language detection.
 for (const [locale, localeInfo] of Object.entries(locales)) {
   for (const [routeName, route] of Object.entries(routes)) {
-    const content = localizedContent(route, locale, template)
+    const content = replaceInstagramEmbeds(localizedContent(route, locale, template), locale)
       .replace('<!-- HISTORY_ARCHIVE -->', historyArchiveMarkup(locale))
       .replace('308 entries', `${archiveBands.length} entries`)
       .replace('308 Einträge', `${archiveBands.length} Einträge`);
@@ -510,6 +546,7 @@ for (const [locale, localeInfo] of Object.entries(locales)) {
     const page = { ...fallback, path: publicPath };
     let html = template.replace(/<main id="main-content"[\s\S]*?<\/main>/i, `<main id="main-content" tabindex="-1" data-route="${routeName}">${content}</main>`);
     html = setMeta(html, page, !publicPath);
+    if (routeName === 'home') html = decorateHomeProgrammeFallback(html, locale);
     html = html.replace('<html lang="en">', `<html lang="${locale}" data-static-locale="${locale}">`);
     const alternates = Object.entries(locales).map(([alternateLocale]) => `  <link rel="alternate" hreflang="${alternateLocale}" href="${localizedUrl(route, alternateLocale)}">`).join('\n');
     html = html.replace('</head>', `${alternates}\n  <link rel="alternate" hreflang="x-default" href="${localizedUrl(route, 'de')}">\n</head>`);
